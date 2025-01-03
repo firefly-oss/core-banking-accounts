@@ -9,9 +9,9 @@ import com.catalis.core.banking.accounts.core.services.parameter.v1.AccountParam
 import com.catalis.core.banking.accounts.interfaces.dtos.parameter.v1.AccountParameterDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.parameter.v1.ParamTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,11 +49,15 @@ public class AccountParameterController {
     })
     @GetMapping
     public Mono<ResponseEntity<PaginationResponse<AccountParameterDTO>>> getAccountParameters(
-            @PathVariable Long accountId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @Parameter(description = "ID of the account", required = true)
+            @PathVariable("accountId") Long accountId,
+            @Parameter(description = "Page number (zero-indexed)", required = true)
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @Parameter(description = "Number of records per page", required = true)
+            @RequestParam(name = "size", defaultValue = "10") int size) {
 
         PaginationRequest paginationRequest = new PaginationRequest(page, size);
+
         return accountParameterGetService.getAccountParameters(accountId, paginationRequest)
                 .map(ResponseEntity::ok);
     }
@@ -70,8 +74,10 @@ public class AccountParameterController {
     })
     @GetMapping("/current")
     public Mono<ResponseEntity<AccountParameterDTO>> getCurrentParameter(
-            @PathVariable Long accountId,
-            @RequestParam ParamTypeEnum paramType) {
+            @Parameter(description = "ID of the account", required = true)
+            @PathVariable("accountId") Long accountId,
+            @Parameter(description = "Type of the parameter", required = true)
+            @RequestParam(name = "paramType") ParamTypeEnum paramType) {
         return accountParameterGetService.getCurrentParameter(accountId, paramType)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
@@ -89,12 +95,14 @@ public class AccountParameterController {
     })
     @PostMapping
     public Mono<ResponseEntity<AccountParameterDTO>> createAccountParameter(
-            @PathVariable Long accountId,
-            @RequestBody(description = "Account parameter details", required = true,
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountParameterDTO.class)))
-            AccountParameterDTO accountParameter) {
+            @Parameter(description = "ID of the account", required = true)
+            @PathVariable("accountId") Long accountId,
+            @Parameter(description = "Account parameter details", required = true,
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AccountParameterDTO.class)))
+            @RequestBody AccountParameterDTO accountParameter) {
 
-        accountParameter.setAccountId(accountId);
+        accountParameter.setAccountId(accountId); // Ensure accountId is associated with the parameter
         return accountParameterCreateService.createAccountParameter(accountParameter)
                 .map(param -> ResponseEntity.status(201).body(param));
     }
@@ -112,13 +120,16 @@ public class AccountParameterController {
     })
     @PutMapping("/{accountParameterId}")
     public Mono<ResponseEntity<AccountParameterDTO>> updateAccountParameter(
-            @PathVariable Long accountId,
-            @PathVariable Long accountParameterId,
-            @RequestBody(description = "Updated parameter details", required = true,
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountParameterDTO.class)))
-            AccountParameterDTO accountParameter) {
+            @Parameter(description = "ID of the account", required = true)
+            @PathVariable("accountId") Long accountId,
+            @Parameter(description = "ID of the account parameter to update", required = true)
+            @PathVariable("accountParameterId") Long accountParameterId,
+            @Parameter(description = "Updated parameter details", required = true,
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AccountParameterDTO.class)))
+            @RequestBody AccountParameterDTO accountParameter) {
 
-        accountParameter.setAccountId(accountId);
+        accountParameter.setAccountId(accountId); // Ensure accountId is validated during the update
         return accountParameterUpdateService.updateAccountParameter(accountParameterId, accountParameter)
                 .map(ResponseEntity::ok);
     }
@@ -133,8 +144,10 @@ public class AccountParameterController {
     })
     @DeleteMapping("/{accountParameterId}")
     public Mono<ResponseEntity<Void>> deleteAccountParameter(
-            @PathVariable Long accountId,
-            @PathVariable Long accountParameterId) {
+            @Parameter(description = "ID of the account", required = true)
+            @PathVariable("accountId") Long accountId,
+            @Parameter(description = "ID of the account parameter to delete", required = true)
+            @PathVariable("accountParameterId") Long accountParameterId) {
         // Verify or check if it belongs to that account if needed
         return accountParameterDeleteService.deleteAccountParameter(accountParameterId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

@@ -53,9 +53,9 @@ public class AccountProviderController {
     })
     @GetMapping("/{accountId}")
     public Mono<ResponseEntity<PaginationResponse<AccountProviderDTO>>> getAccountProviders(
-            @PathVariable Long accountId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @PathVariable("accountId") Long accountId,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         PaginationRequest paginationRequest = new PaginationRequest(page, size);
 
         return accountProviderGetService.getAccountProviders(accountId, paginationRequest)
@@ -79,9 +79,9 @@ public class AccountProviderController {
     })
     @GetMapping("/active")
     public Mono<ResponseEntity<PaginationResponse<AccountProviderDTO>>> getActiveProvidersByName(
-            @RequestParam String providerName,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(name = "providerName") String providerName,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         PaginationRequest paginationRequest = new PaginationRequest(page, size);
 
         return accountProviderGetService.getActiveProvidersByName(providerName, paginationRequest)
@@ -104,8 +104,7 @@ public class AccountProviderController {
     @PostMapping
     public Mono<ResponseEntity<AccountProviderDTO>> createAccountProvider(
             @RequestBody(description = "Account provider details", required = true,
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountProviderDTO.class)))
-            AccountProviderDTO accountProvider) {
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountProviderDTO.class))) AccountProviderDTO accountProvider) {
         return accountProviderCreateService.createAccountProvider(accountProvider)
                 .map(createdProvider -> ResponseEntity.status(201).body(createdProvider));
     }
@@ -127,10 +126,9 @@ public class AccountProviderController {
     })
     @PutMapping("/{accountProviderId}")
     public Mono<ResponseEntity<AccountProviderDTO>> updateAccountProvider(
-            @PathVariable Long accountProviderId,
+            @PathVariable("accountProviderId") Long accountProviderId,
             @RequestBody(description = "Updated account provider details", required = true,
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountProviderDTO.class)))
-            AccountProviderDTO updatedProvider) {
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountProviderDTO.class))) AccountProviderDTO updatedProvider) {
         return accountProviderUpdateService.updateAccountProvider(accountProviderId, updatedProvider)
                 .map(ResponseEntity::ok);
     }
@@ -147,7 +145,7 @@ public class AccountProviderController {
             @ApiResponse(responseCode = "404", description = "Account provider not found", content = @Content)
     })
     @DeleteMapping("/{accountProviderId}")
-    public Mono<ResponseEntity<Void>> deleteAccountProvider(@PathVariable Long accountProviderId) {
+    public Mono<ResponseEntity<Void>> deleteAccountProvider(@PathVariable("accountProviderId") Long accountProviderId) {
         return accountProviderDeleteService.deleteAccountProvider(accountProviderId)
                 .then(Mono.just(ResponseEntity.noContent().build()));
     }
