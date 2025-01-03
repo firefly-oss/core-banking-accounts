@@ -1,0 +1,6 @@
+-- V1__Create_Enums.sql
+CREATE TYPE account_status_enum AS ENUM ('OPEN', 'CLOSED', 'SUSPENDED', 'DORMANT');
+CREATE TYPE balance_type_enum AS ENUM ('CURRENT', 'AVAILABLE', 'BLOCKED');
+CREATE TYPE status_code_enum AS ENUM ('OPEN', 'SUSPENDED', 'CLOSED', 'DORMANT');
+CREATE TYPE param_type_enum AS ENUM ('MONTHLY_FEE', 'OVERDRAFT_LIMIT', 'INTEREST_RATE');
+CREATE TYPE provider_status_enum AS ENUM ('ACTIVE', 'INACTIVE', 'PENDING', 'SUSPENDED');
