@@ -24,21 +24,19 @@ public class AccountBalanceGetService {
     @Autowired
     private AccountBalanceMapper mapper;
 
+
     /**
-     * Counts the balance history records for a specific account within a given time range and balance type.
+     * Retrieves the current account balance for the given account ID.
      *
-     * @param accountId the ID of the account whose balance history is to be counted
-     * @param balanceType the type of balance to filter the records (e.g., CURRENT, AVAILABLE, BLOCKED)
-     * @param startDate the start date of the time range to filter the balance history
-     * @param endDate the end date of the time range to filter the balance history
-     * @return a Mono emitting the count of balance history records that match the criteria
+     * @param accountId the ID of the account for which the current balance is to be retrieved
+     * @return a Mono emitting the current account balance as an AccountBalanceDTO, or an error if no balance is found
      */
-    public Mono<Long> countBalanceHistory(Long accountId, BalanceTypeEnum balanceType,
-                                          LocalDateTime startDate, LocalDateTime endDate) {
-        return repository.countBalanceHistory(accountId, balanceType, startDate, endDate)
-                .onErrorResume(e -> Mono.error(new RuntimeException("Failed to count balance history for Account ID: "
-                        + accountId, e)));
+    public Mono<AccountBalanceDTO> getCurrentAccountBalance(Long accountId) {
+        return repository.findCurrentBalance(accountId)
+                .map(mapper::toDTO)
+                .switchIfEmpty(Mono.error(new RuntimeException("Current account balance not found for accountId: " + accountId)));
     }
+
 
     /**
      * Retrieves a paginated list of account balances for a specified account.

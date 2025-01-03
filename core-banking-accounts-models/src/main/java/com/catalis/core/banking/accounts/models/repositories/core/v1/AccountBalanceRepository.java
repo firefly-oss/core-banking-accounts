@@ -24,4 +24,8 @@ public interface AccountBalanceRepository extends BaseRepository<AccountBalance,
     Mono<Long> countBalanceHistory(Long accountId, BalanceTypeEnum balanceType, LocalDateTime startDate,
                                    LocalDateTime endDate);
 
+    @Query("SELECT * FROM account_balance WHERE account_id = :accountId AND balance_type = 'CURRENT' AND " +
+            "as_of_datetime <= CURRENT_TIMESTAMP ORDER BY as_of_datetime DESC LIMIT 1")
+    Mono<AccountBalance> findCurrentBalance(Long accountId);
+
 }
