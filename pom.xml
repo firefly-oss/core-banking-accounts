@@ -21,9 +21,9 @@
     </modules>
 
     <properties>
-        <common-platform-product-mgmt.version>
+        <core-banking-accounts.version>
             1.0.0-SNAPSHOT
-        </common-platform-product-mgmt.version>
+        </core-banking-accounts.version>
     </properties>
 
     <dependencyManagement>
