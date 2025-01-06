@@ -2,11 +2,11 @@ package com.catalis.core.banking.accounts.web.controllers.core.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.banking.accounts.core.services.core.v1.AccountBalanceCreateService;
-import com.catalis.core.banking.accounts.core.services.core.v1.AccountBalanceDeleteService;
-import com.catalis.core.banking.accounts.core.services.core.v1.AccountBalanceGetService;
-import com.catalis.core.banking.accounts.core.services.core.v1.AccountBalanceUpdateService;
-import com.catalis.core.banking.accounts.interfaces.dtos.core.v1.AccountBalanceDTO;
+import com.catalis.core.banking.accounts.core.services.models.core.v1.AccountBalanceCreateService;
+import com.catalis.core.banking.accounts.core.services.models.core.v1.AccountBalanceDeleteService;
+import com.catalis.core.banking.accounts.core.services.models.core.v1.AccountBalanceGetService;
+import com.catalis.core.banking.accounts.core.services.models.core.v1.AccountBalanceUpdateService;
+import com.catalis.core.banking.accounts.interfaces.dtos.models.core.v1.AccountBalanceDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

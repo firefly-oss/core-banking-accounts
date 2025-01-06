@@ -2,12 +2,12 @@ package com.catalis.core.banking.accounts.web.controllers.parameter.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.banking.accounts.core.services.parameter.v1.AccountParameterCreateService;
-import com.catalis.core.banking.accounts.core.services.parameter.v1.AccountParameterDeleteService;
-import com.catalis.core.banking.accounts.core.services.parameter.v1.AccountParameterGetService;
-import com.catalis.core.banking.accounts.core.services.parameter.v1.AccountParameterUpdateService;
-import com.catalis.core.banking.accounts.interfaces.dtos.parameter.v1.AccountParameterDTO;
-import com.catalis.core.banking.accounts.interfaces.enums.parameter.v1.ParamTypeEnum;
+import com.catalis.core.banking.accounts.core.services.models.parameter.v1.AccountParameterCreateService;
+import com.catalis.core.banking.accounts.core.services.models.parameter.v1.AccountParameterDeleteService;
+import com.catalis.core.banking.accounts.core.services.models.parameter.v1.AccountParameterGetService;
+import com.catalis.core.banking.accounts.core.services.models.parameter.v1.AccountParameterUpdateService;
+import com.catalis.core.banking.accounts.interfaces.dtos.models.parameter.v1.AccountParameterDTO;
+import com.catalis.core.banking.accounts.interfaces.enums.models.parameter.v1.ParamTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
