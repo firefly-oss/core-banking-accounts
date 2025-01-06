@@ -18,6 +18,7 @@
         <module>core-banking-accounts-interfaces</module>
         <module>core-banking-accounts-models</module>
         <module>core-banking-accounts-web</module>
+        <module>core-banking-accounts-provider-sample</module>
     </modules>
 
     <properties>
@@ -47,6 +48,11 @@
             <dependency>
                 <groupId>com.catalis</groupId>
                 <artifactId>core-banking-accounts-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.catalis</groupId>
+                <artifactId>core-banking-accounts-provider-sample</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
