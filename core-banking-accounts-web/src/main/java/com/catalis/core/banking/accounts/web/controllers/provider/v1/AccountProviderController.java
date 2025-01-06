@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,12 +38,11 @@ public class AccountProviderController {
     private AccountProviderDeleteService accountProviderDeleteService;
 
     /**
-     * Retrieves a paginated list of account providers for a specific account ID.
+     * Retrieves a paginated list of account providers for a specified account.
      *
-     * @param accountId the account ID to retrieve providers for
-     * @param page      the page number (default: 0)
-     * @param size      the page size (default: 10)
-     * @return a paginated list of account providers
+     * @param accountId The unique identifier of the account for which the providers are to be retrieved.
+     * @param paginationRequest The pagination parameters to control the number of results and their order.
+     * @return A reactive type containing a response entity wrapping a paginated list of account providers.
      */
     @Operation(summary = "Get Account Providers", description = "Retrieve a list of account providers for a specific account.")
     @ApiResponses({
@@ -54,21 +54,19 @@ public class AccountProviderController {
     @GetMapping("/{accountId}")
     public Mono<ResponseEntity<PaginationResponse<AccountProviderDTO>>> getAccountProviders(
             @PathVariable("accountId") Long accountId,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
-        PaginationRequest paginationRequest = new PaginationRequest(page, size);
+            @ParameterObject @ModelAttribute PaginationRequest paginationRequest) {
 
         return accountProviderGetService.getAccountProviders(accountId, paginationRequest)
                 .map(ResponseEntity::ok);
     }
 
     /**
-     * Retrieves a paginated list of active providers filtered by provider name.
+     * Retrieves a paginated list of active account providers filtered by the specified provider name.
      *
-     * @param providerName the provider name to filter active providers
-     * @param page         the page number (default: 0)
-     * @param size         the page size (default: 10)
-     * @return a paginated list of active providers
+     * @param providerName The name of the provider to filter active account providers.
+     * @param paginationRequest The pagination request containing page number, size, and sorting options.
+     * @return A {@code Mono<ResponseEntity<PaginationResponse<AccountProviderDTO>>>} containing the paginated
+     *         list of active account providers or an appropriate response status if no providers are found.
      */
     @Operation(summary = "Get Active Providers", description = "Retrieve a list of active account providers filtered by provider name.")
     @ApiResponses({
@@ -80,9 +78,7 @@ public class AccountProviderController {
     @GetMapping("/active")
     public Mono<ResponseEntity<PaginationResponse<AccountProviderDTO>>> getActiveProvidersByName(
             @RequestParam(name = "providerName") String providerName,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
-        PaginationRequest paginationRequest = new PaginationRequest(page, size);
+            @ParameterObject @ModelAttribute PaginationRequest paginationRequest) {
 
         return accountProviderGetService.getActiveProvidersByName(providerName, paginationRequest)
                 .map(ResponseEntity::ok);

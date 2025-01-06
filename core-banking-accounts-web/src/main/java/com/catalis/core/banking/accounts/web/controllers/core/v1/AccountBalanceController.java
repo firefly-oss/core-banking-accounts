@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,12 +51,7 @@ public class AccountBalanceController {
     public Mono<ResponseEntity<PaginationResponse<AccountBalanceDTO>>> getAccountBalances(
             @Parameter(name = "accountId", description = "ID of the account")
             @PathVariable("accountId") Long accountId,
-            @Parameter(name = "page", description = "Page number (zero-indexed)")
-            @RequestParam(defaultValue = "0") int page,
-            @Parameter(name = "size", description = "Number of records per page")
-            @RequestParam(defaultValue = "10") int size) {
-
-        PaginationRequest paginationRequest = new PaginationRequest(page, size);
+            @ParameterObject @ModelAttribute PaginationRequest paginationRequest) {
 
         return accountBalanceGetService.getAccountBalances(accountId, paginationRequest)
                 .map(ResponseEntity::ok);

@@ -55,7 +55,7 @@ public class AccountController {
     @GetMapping
     public Mono<ResponseEntity<PaginationResponse<AccountDTO>>> getAccounts(
             @RequestParam(required = false) Long branchId,
-            @ParameterObject PaginationRequest paginationRequest) {
+            @ParameterObject @ModelAttribute PaginationRequest paginationRequest) {
 
         return accountGetService.getAccountsByBranchId(branchId, paginationRequest)
                 .map(ResponseEntity::ok);

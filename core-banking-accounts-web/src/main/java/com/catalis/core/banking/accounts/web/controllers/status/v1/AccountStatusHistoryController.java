@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,12 +51,8 @@ public class AccountStatusHistoryController {
     public Mono<ResponseEntity<PaginationResponse<AccountStatusHistoryDTO>>> getStatusHistory(
             @Parameter(description = "ID of the account", name = "accountId")
             @PathVariable("accountId") Long accountId,
-            @Parameter(description = "Page number (zero-indexed)", name = "page")
-            @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Number of records per page", name = "size")
-            @RequestParam(defaultValue = "10") int size) {
+            @ParameterObject @ModelAttribute PaginationRequest paginationRequest) {
 
-        PaginationRequest paginationRequest = new PaginationRequest(page, size);
         return getService.getStatusHistory(accountId, paginationRequest)
                 .map(ResponseEntity::ok);
     }
