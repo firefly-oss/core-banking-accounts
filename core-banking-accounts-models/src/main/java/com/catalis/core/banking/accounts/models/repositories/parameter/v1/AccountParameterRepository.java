@@ -1,6 +1,6 @@
 package com.catalis.core.banking.accounts.models.repositories.parameter.v1;
 
-import com.catalis.core.banking.accounts.interfaces.enums.parameter.v1.ParamTypeEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.models.parameter.v1.ParamTypeEnum;
 import com.catalis.core.banking.accounts.models.entities.parameter.v1.AccountParameter;
 import com.catalis.core.banking.accounts.models.repositories.BaseRepository;
 import org.springframework.data.domain.Pageable;

@@ -1,6 +1,6 @@
 package com.catalis.core.banking.accounts.models.entities.core.v1;
 
-import com.catalis.core.banking.accounts.interfaces.enums.core.v1.AccountStatusEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.models.core.v1.AccountStatusEnum;
 import com.catalis.core.banking.accounts.models.entities.BaseEntity;
 import com.catalis.core.banking.accounts.models.entities.status.v1.AccountStatusHistory;
 import lombok.*;

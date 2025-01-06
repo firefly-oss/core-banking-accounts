@@ -1,6 +1,6 @@
 package com.catalis.core.banking.accounts.models.entities.core.v1;
 
-import com.catalis.core.banking.accounts.interfaces.enums.core.v1.BalanceTypeEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.models.core.v1.BalanceTypeEnum;
 import com.catalis.core.banking.accounts.models.entities.BaseEntity;
 import lombok.*;
 import org.springframework.data.annotation.Id;

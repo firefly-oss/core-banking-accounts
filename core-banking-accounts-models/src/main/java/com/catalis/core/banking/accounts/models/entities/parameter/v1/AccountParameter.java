@@ -1,6 +1,6 @@
 package com.catalis.core.banking.accounts.models.entities.parameter.v1;
 
-import com.catalis.core.banking.accounts.interfaces.enums.parameter.v1.ParamTypeEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.models.parameter.v1.ParamTypeEnum;
 import com.catalis.core.banking.accounts.models.entities.BaseEntity;
 import lombok.*;
 import org.springframework.data.annotation.Id;
