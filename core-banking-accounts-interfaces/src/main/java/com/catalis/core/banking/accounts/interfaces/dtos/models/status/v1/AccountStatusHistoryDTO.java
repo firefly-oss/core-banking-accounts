@@ -1,7 +1,8 @@
-package com.catalis.core.banking.accounts.interfaces.dtos.status.v1;
+package com.catalis.core.banking.accounts.interfaces.dtos.models.status.v1;
 
-import com.catalis.core.banking.accounts.interfaces.dtos.BaseDTO;
-import com.catalis.core.banking.accounts.interfaces.enums.status.v1.StatusCodeEnum;
+
+import com.catalis.core.banking.accounts.interfaces.dtos.models.BaseDTO;
+import com.catalis.core.banking.accounts.interfaces.enums.models.status.v1.StatusCodeEnum;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;

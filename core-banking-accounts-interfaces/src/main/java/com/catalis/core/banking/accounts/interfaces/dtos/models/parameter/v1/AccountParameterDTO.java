@@ -1,7 +1,7 @@
-package com.catalis.core.banking.accounts.interfaces.dtos.parameter.v1;
+package com.catalis.core.banking.accounts.interfaces.dtos.models.parameter.v1;
 
-import com.catalis.core.banking.accounts.interfaces.dtos.BaseDTO;
-import com.catalis.core.banking.accounts.interfaces.enums.parameter.v1.ParamTypeEnum;
+import com.catalis.core.banking.accounts.interfaces.dtos.models.BaseDTO;
+import com.catalis.core.banking.accounts.interfaces.enums.models.parameter.v1.ParamTypeEnum;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;

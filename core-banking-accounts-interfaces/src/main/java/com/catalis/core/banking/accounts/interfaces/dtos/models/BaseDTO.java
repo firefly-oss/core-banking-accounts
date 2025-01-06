@@ -1,4 +1,4 @@
-package com.catalis.core.banking.accounts.interfaces.dtos;
+package com.catalis.core.banking.accounts.interfaces.dtos.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
