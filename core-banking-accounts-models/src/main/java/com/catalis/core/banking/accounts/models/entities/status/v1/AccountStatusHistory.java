@@ -1,6 +1,6 @@
 package com.catalis.core.banking.accounts.models.entities.status.v1;
 
-import com.catalis.core.banking.accounts.interfaces.enums.models.status.v1.StatusCodeEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.status.v1.StatusCodeEnum;
 import com.catalis.core.banking.accounts.models.entities.BaseEntity;
 import lombok.*;
 import org.springframework.data.annotation.Id;
