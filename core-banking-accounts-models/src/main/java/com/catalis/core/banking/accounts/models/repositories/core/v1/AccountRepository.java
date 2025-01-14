@@ -7,9 +7,4 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface AccountRepository extends BaseRepository<Account, Long> {
-    Mono<Account> findByAccountNumber(String accountNumber);
-    Mono<Account> findByContractId(Long contractId);
-
-    Flux<Account> findByBranchId(Long branchId, Pageable pageable);
-    Mono<Long> countByBranchId(Long branchId);
 }

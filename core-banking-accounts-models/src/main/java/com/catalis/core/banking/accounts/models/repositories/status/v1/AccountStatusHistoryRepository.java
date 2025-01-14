@@ -12,12 +12,4 @@ import java.time.LocalDateTime;
 public interface AccountStatusHistoryRepository extends BaseRepository<AccountStatusHistory, Long> {
     Flux<AccountStatusHistory> findByAccountId(Long accountId, Pageable pageable);
     Mono<Long> countByAccountId(Long accountId);
-
-    @Query("SELECT * FROM account_status_history WHERE account_id = :accountId AND" +
-            " status_start_datetime >= :startDate")
-    Flux<AccountStatusHistory> findStatusChangesSince(Long accountId, LocalDateTime startDate);
-
-    @Query("SELECT COUNT(*) FROM account_status_history WHERE account_id = :accountId AND " +
-            "status_start_datetime >= :startDate")
-    Mono<Long> countStatusChangesSince(Long accountId, LocalDateTime startDate);
 }

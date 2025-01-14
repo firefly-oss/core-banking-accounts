@@ -11,8 +11,4 @@ import reactor.core.publisher.Mono;
 public interface AccountParameterRepository extends BaseRepository<AccountParameter, Long> {
     Flux<AccountParameter> findByAccountId(Long accountId, Pageable pageable);
     Mono<Long> countByAccountId(Long accountId);
-
-    @Query("SELECT * FROM account_parameter WHERE account_id = :accountId AND param_type = :paramType AND " +
-            "effective_date <= CURRENT_TIMESTAMP AND (expiry_date IS NULL OR expiry_date > CURRENT_TIMESTAMP)")
-    Mono<AccountParameter> findCurrentParameter(Long accountId, ParamTypeEnum paramType);
 }
