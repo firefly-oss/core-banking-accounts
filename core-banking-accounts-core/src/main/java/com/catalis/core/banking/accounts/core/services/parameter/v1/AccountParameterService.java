@@ -1,0 +1,34 @@
+package com.catalis.core.banking.accounts.core.services.parameter.v1;
+
+import com.catalis.common.core.queries.PaginationRequest;
+import com.catalis.common.core.queries.PaginationResponse;
+import com.catalis.core.banking.accounts.interfaces.dtos.parameter.v1.AccountParameterDTO;
+import reactor.core.publisher.Mono;
+
+public interface AccountParameterService {
+
+    /**
+     * List all parameters (paginated) for a specific account.
+     */
+    Mono<PaginationResponse<AccountParameterDTO>> listParameters(Long accountId, PaginationRequest paginationRequest);
+
+    /**
+     * Create a new parameter for a specific account.
+     */
+    Mono<AccountParameterDTO> createParameter(Long accountId, AccountParameterDTO parameterDTO);
+
+    /**
+     * Retrieve a single parameter by its ID, ensuring it belongs to the specified account.
+     */
+    Mono<AccountParameterDTO> getParameter(Long accountId, Long paramId);
+
+    /**
+     * Update an existing parameter associated with the specified account.
+     */
+    Mono<AccountParameterDTO> updateParameter(Long accountId, Long paramId, AccountParameterDTO parameterDTO);
+
+    /**
+     * Delete a specific parameter by its ID, ensuring it belongs to the specified account.
+     */
+    Mono<Void> deleteParameter(Long accountId, Long paramId);
+}

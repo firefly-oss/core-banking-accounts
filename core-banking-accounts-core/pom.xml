@@ -25,10 +25,6 @@
         </dependency>
         <dependency>
             <groupId>com.catalis</groupId>
-            <artifactId>core-banking-accounts-provider-sample</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.catalis</groupId>
             <artifactId>core-banking-accounts-models</artifactId>
         </dependency>
 
