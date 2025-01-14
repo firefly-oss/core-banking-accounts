@@ -2,10 +2,7 @@ package com.catalis.core.banking.accounts.web.controllers.status.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.banking.accounts.core.services.status.v1.AccountStatusHistoryCreateService;
-import com.catalis.core.banking.accounts.core.services.status.v1.AccountStatusHistoryDeleteService;
-import com.catalis.core.banking.accounts.core.services.status.v1.AccountStatusHistoryGetService;
-import com.catalis.core.banking.accounts.core.services.status.v1.AccountStatusHistoryUpdateService;
+import com.catalis.core.banking.accounts.core.services.status.v1.AccountStatusHistoryServiceImpl;
 import com.catalis.core.banking.accounts.interfaces.dtos.status.v1.AccountStatusHistoryDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,110 +13,139 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+@Tag(name = "Account Status History", description = "APIs for managing the status history of a specific bank account")
 @RestController
 @RequestMapping("/api/v1/accounts/{accountId}/status-history")
-@Tag(name = "Account Management API - Status History", description = "Endpoints for account status history.")
 public class AccountStatusHistoryController {
 
     @Autowired
-    private AccountStatusHistoryGetService getService;
+    private AccountStatusHistoryServiceImpl service;
 
-    @Autowired
-    private AccountStatusHistoryCreateService createService;
-
-    @Autowired
-    private AccountStatusHistoryUpdateService updateService;
-
-    @Autowired
-    private AccountStatusHistoryDeleteService deleteService;
-
-    /**
-     * Retrieves a paginated list of account status history records for a specific account.
-     */
-    @Operation(summary = "Get Account Status History", description = "Fetches a paginated list of status history for a specific account.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved status history",
+    @Operation(
+            summary = "List Account Status History",
+            description = "Retrieve a paginated list of status history records associated with the specified account."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved status history records",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PaginationResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Account not found", content = @Content)
+            @ApiResponse(responseCode = "404", description = "No status history records found for the specified account",
+                    content = @Content)
     })
-    @GetMapping
-    public Mono<ResponseEntity<PaginationResponse<AccountStatusHistoryDTO>>> getStatusHistory(
-            @Parameter(description = "ID of the account", name = "accountId")
-            @PathVariable("accountId") Long accountId,
-            @ParameterObject @ModelAttribute PaginationRequest paginationRequest) {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<PaginationResponse<AccountStatusHistoryDTO>>> getAllStatusHistory(
+            @Parameter(description = "Unique identifier of the account", required = true)
+            @PathVariable Long accountId,
 
-        return getService.getStatusHistory(accountId, paginationRequest)
-                .map(ResponseEntity::ok);
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
+    ) {
+        return service.listStatusHistory(accountId, paginationRequest)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Creates a new account status history entry for a specific account.
-     */
-    @Operation(summary = "Create Account Status History", description = "Creates a new account status history record for an account.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Successfully created account status history",
+    @Operation(
+            summary = "Create Account Status History",
+            description = "Create a new status history record for the specified account."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Status history record created successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = AccountStatusHistoryDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid status history data provided",
+                    content = @Content)
     })
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountStatusHistoryDTO>> createStatusHistory(
-            @Parameter(description = "ID of the account", name = "accountId")
-            @PathVariable("accountId") Long accountId,
-            @Parameter(description = "Details of the account status history to be created", required = true,
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountStatusHistoryDTO.class)), name = "request")
-            @RequestBody AccountStatusHistoryDTO request) {
-        request.setAccountId(accountId); // Ensure the accountId is set in the DTO
-        return createService.createAccountStatusHistory(request)
-                .map(record -> ResponseEntity.status(201).body(record));
+            @Parameter(description = "Unique identifier of the account", required = true)
+            @PathVariable Long accountId,
+
+            @Parameter(description = "Data for the new account status history record", required = true,
+                    schema = @Schema(implementation = AccountStatusHistoryDTO.class))
+            @RequestBody AccountStatusHistoryDTO historyDTO
+    ) {
+        return service.createStatusHistory(accountId, historyDTO)
+                .map(createdHistory -> ResponseEntity.status(201).body(createdHistory))
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 
-    /**
-     * Updates an existing account status history record for a specific account.
-     */
-    @Operation(summary = "Update Account Status History", description = "Updates an existing account status history record for an account.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successfully updated status history",
+    @Operation(
+            summary = "Get Account Status History by ID",
+            description = "Retrieve a specific status history record by its unique identifier, ensuring it belongs to the specified account."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the account status history",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = AccountStatusHistoryDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Status history record not found", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content)
+            @ApiResponse(responseCode = "404", description = "Status history record not found",
+                    content = @Content)
     })
-    @PutMapping("/{statusHistoryId}")
-    public Mono<ResponseEntity<AccountStatusHistoryDTO>> updateStatusHistory(
-            @Parameter(description = "ID of the account", name = "accountId")
-            @PathVariable("accountId") Long accountId,
-            @Parameter(description = "ID of the status history to update", name = "statusHistoryId")
-            @PathVariable("statusHistoryId") Long statusHistoryId,
-            @Parameter(description = "Updated details of the account status history", required = true,
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountStatusHistoryDTO.class)), name = "request")
-            @RequestBody AccountStatusHistoryDTO request) {
-        request.setAccountId(accountId); // Ensure the accountId is validated during the update
-        return updateService.updateAccountStatusHistory(statusHistoryId, request)
-                .map(ResponseEntity::ok);
+    @GetMapping(value = "/{historyId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<AccountStatusHistoryDTO>> getStatusHistory(
+            @Parameter(description = "Unique identifier of the account", required = true)
+            @PathVariable Long accountId,
+
+            @Parameter(description = "Unique identifier of the status history record", required = true)
+            @PathVariable Long historyId
+    ) {
+        return service.getStatusHistory(accountId, historyId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Deletes an account status history record by its ID for a specific account.
-     */
-    @Operation(summary = "Delete Account Status History", description = "Deletes an account status history record for an account.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Successfully deleted status history", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Status history record not found", content = @Content)
+    @Operation(
+            summary = "Update Account Status History",
+            description = "Update an existing status history record associated with the specified account."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Status history record updated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AccountStatusHistoryDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Status history record not found",
+                    content = @Content)
     })
-    @DeleteMapping("/{statusHistoryId}")
+    @PutMapping(value = "/{historyId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<AccountStatusHistoryDTO>> updateStatusHistory(
+            @Parameter(description = "Unique identifier of the account", required = true)
+            @PathVariable Long accountId,
+
+            @Parameter(description = "Unique identifier of the status history record to update", required = true)
+            @PathVariable Long historyId,
+
+            @Parameter(description = "Updated data for the status history record", required = true,
+                    schema = @Schema(implementation = AccountStatusHistoryDTO.class))
+            @RequestBody AccountStatusHistoryDTO historyDTO
+    ) {
+        return service.updateStatusHistory(accountId, historyId, historyDTO)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @Operation(
+            summary = "Delete Account Status History",
+            description = "Remove an existing status history record by its unique identifier."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Status history record deleted successfully",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Status history record not found",
+                    content = @Content)
+    })
+    @DeleteMapping(value = "/{historyId}")
     public Mono<ResponseEntity<Void>> deleteStatusHistory(
-            @Parameter(description = "ID of the account", name = "accountId")
-            @PathVariable("accountId") Long accountId,
-            @Parameter(description = "ID of the status history record to delete", name = "statusHistoryId")
-            @PathVariable("statusHistoryId") Long statusHistoryId) {
-        // Optionally verify that the statusHistoryId belongs to the accountId
-        return deleteService.deleteAccountStatusHistory(statusHistoryId)
+            @Parameter(description = "Unique identifier of the account", required = true)
+            @PathVariable Long accountId,
+
+            @Parameter(description = "Unique identifier of the status history record to delete", required = true)
+            @PathVariable Long historyId
+    ) {
+        return service.deleteStatusHistory(accountId, historyId)
                 .then(Mono.just(ResponseEntity.noContent().build()));
     }
 }

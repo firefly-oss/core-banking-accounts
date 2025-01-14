@@ -2,147 +2,150 @@ package com.catalis.core.banking.accounts.web.controllers.provider.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.banking.accounts.core.services.provider.v1.AccountProviderCreateService;
-import com.catalis.core.banking.accounts.core.services.provider.v1.AccountProviderDeleteService;
-import com.catalis.core.banking.accounts.core.services.provider.v1.AccountProviderGetService;
-import com.catalis.core.banking.accounts.core.services.provider.v1.AccountProviderUpdateService;
+import com.catalis.core.banking.accounts.core.services.provider.v1.AccountProviderServiceImpl;
 import com.catalis.core.banking.accounts.interfaces.dtos.provider.v1.AccountProviderDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+@Tag(name = "Account Providers", description = "APIs for managing provider records associated with a specific account")
 @RestController
-@RequestMapping("/api/v1/account-providers")
-@Tag(name = "Account Provider Management API", description = "Endpoints for managing account providers.")
+@RequestMapping("/api/v1/accounts/{accountId}/providers")
 public class AccountProviderController {
 
     @Autowired
-    private AccountProviderGetService accountProviderGetService;
+    private AccountProviderServiceImpl service;
 
-    @Autowired
-    private AccountProviderCreateService accountProviderCreateService;
-
-    @Autowired
-    private AccountProviderUpdateService accountProviderUpdateService;
-
-    @Autowired
-    private AccountProviderDeleteService accountProviderDeleteService;
-
-    /**
-     * Retrieves a paginated list of account providers for a specified account.
-     *
-     * @param accountId The unique identifier of the account for which the providers are to be retrieved.
-     * @param paginationRequest The pagination parameters to control the number of results and their order.
-     * @return A reactive type containing a response entity wrapping a paginated list of account providers.
-     */
-    @Operation(summary = "Get Account Providers", description = "Retrieve a list of account providers for a specific account.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved account providers",
+    @Operation(
+            summary = "List Account Providers",
+            description = "Retrieve a paginated list of provider records associated with the specified account."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the provider records",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PaginationResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Account not found", content = @Content)
+            @ApiResponse(responseCode = "404", description = "No providers found for the specified account",
+                    content = @Content)
     })
-    @GetMapping("/{accountId}")
-    public Mono<ResponseEntity<PaginationResponse<AccountProviderDTO>>> getAccountProviders(
-            @PathVariable("accountId") Long accountId,
-            @ParameterObject @ModelAttribute PaginationRequest paginationRequest) {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<PaginationResponse<AccountProviderDTO>>> getAllProviders(
+            @Parameter(description = "Unique identifier of the account", required = true)
+            @PathVariable Long accountId,
 
-        return accountProviderGetService.getAccountProviders(accountId, paginationRequest)
-                .map(ResponseEntity::ok);
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
+    ) {
+        return service.listProviders(accountId, paginationRequest)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Retrieves a paginated list of active account providers filtered by the specified provider name.
-     *
-     * @param providerName The name of the provider to filter active account providers.
-     * @param paginationRequest The pagination request containing page number, size, and sorting options.
-     * @return A {@code Mono<ResponseEntity<PaginationResponse<AccountProviderDTO>>>} containing the paginated
-     *         list of active account providers or an appropriate response status if no providers are found.
-     */
-    @Operation(summary = "Get Active Providers", description = "Retrieve a list of active account providers filtered by provider name.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved active providers",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PaginationResponse.class))),
-            @ApiResponse(responseCode = "404", description = "No active providers found", content = @Content)
-    })
-    @GetMapping("/active")
-    public Mono<ResponseEntity<PaginationResponse<AccountProviderDTO>>> getActiveProvidersByName(
-            @RequestParam(name = "providerName") String providerName,
-            @ParameterObject @ModelAttribute PaginationRequest paginationRequest) {
-
-        return accountProviderGetService.getActiveProvidersByName(providerName, paginationRequest)
-                .map(ResponseEntity::ok);
-    }
-
-    /**
-     * Creates a new account provider.
-     *
-     * @param accountProvider the account provider details
-     * @return the created account provider
-     */
-    @Operation(summary = "Create Account Provider", description = "Creates a new account provider.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Account provider created successfully",
+    @Operation(
+            summary = "Create Account Provider",
+            description = "Create a new provider record and associate it with the specified account."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Provider created successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = AccountProviderDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid provider data provided",
+                    content = @Content)
     })
-    @PostMapping
-    public Mono<ResponseEntity<AccountProviderDTO>> createAccountProvider(
-            @RequestBody(description = "Account provider details", required = true,
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountProviderDTO.class))) AccountProviderDTO accountProvider) {
-        return accountProviderCreateService.createAccountProvider(accountProvider)
-                .map(createdProvider -> ResponseEntity.status(201).body(createdProvider));
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<AccountProviderDTO>> createProvider(
+            @Parameter(description = "Unique identifier of the account", required = true)
+            @PathVariable Long accountId,
+
+            @Parameter(description = "Data for the new account provider record", required = true,
+                    schema = @Schema(implementation = AccountProviderDTO.class))
+            @RequestBody AccountProviderDTO providerDTO
+    ) {
+        return service.createProvider(accountId, providerDTO)
+                .map(createdProvider -> ResponseEntity.status(201).body(createdProvider))
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 
-    /**
-     * Updates an existing account provider.
-     *
-     * @param accountProviderId the ID of the account provider to be updated
-     * @param updatedProvider   the updated account provider details
-     * @return the updated account provider
-     */
-    @Operation(summary = "Update Account Provider", description = "Updates an existing account provider.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successfully updated account provider",
+    @Operation(
+            summary = "Get Account Provider by ID",
+            description = "Retrieve a specific provider record by its unique identifier, ensuring it belongs to the specified account."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the account provider",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = AccountProviderDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Account provider not found", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content)
+            @ApiResponse(responseCode = "404", description = "Provider record not found",
+                    content = @Content)
     })
-    @PutMapping("/{accountProviderId}")
-    public Mono<ResponseEntity<AccountProviderDTO>> updateAccountProvider(
-            @PathVariable("accountProviderId") Long accountProviderId,
-            @RequestBody(description = "Updated account provider details", required = true,
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountProviderDTO.class))) AccountProviderDTO updatedProvider) {
-        return accountProviderUpdateService.updateAccountProvider(accountProviderId, updatedProvider)
-                .map(ResponseEntity::ok);
+    @GetMapping(value = "/{providerId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<AccountProviderDTO>> getProvider(
+            @Parameter(description = "Unique identifier of the account", required = true)
+            @PathVariable Long accountId,
+
+            @Parameter(description = "Unique identifier of the provider record", required = true)
+            @PathVariable Long providerId
+    ) {
+        return service.getProvider(accountId, providerId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Deletes an account provider by its ID.
-     *
-     * @param accountProviderId the ID of the account provider to delete
-     * @return a response indicating successful deletion
-     */
-    @Operation(summary = "Delete Account Provider", description = "Deletes an account provider by its ID.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Account provider deleted successfully", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Account provider not found", content = @Content)
+    @Operation(
+            summary = "Update Account Provider",
+            description = "Update an existing provider record associated with the specified account."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Provider updated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AccountProviderDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Provider record not found",
+                    content = @Content)
     })
-    @DeleteMapping("/{accountProviderId}")
-    public Mono<ResponseEntity<Void>> deleteAccountProvider(@PathVariable("accountProviderId") Long accountProviderId) {
-        return accountProviderDeleteService.deleteAccountProvider(accountProviderId)
+    @PutMapping(value = "/{providerId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<AccountProviderDTO>> updateProvider(
+            @Parameter(description = "Unique identifier of the account", required = true)
+            @PathVariable Long accountId,
+
+            @Parameter(description = "Unique identifier of the provider record to update", required = true)
+            @PathVariable Long providerId,
+
+            @Parameter(description = "Updated provider data", required = true,
+                    schema = @Schema(implementation = AccountProviderDTO.class))
+            @RequestBody AccountProviderDTO providerDTO
+    ) {
+        return service.updateProvider(accountId, providerId, providerDTO)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @Operation(
+            summary = "Delete Account Provider",
+            description = "Remove an existing provider record from the specified account by its unique identifier."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Provider deleted successfully",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Provider record not found",
+                    content = @Content)
+    })
+    @DeleteMapping(value = "/{providerId}")
+    public Mono<ResponseEntity<Void>> deleteProvider(
+            @Parameter(description = "Unique identifier of the account", required = true)
+            @PathVariable Long accountId,
+
+            @Parameter(description = "Unique identifier of the provider record to delete", required = true)
+            @PathVariable Long providerId
+    ) {
+        return service.deleteProvider(accountId, providerId)
                 .then(Mono.just(ResponseEntity.noContent().build()));
     }
 }
