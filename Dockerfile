@@ -1,14 +1,12 @@
-# Use Java 21 (adjust if you prefer a different base)
-FROM eclipse-temurin:21-jdk
-
-# Create a directory inside the container
+# 1) Build stage: use a Maven container to compile
+FROM maven:3.8.7-eclipse-temurin-21 as build
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Copy only the final JAR from the web module
-COPY core-banking-accounts-web/target/core-banking-accounts.jar app.jar
-
-# If your Spring Boot app listens on 8080, expose it (adjust if needed)
+# 2) Runtime stage: minimal JDK
+FROM eclipse-temurin:21-jdk
+WORKDIR /app
+COPY --from=build /app/core-banking-accounts-web/target/core-banking-accounts.jar app.jar
 EXPOSE 8080
-
-# Run the jar
-CMD ["java","-jar","app.jar"]
+CMD ["java", "-jar", "app.jar"]
