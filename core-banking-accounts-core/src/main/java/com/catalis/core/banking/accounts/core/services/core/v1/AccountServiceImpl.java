@@ -1,5 +1,8 @@
 package com.catalis.core.banking.accounts.core.services.core.v1;
 
+import com.catalis.common.core.filters.FilterRequest;
+import com.catalis.common.core.filters.FilterUtils;
+import com.catalis.common.core.queries.PaginationResponse;
 import com.catalis.core.banking.accounts.core.mappers.models.core.v1.AccountMapper;
 import com.catalis.core.banking.accounts.interfaces.dtos.core.v1.AccountDTO;
 import com.catalis.core.banking.accounts.models.entities.core.v1.Account;
@@ -18,6 +21,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountMapper mapper;
+
+    @Override
+    public Mono<PaginationResponse<AccountDTO>> filterAccounts(FilterRequest<AccountDTO> filterRequest) {
+        return FilterUtils
+                .createFilter(
+                        Account.class,
+                        mapper::toDTO
+                )
+                .filter(filterRequest);
+    }
 
     @Override
     public Mono<AccountDTO> createAccount(AccountDTO accountDTO) {
