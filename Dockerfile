@@ -1,13 +1,14 @@
+# Use Java 21 (adjust if you prefer a different base)
 FROM eclipse-temurin:21-jdk
 
+# Create a directory inside the container
 WORKDIR /app
 
-COPY core-banking-accounts-web-*.jar app.jar
+# Copy only the final JAR from the web module
+COPY core-banking-accounts-web/target/core-banking-accounts.jar app.jar
 
-USER 1001
-
+# If your Spring Boot app listens on 8080, expose it (adjust if needed)
 EXPOSE 8080
-EXPOSE 8081
-EXPOSE 9090
 
-CMD [ "java", "-jar", "app.jar" ]
+# Run the jar
+CMD ["java","-jar","app.jar"]
