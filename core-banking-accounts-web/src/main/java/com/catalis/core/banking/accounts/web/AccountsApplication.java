@@ -33,7 +33,17 @@ import org.springframework.web.reactive.config.EnableWebFlux;
                         name = "${spring.application.team.name}",
                         email = "${spring.application.team.email}"
                 )
-        )
+        ),
+        servers = {
+                @Server(
+                        url = "http://core.catalis.vc/accounts",
+                        description = "Development Environment"
+                ),
+                @Server(
+                        url = "/",
+                        description = "Local Development Environment"
+                )
+        }
 )
 public class AccountsApplication {
     public static void main(String[] args) {
