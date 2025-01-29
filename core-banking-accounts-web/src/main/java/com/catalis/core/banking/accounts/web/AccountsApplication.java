@@ -33,13 +33,7 @@ import org.springframework.web.reactive.config.EnableWebFlux;
                         name = "${spring.application.team.name}",
                         email = "${spring.application.team.email}"
                 )
-        ),
-        servers = {
-                @Server(
-                        url = "/",
-                        description = "Current Environment"
-                )
-        }
+        )
 )
 public class AccountsApplication {
     public static void main(String[] args) {
