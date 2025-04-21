@@ -1,8 +1,8 @@
 package com.catalis.core.banking.accounts.interfaces.dtos.core.v1;
 
-import com.catalis.common.core.filters.FilterableId;
 import com.catalis.core.banking.accounts.interfaces.dtos.BaseDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.core.v1.AccountStatusEnum;
+import com.catalis.core.utils.annotations.FilterableId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;

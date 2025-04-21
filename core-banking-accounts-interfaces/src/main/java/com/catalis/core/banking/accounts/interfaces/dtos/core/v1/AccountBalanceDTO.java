@@ -2,6 +2,7 @@ package com.catalis.core.banking.accounts.interfaces.dtos.core.v1;
 
 import com.catalis.core.banking.accounts.interfaces.dtos.BaseDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.core.v1.BalanceTypeEnum;
+import com.catalis.core.utils.annotations.FilterableId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class AccountBalanceDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long accountBalanceId;
 
+    @FilterableId
     private Long accountId;
     private BalanceTypeEnum balanceType;
     private BigDecimal balanceAmount;

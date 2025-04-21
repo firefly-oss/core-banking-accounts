@@ -2,6 +2,7 @@ package com.catalis.core.banking.accounts.interfaces.dtos.parameter.v1;
 
 import com.catalis.core.banking.accounts.interfaces.dtos.BaseDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.parameter.v1.ParamTypeEnum;
+import com.catalis.core.utils.annotations.FilterableId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +22,9 @@ public class AccountParameterDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long accountParameterId;
 
+    @FilterableId
     private Long accountId;
+
     private ParamTypeEnum paramType;
     private BigDecimal paramValue;
     private String paramUnit;
