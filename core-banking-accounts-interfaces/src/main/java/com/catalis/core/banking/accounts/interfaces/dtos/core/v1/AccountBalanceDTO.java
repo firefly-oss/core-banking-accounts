@@ -25,6 +25,10 @@ public class AccountBalanceDTO extends BaseDTO {
 
     @FilterableId
     private Long accountId;
+
+    @FilterableId
+    private Long accountSpaceId;
+
     private BalanceTypeEnum balanceType;
     private BigDecimal balanceAmount;
     private LocalDateTime asOfDatetime;

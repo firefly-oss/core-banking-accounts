@@ -25,4 +25,6 @@ public class AccountProviderDTO extends BaseDTO {
     private String externalReference;
     private ProviderStatusEnum status;
 
+    @FilterableId
+    private Long accountSpaceId;
 }
