@@ -9,11 +9,24 @@ public interface AccountBalanceService {
 
     /**
      * Retrieve a paginated list of account balances for a specified account.
+     * This returns all balances for the account, including both global and space-specific balances.
      */
     Mono<PaginationResponse<AccountBalanceDTO>> getAllBalances(Long accountId, PaginationRequest paginationRequest);
 
     /**
+     * Retrieve a paginated list of global account balances (not associated with any space).
+     */
+    Mono<PaginationResponse<AccountBalanceDTO>> getGlobalBalances(Long accountId, PaginationRequest paginationRequest);
+
+    /**
+     * Retrieve a paginated list of balances for a specific account space.
+     */
+    Mono<PaginationResponse<AccountBalanceDTO>> getSpaceBalances(Long accountId, Long accountSpaceId, PaginationRequest paginationRequest);
+
+    /**
      * Create a new balance record for a specific account.
+     * If accountSpaceId is set in the DTO, this will create a space-specific balance.
+     * If accountSpaceId is null, this will create a global account balance.
      */
     Mono<AccountBalanceDTO> createBalance(Long accountId, AccountBalanceDTO balanceDTO);
 

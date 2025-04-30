@@ -33,6 +33,26 @@ public class AccountBalanceServiceImpl implements AccountBalanceService {
     }
 
     @Override
+    public Mono<PaginationResponse<AccountBalanceDTO>> getGlobalBalances(Long accountId, PaginationRequest paginationRequest) {
+        return PaginationUtils.paginateQuery(
+                paginationRequest,
+                mapper::toDTO,
+                pageable -> repository.findByAccountIdAndAccountSpaceIdIsNull(accountId, pageable),
+                () -> repository.countByAccountIdAndAccountSpaceIdIsNull(accountId)
+        );
+    }
+
+    @Override
+    public Mono<PaginationResponse<AccountBalanceDTO>> getSpaceBalances(Long accountId, Long accountSpaceId, PaginationRequest paginationRequest) {
+        return PaginationUtils.paginateQuery(
+                paginationRequest,
+                mapper::toDTO,
+                pageable -> repository.findByAccountIdAndAccountSpaceId(accountId, accountSpaceId, pageable),
+                () -> repository.countByAccountIdAndAccountSpaceId(accountId, accountSpaceId)
+        );
+    }
+
+    @Override
     public Mono<AccountBalanceDTO> createBalance(Long accountId, AccountBalanceDTO balanceDTO) {
         balanceDTO.setAccountId(accountId);
         AccountBalance accountBalance = mapper.toEntity(balanceDTO);

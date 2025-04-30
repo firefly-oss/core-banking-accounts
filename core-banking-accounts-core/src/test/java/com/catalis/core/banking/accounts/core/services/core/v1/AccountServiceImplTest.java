@@ -4,8 +4,11 @@ import com.catalis.common.core.filters.FilterRequest;
 import com.catalis.common.core.filters.FilterUtils;
 import com.catalis.common.core.queries.PaginationResponse;
 import com.catalis.core.banking.accounts.core.mappers.models.core.v1.AccountMapper;
+import com.catalis.core.banking.accounts.core.services.space.v1.AccountSpaceService;
 import com.catalis.core.banking.accounts.interfaces.dtos.core.v1.AccountDTO;
+import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.AccountSpaceDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.core.v1.AccountStatusEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.space.v1.AccountSpaceTypeEnum;
 import com.catalis.core.banking.accounts.models.entities.core.v1.Account;
 import com.catalis.core.banking.accounts.models.repositories.core.v1.AccountRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,6 +36,9 @@ class AccountServiceImplTest {
 
     @Mock
     private AccountMapper accountMapper;
+
+    @Mock
+    private AccountSpaceService accountSpaceService;
 
     @InjectMocks
     private AccountServiceImpl accountService;
@@ -71,11 +78,19 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void createAccount_ShouldReturnCreatedAccount() {
+    void createAccount_ShouldCreateMainSpaceAndReturnCreatedAccount() {
         // Arrange
         when(accountMapper.toEntity(any(AccountDTO.class))).thenReturn(testAccount);
         when(accountRepository.save(any(Account.class))).thenReturn(Mono.just(testAccount));
         when(accountMapper.toDTO(any(Account.class))).thenReturn(testAccountDTO);
+        when(accountSpaceService.createAccountSpace(any(AccountSpaceDTO.class))).thenReturn(Mono.just(
+                AccountSpaceDTO.builder()
+                        .accountSpaceId(1L)
+                        .accountId(TEST_ACCOUNT_ID)
+                        .spaceName("Main Account")
+                        .spaceType(AccountSpaceTypeEnum.MAIN)
+                        .build()
+        ));
 
         // Act & Assert
         StepVerifier.create(accountService.createAccount(testAccountDTO))
@@ -84,6 +99,14 @@ class AccountServiceImplTest {
 
         verify(accountMapper).toEntity(testAccountDTO);
         verify(accountRepository).save(testAccount);
+
+        // Verify that createAccountSpace was called with a DTO containing the correct values
+        verify(accountSpaceService).createAccountSpace(argThat(spaceDTO -> 
+                spaceDTO.getAccountId().equals(TEST_ACCOUNT_ID) &&
+                spaceDTO.getSpaceType() == AccountSpaceTypeEnum.MAIN &&
+                "Main Account".equals(spaceDTO.getSpaceName())
+        ));
+
         verify(accountMapper).toDTO(testAccount);
     }
 

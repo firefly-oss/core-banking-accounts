@@ -66,4 +66,54 @@ public class AccountProviderServiceImpl implements AccountProviderService {
                 .filter(provider -> provider.getAccountId().equals(accountId))
                 .flatMap(repository::delete);
     }
+
+    @Override
+    public Mono<PaginationResponse<AccountProviderDTO>> listProvidersForSpace(Long accountId, Long accountSpaceId, PaginationRequest paginationRequest) {
+        return PaginationUtils.paginateQuery(
+                paginationRequest,
+                mapper::toDTO,
+                pageable -> repository.findByAccountIdAndAccountSpaceId(accountId, accountSpaceId, pageable),
+                () -> repository.countByAccountIdAndAccountSpaceId(accountId, accountSpaceId)
+        );
+    }
+
+    @Override
+    public Mono<AccountProviderDTO> createProviderForSpace(Long accountId, Long accountSpaceId, AccountProviderDTO providerDTO) {
+        AccountProvider accountProvider = mapper.toEntity(providerDTO);
+        accountProvider.setAccountId(accountId);
+        accountProvider.setAccountSpaceId(accountSpaceId);
+        return repository.save(accountProvider)
+                .map(mapper::toDTO);
+    }
+
+    @Override
+    public Mono<AccountProviderDTO> getProviderForSpace(Long accountId, Long accountSpaceId, Long providerId) {
+        return repository.findById(providerId)
+                .filter(provider -> provider.getAccountId().equals(accountId) && 
+                        (provider.getAccountSpaceId() != null && provider.getAccountSpaceId().equals(accountSpaceId)))
+                .map(mapper::toDTO);
+    }
+
+    @Override
+    public Mono<AccountProviderDTO> updateProviderForSpace(Long accountId, Long accountSpaceId, Long providerId, AccountProviderDTO providerDTO) {
+        return repository.findById(providerId)
+                .filter(provider -> provider.getAccountId().equals(accountId) && 
+                        (provider.getAccountSpaceId() != null && provider.getAccountSpaceId().equals(accountSpaceId)))
+                .flatMap(existingProvider -> {
+                    AccountProvider updatedProvider = mapper.toEntity(providerDTO);
+                    updatedProvider.setAccountProviderId(existingProvider.getAccountProviderId());
+                    updatedProvider.setAccountId(existingProvider.getAccountId());
+                    updatedProvider.setAccountSpaceId(existingProvider.getAccountSpaceId());
+                    return repository.save(updatedProvider);
+                })
+                .map(mapper::toDTO);
+    }
+
+    @Override
+    public Mono<Void> deleteProviderForSpace(Long accountId, Long accountSpaceId, Long providerId) {
+        return repository.findById(providerId)
+                .filter(provider -> provider.getAccountId().equals(accountId) && 
+                        (provider.getAccountSpaceId() != null && provider.getAccountSpaceId().equals(accountSpaceId)))
+                .flatMap(repository::delete);
+    }
 }
