@@ -10,13 +10,16 @@ import java.time.LocalDateTime;
 
 /**
  * Represents the balance information for an account.
- * Tracks different types of balances (current, available, blocked) for each account.
+ * Tracks different types of balances (current, available, blocked) for each account and account space.
  *
  * Business Rules:
  * - Each account can have multiple balance types
+ * - Each account space can have multiple balance types
  * - Balance amounts must be stored with 4 decimal places
  * - Historical balance records should be maintained
  * - Balance updates must be timestamped
+ * - If accountSpaceId is null, the balance is for the global account
+ * - The sum of all space balances must equal the account's global balance
  */
 @Table("account_balance")
 @Getter @Setter
@@ -36,6 +39,13 @@ public class AccountBalance extends BaseEntity {
      * Example: 100001 (links to Account.accountId)
      */
     private Long accountId;
+
+    /**
+     * Optional reference to the associated account space
+     * If null, this balance is for the global account (not a specific space)
+     * Example: 100001 (links to AccountSpace.accountSpaceId)
+     */
+    private Long accountSpaceId;
 
     /**
      * Type of balance being recorded

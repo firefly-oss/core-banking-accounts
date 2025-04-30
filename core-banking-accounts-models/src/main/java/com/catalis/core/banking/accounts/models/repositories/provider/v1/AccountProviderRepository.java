@@ -10,4 +10,10 @@ import reactor.core.publisher.Mono;
 public interface AccountProviderRepository extends BaseRepository<AccountProvider, Long> {
     Flux<AccountProvider> findByAccountId(Long accountId, Pageable pageable);
     Mono<Long> countByAccountId(Long accountId);
+
+    Flux<AccountProvider> findByAccountSpaceId(Long accountSpaceId, Pageable pageable);
+    Mono<Long> countByAccountSpaceId(Long accountSpaceId);
+
+    Flux<AccountProvider> findByAccountIdAndAccountSpaceId(Long accountId, Long accountSpaceId, Pageable pageable);
+    Mono<Long> countByAccountIdAndAccountSpaceId(Long accountId, Long accountSpaceId);
 }

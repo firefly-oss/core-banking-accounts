@@ -11,6 +11,15 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 
 public interface AccountBalanceRepository extends BaseRepository<AccountBalance, Long> {
+    // Find all balances for an account (both global and space-specific)
     Flux<AccountBalance> findByAccountId(Long accountId, Pageable pageable);
     Mono<Long> countByAccountId(Long accountId);
+
+    // Find global balances for an account (where accountSpaceId is null)
+    Flux<AccountBalance> findByAccountIdAndAccountSpaceIdIsNull(Long accountId, Pageable pageable);
+    Mono<Long> countByAccountIdAndAccountSpaceIdIsNull(Long accountId);
+
+    // Find balances for a specific account space
+    Flux<AccountBalance> findByAccountIdAndAccountSpaceId(Long accountId, Long accountSpaceId, Pageable pageable);
+    Mono<Long> countByAccountIdAndAccountSpaceId(Long accountId, Long accountSpaceId);
 }

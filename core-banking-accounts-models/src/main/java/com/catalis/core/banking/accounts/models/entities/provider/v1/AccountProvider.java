@@ -61,4 +61,11 @@ public class AccountProvider extends BaseEntity {
      * - SUSPENDED: Provider issues
      */
     private ProviderStatusEnum status;
+
+    /**
+     * Optional reference to a specific account space
+     * If null, the provider is associated with the entire account
+     * Example: 1000001 (links to AccountSpace.accountSpaceId)
+     */
+    private Long accountSpaceId;
 }
