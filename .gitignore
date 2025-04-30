@@ -30,4 +30,4 @@ replay_pid*
 *.iws
 
 # Target directory
-/target/
+/target/**/target/
