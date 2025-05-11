@@ -135,4 +135,33 @@ public class AccountSpace extends BaseEntity {
      * Example: 1000002 (ID of another space)
      */
     private Long sourceSpaceId;
+
+    /**
+     * Indicates whether the space is frozen (no withdrawals or transfers allowed)
+     * Default is false (not frozen)
+     */
+    private Boolean isFrozen;
+
+    /**
+     * Timestamp when the space was frozen
+     * Null if the space has never been frozen
+     */
+    private LocalDateTime frozenDateTime;
+
+    /**
+     * Timestamp when the space was last unfrozen
+     * Null if the space has never been unfrozen after being frozen
+     */
+    private LocalDateTime unfrozenDateTime;
+
+    /**
+     * Reason for the last balance update
+     * Used for audit and tracking purposes
+     */
+    private String lastBalanceUpdateReason;
+
+    /**
+     * Timestamp of the last balance update
+     */
+    private LocalDateTime lastBalanceUpdateDateTime;
 }

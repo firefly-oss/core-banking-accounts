@@ -1,12 +1,20 @@
 package com.catalis.core.banking.accounts.models.entities.core.v1;
 
 import com.catalis.core.banking.accounts.interfaces.enums.core.v1.AccountStatusEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.core.v1.AccountSubTypeEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.interest.v1.InterestAccrualMethodEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.interest.v1.InterestPaymentFrequencyEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.regulatory.v1.RegulatoryStatusEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.regulatory.v1.TaxReportingStatusEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.statement.v1.StatementDeliveryMethodEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.statement.v1.StatementFrequencyEnum;
 import com.catalis.core.banking.accounts.models.entities.BaseEntity;
 import com.catalis.core.banking.accounts.models.entities.status.v1.AccountStatusHistory;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -114,4 +122,88 @@ public class Account extends BaseEntity {
      * - "Special Rate Account - Management Approved"
      */
     private String description;
+
+    /**
+     * More specific classification of the account type
+     * Examples:
+     * - STANDARD_CHECKING: Basic checking account
+     * - HIGH_YIELD_SAVINGS: High-interest savings account
+     * - FIXED_RATE_MORTGAGE: Fixed-rate mortgage loan
+     */
+    private AccountSubTypeEnum accountSubType;
+
+    /**
+     * Tax reporting status of the account
+     * Examples:
+     * - REPORTABLE: Account is reportable for tax purposes
+     * - EXEMPT: Account is exempt from tax reporting
+     * - FATCA_REPORTABLE: Account is subject to FATCA reporting
+     */
+    private TaxReportingStatusEnum taxReportingStatus;
+
+    /**
+     * Regulatory classification of the account
+     * Examples:
+     * - COMPLIANT: Account meets all regulatory requirements
+     * - ENHANCED_DUE_DILIGENCE: Account requires enhanced monitoring
+     * - REGULATORY_RESTRICTED: Account has regulatory restrictions
+     */
+    private RegulatoryStatusEnum regulatoryStatus;
+
+    /**
+     * Maturity date for term deposits and fixed-term accounts
+     * Null for non-term accounts
+     * Example: 2025-01-15 (January 15, 2025)
+     */
+    private LocalDate maturityDate;
+
+    /**
+     * Method used to calculate interest on the account
+     * Examples:
+     * - DAILY_COMPOUND: Interest compounds daily
+     * - MONTHLY_AVERAGE_BALANCE: Interest based on monthly average
+     * - TIERED_RATE: Different rates for different balance tiers
+     */
+    private InterestAccrualMethodEnum interestAccrualMethod;
+
+    /**
+     * Frequency of interest payments to the account
+     * Examples:
+     * - MONTHLY: Interest paid monthly
+     * - QUARTERLY: Interest paid quarterly
+     * - AT_MATURITY: Interest paid at maturity (for term deposits)
+     */
+    private InterestPaymentFrequencyEnum interestPaymentFrequency;
+
+    /**
+     * Minimum balance required for the account
+     * Zero if no minimum balance is required
+     * Example: 500.0000 (Minimum balance of $500)
+     */
+    private BigDecimal minimumBalance;
+
+    /**
+     * Maximum allowed overdraft for the account
+     * Zero if no overdraft is allowed
+     * Example: 1000.0000 (Overdraft limit of $1,000)
+     */
+    private BigDecimal overdraftLimit;
+
+    /**
+     * Frequency of account statements
+     * Examples:
+     * - MONTHLY: Statements generated monthly
+     * - QUARTERLY: Statements generated quarterly
+     * - ON_DEMAND: Statements generated only when requested
+     */
+    private StatementFrequencyEnum statementFrequency;
+
+    /**
+     * Method of delivering account statements
+     * Examples:
+     * - MAIL: Statements sent by postal mail
+     * - EMAIL: Statements sent by email
+     * - ONLINE: Statements available online only
+     */
+    private StatementDeliveryMethodEnum statementDeliveryMethod;
 }

@@ -71,4 +71,33 @@ public interface AccountSpaceRepository extends BaseRepository<AccountSpace, Lon
      */
     @Query("SELECT SUM(balance) FROM account_space WHERE account_id = :accountId")
     Mono<java.math.BigDecimal> calculateTotalBalance(Long accountId);
+
+    /**
+     * Find all frozen spaces for an account
+     * @param accountId the account ID
+     * @return a Flux of AccountSpace entities that are frozen
+     */
+    Flux<AccountSpace> findByAccountIdAndIsFrozenTrue(Long accountId);
+
+    /**
+     * Find all unfrozen spaces for an account
+     * @param accountId the account ID
+     * @return a Flux of AccountSpace entities that are not frozen
+     */
+    Flux<AccountSpace> findByAccountIdAndIsFrozenFalse(Long accountId);
+
+    /**
+     * Count the number of frozen spaces for an account
+     * @param accountId the account ID
+     * @return a Mono with the count of frozen spaces
+     */
+    Mono<Long> countByAccountIdAndIsFrozenTrue(Long accountId);
+
+    /**
+     * Find spaces that were frozen after a specific date
+     * @param accountId the account ID
+     * @param dateTime the date/time threshold
+     * @return a Flux of AccountSpace entities frozen after the specified date/time
+     */
+    Flux<AccountSpace> findByAccountIdAndFrozenDateTimeGreaterThanEqual(Long accountId, LocalDateTime dateTime);
 }

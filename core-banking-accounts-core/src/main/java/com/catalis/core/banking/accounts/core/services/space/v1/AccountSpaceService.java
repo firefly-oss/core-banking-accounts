@@ -3,6 +3,7 @@ package com.catalis.core.banking.accounts.core.services.space.v1;
 import com.catalis.common.core.filters.FilterRequest;
 import com.catalis.common.core.queries.PaginationResponse;
 import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.AccountSpaceDTO;
+import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.SpaceAnalyticsDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.space.v1.AccountSpaceTypeEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.space.v1.TransferFrequencyEnum;
 import reactor.core.publisher.Flux;
@@ -148,6 +149,36 @@ public interface AccountSpaceService {
      */
     Mono<Map<Long, BigDecimal>> simulateFutureBalances(Long accountId, int months);
 
+    // ===== Status Management Methods =====
+
+    /**
+     * Freezes an account space, preventing any withdrawals or transfers from it.
+     * This is useful for temporary restrictions without deleting the space.
+     *
+     * @param accountSpaceId the unique identifier of the account space to freeze
+     * @return a Mono emitting the updated account space with frozen status
+     */
+    Mono<AccountSpaceDTO> freezeAccountSpace(Long accountSpaceId);
+
+    /**
+     * Unfreezes a previously frozen account space, allowing normal operations again.
+     *
+     * @param accountSpaceId the unique identifier of the account space to unfreeze
+     * @return a Mono emitting the updated account space with unfrozen status
+     */
+    Mono<AccountSpaceDTO> unfreezeAccountSpace(Long accountSpaceId);
+
+    /**
+     * Updates the balance of an account space directly.
+     * This should be used for administrative adjustments only, not regular transactions.
+     *
+     * @param accountSpaceId the unique identifier of the account space
+     * @param newBalance the new balance to set
+     * @param reason the reason for the balance adjustment
+     * @return a Mono emitting the updated account space with the new balance
+     */
+    Mono<AccountSpaceDTO> updateAccountSpaceBalance(Long accountSpaceId, BigDecimal newBalance, String reason);
+
     // ===== Analytics Methods =====
 
     /**
@@ -171,6 +202,17 @@ public interface AccountSpaceService {
             LocalDateTime startDate,
             LocalDateTime endDate
     );
+
+    /**
+     * Generates analytics for a specific account space over a period.
+     * This includes growth rate, transaction frequency, and other metrics.
+     *
+     * @param accountSpaceId the unique identifier of the account space
+     * @param startDate the start date for the analysis period
+     * @param endDate the end date for the analysis period
+     * @return a Mono emitting a SpaceAnalyticsDTO with detailed analytics
+     */
+    Mono<SpaceAnalyticsDTO> getSpaceAnalytics(Long accountSpaceId, LocalDateTime startDate, LocalDateTime endDate);
 
     /**
      * Retrieves spaces by type for an account.

@@ -63,4 +63,19 @@ public class AccountSpaceDTO extends BaseDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private BigDecimal contributionToAccountTotal;
+
+    // Status management fields
+    private Boolean isFrozen;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDateTime frozenDateTime;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDateTime unfrozenDateTime;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String lastBalanceUpdateReason;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDateTime lastBalanceUpdateDateTime;
 }

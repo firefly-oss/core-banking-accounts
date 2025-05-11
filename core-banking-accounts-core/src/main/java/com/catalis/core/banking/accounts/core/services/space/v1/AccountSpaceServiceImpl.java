@@ -7,6 +7,7 @@ import com.catalis.core.banking.accounts.core.mappers.models.space.v1.AccountSpa
 import com.catalis.core.banking.accounts.core.services.core.v1.AccountBalanceService;
 import com.catalis.core.banking.accounts.interfaces.dtos.core.v1.AccountBalanceDTO;
 import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.AccountSpaceDTO;
+import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.SpaceAnalyticsDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.core.v1.BalanceTypeEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.space.v1.AccountSpaceTypeEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.space.v1.TransferFrequencyEnum;
@@ -47,6 +48,10 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     private static final String ERROR_SOURCE_SPACE_INVALID = "Source space must belong to the same account";
     private static final String ERROR_INVALID_DATE_RANGE = "Invalid date range: start date must be before end date";
     private static final String ERROR_MONTHS_POSITIVE = "Months must be positive, got: %d";
+    private static final String ERROR_SPACE_ALREADY_FROZEN = "Account space is already frozen";
+    private static final String ERROR_SPACE_NOT_FROZEN = "Account space is not frozen";
+    private static final String ERROR_NEGATIVE_BALANCE = "New balance cannot be negative";
+    private static final String ERROR_REASON_REQUIRED = "Reason is required for balance adjustments";
 
     @Autowired
     private AccountSpaceRepository repository;
@@ -70,7 +75,6 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     private static final String ERROR_ACCOUNT_ID_REQUIRED = "Account ID is required for creating a space";
     private static final String ERROR_SPACE_NAME_REQUIRED = "Space name is required";
     private static final String ERROR_SPACE_TYPE_REQUIRED = "Space type is required";
-    private static final String ERROR_NEGATIVE_BALANCE = "Balance cannot be negative";
     private static final String ERROR_NEGATIVE_TARGET = "Target amount cannot be negative";
     private static final String ERROR_TARGET_DATE_PAST = "Target date cannot be in the past";
 
@@ -678,5 +682,175 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     public Flux<AccountSpaceDTO> getSpacesByType(Long accountId, AccountSpaceTypeEnum spaceType) {
         return repository.findByAccountIdAndSpaceType(accountId, spaceType)
                 .map(mapper::toDTO);
+    }
+
+    @Override
+    public Mono<AccountSpaceDTO> freezeAccountSpace(Long accountSpaceId) {
+        return repository.findById(accountSpaceId)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException(
+                        String.format(ERROR_SPACE_NOT_FOUND, accountSpaceId))))
+                .flatMap(space -> {
+                    // Check if space is already frozen
+                    if (Boolean.TRUE.equals(space.getIsFrozen())) {
+                        return Mono.error(new IllegalStateException(ERROR_SPACE_ALREADY_FROZEN));
+                    }
+
+                    // Set frozen status
+                    space.setIsFrozen(true);
+                    space.setFrozenDateTime(LocalDateTime.now());
+
+                    return repository.save(space);
+                })
+                .map(mapper::toDTO);
+    }
+
+    @Override
+    public Mono<AccountSpaceDTO> unfreezeAccountSpace(Long accountSpaceId) {
+        return repository.findById(accountSpaceId)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException(
+                        String.format(ERROR_SPACE_NOT_FOUND, accountSpaceId))))
+                .flatMap(space -> {
+                    // Check if space is not frozen
+                    if (Boolean.FALSE.equals(space.getIsFrozen())) {
+                        return Mono.error(new IllegalStateException(ERROR_SPACE_NOT_FROZEN));
+                    }
+
+                    // Unset frozen status
+                    space.setIsFrozen(false);
+                    space.setUnfrozenDateTime(LocalDateTime.now());
+
+                    return repository.save(space);
+                })
+                .map(mapper::toDTO);
+    }
+
+    @Override
+    public Mono<AccountSpaceDTO> updateAccountSpaceBalance(Long accountSpaceId, BigDecimal newBalance, String reason) {
+        // Validate inputs
+        if (newBalance == null || newBalance.compareTo(BigDecimal.ZERO) < 0) {
+            return Mono.error(new IllegalArgumentException(ERROR_NEGATIVE_BALANCE));
+        }
+
+        if (reason == null || reason.trim().isEmpty()) {
+            return Mono.error(new IllegalArgumentException(ERROR_REASON_REQUIRED));
+        }
+
+        return repository.findById(accountSpaceId)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException(
+                        String.format(ERROR_SPACE_NOT_FOUND, accountSpaceId))))
+                .flatMap(space -> {
+                    // Store old balance for history
+                    BigDecimal oldBalance = space.getBalance();
+
+                    // Update balance
+                    space.setBalance(newBalance);
+                    space.setLastBalanceUpdateReason(reason);
+                    space.setLastBalanceUpdateDateTime(LocalDateTime.now());
+
+                    // Save the updated space
+                    return repository.save(space)
+                            .flatMap(savedSpace -> {
+                                // Create a balance history record
+                                AccountBalanceDTO balanceDTO = AccountBalanceDTO.builder()
+                                        .accountId(savedSpace.getAccountId())
+                                        .accountSpaceId(savedSpace.getAccountSpaceId())
+                                        .balanceType(BalanceTypeEnum.CURRENT)
+                                        .balanceAmount(newBalance)
+                                        .asOfDatetime(LocalDateTime.now())
+                                        .build();
+
+                                return accountBalanceService.createBalance(savedSpace.getAccountId(), balanceDTO)
+                                        .thenReturn(savedSpace);
+                            });
+                })
+                .map(mapper::toDTO);
+    }
+
+    @Override
+    public Mono<SpaceAnalyticsDTO> getSpaceAnalytics(Long accountSpaceId, LocalDateTime startDate, LocalDateTime endDate) {
+        // Validate date range
+        if (startDate != null && endDate != null && !startDate.isBefore(endDate)) {
+            return Mono.error(new IllegalArgumentException(ERROR_INVALID_DATE_RANGE));
+        }
+
+        return repository.findById(accountSpaceId)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException(
+                        String.format(ERROR_SPACE_NOT_FOUND, accountSpaceId))))
+                .flatMap(space -> {
+                    // Create analytics DTO with basic information
+                    SpaceAnalyticsDTO analytics = new SpaceAnalyticsDTO();
+                    analytics.setAccountSpaceId(space.getAccountSpaceId());
+                    analytics.setAccountId(space.getAccountId());
+                    analytics.setSpaceName(space.getSpaceName());
+                    analytics.setSpaceType(space.getSpaceType());
+                    analytics.setStartDate(startDate);
+                    analytics.setEndDate(endDate);
+                    analytics.setClosingBalance(space.getBalance());
+
+                    // Get balance history for the period
+                    return accountBalanceService.getSpaceBalances(
+                                space.getAccountId(),
+                                space.getAccountSpaceId(),
+                                null) // We'll filter by date in memory
+                            .map(response -> {
+                                // Filter by date range if provided
+                                var balanceHistory = response.getContent().stream()
+                                        .filter(b -> startDate == null || !b.getAsOfDatetime().isBefore(startDate))
+                                        .filter(b -> endDate == null || !b.getAsOfDatetime().isAfter(endDate))
+                                        .sorted((b1, b2) -> b1.getAsOfDatetime().compareTo(b2.getAsOfDatetime()))
+                                        .toList();
+
+                                // Calculate metrics if we have balance history
+                                if (!balanceHistory.isEmpty()) {
+                                    // Opening and closing balances
+                                    analytics.setOpeningBalance(balanceHistory.get(0).getBalanceAmount());
+
+                                    // Min, max, average balances
+                                    analytics.setLowestBalance(balanceHistory.stream()
+                                            .map(AccountBalanceDTO::getBalanceAmount)
+                                            .min(BigDecimal::compareTo)
+                                            .orElse(BigDecimal.ZERO));
+
+                                    analytics.setHighestBalance(balanceHistory.stream()
+                                            .map(AccountBalanceDTO::getBalanceAmount)
+                                            .max(BigDecimal::compareTo)
+                                            .orElse(BigDecimal.ZERO));
+
+                                    // Net change
+                                    if (analytics.getOpeningBalance() != null && analytics.getClosingBalance() != null) {
+                                        analytics.setNetChange(analytics.getClosingBalance().subtract(analytics.getOpeningBalance()));
+
+                                        // Net change percentage
+                                        if (analytics.getOpeningBalance().compareTo(BigDecimal.ZERO) != 0) {
+                                            analytics.setNetChangePercentage(
+                                                    analytics.getNetChange()
+                                                            .divide(analytics.getOpeningBalance(), MATH_CONTEXT)
+                                                            .multiply(ONE_HUNDRED));
+                                        }
+                                    }
+
+                                    // Time series data
+                                    analytics.setBalanceHistory(balanceHistory.stream()
+                                            .map(b -> new SpaceAnalyticsDTO.TimeSeriesDataPoint(
+                                                    b.getAsOfDatetime(), b.getBalanceAmount()))
+                                            .toList());
+                                }
+
+                                // Goal tracking if applicable
+                                if (space.getTargetAmount() != null && space.getTargetAmount().compareTo(BigDecimal.ZERO) > 0) {
+                                    BigDecimal progress = space.getBalance()
+                                            .divide(space.getTargetAmount(), MATH_CONTEXT)
+                                            .multiply(ONE_HUNDRED);
+                                    analytics.setGoalProgress(progress);
+
+                                    // Projected completion if we have a target date
+                                    if (space.getTargetDate() != null) {
+                                        analytics.setProjectedCompletionDate(space.getTargetDate());
+                                    }
+                                }
+
+                                return analytics;
+                            });
+                });
     }
 }
