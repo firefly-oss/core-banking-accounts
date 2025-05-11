@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 public class AccountStatementClient extends BaseClient {
 
     private static final String BASE_PATH = "/api/v1/account-statements";
-    
+
     /**
      * Constructs a new AccountStatementClient with the given WebClient.
      *
@@ -26,7 +26,7 @@ public class AccountStatementClient extends BaseClient {
     public AccountStatementClient(WebClient webClient) {
         super(webClient);
     }
-    
+
     /**
      * Generate a statement for an account.
      *
@@ -36,23 +36,22 @@ public class AccountStatementClient extends BaseClient {
      * @return a Mono containing the generated AccountStatementDTO
      */
     public Mono<AccountStatementDTO> generateStatement(
-            Long accountId, 
-            LocalDate startDate, 
+            Long accountId,
+            LocalDate startDate,
             LocalDate endDate) {
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
-        
+
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder
-                        .path(BASE_PATH + "/generate")
-                        .queryParam("accountId", accountId)
+                        .path(BASE_PATH + "/accounts/{accountId}/generate")
                         .queryParam("startDate", startDate.format(formatter))
                         .queryParam("endDate", endDate.format(formatter))
-                        .build())
+                        .build(accountId))
                 .retrieve()
                 .bodyToMono(AccountStatementDTO.class);
     }
-    
+
     /**
      * Generate a statement for a specific account space.
      *
@@ -63,25 +62,23 @@ public class AccountStatementClient extends BaseClient {
      * @return a Mono containing the generated AccountStatementDTO
      */
     public Mono<AccountStatementDTO> generateSpaceStatement(
-            Long accountId, 
-            Long accountSpaceId, 
-            LocalDate startDate, 
+            Long accountId,
+            Long accountSpaceId,
+            LocalDate startDate,
             LocalDate endDate) {
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
-        
+
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder
-                        .path(BASE_PATH + "/generate-space-statement")
-                        .queryParam("accountId", accountId)
-                        .queryParam("accountSpaceId", accountSpaceId)
+                        .path(BASE_PATH + "/accounts/{accountId}/spaces/{accountSpaceId}/generate")
                         .queryParam("startDate", startDate.format(formatter))
                         .queryParam("endDate", endDate.format(formatter))
-                        .build())
+                        .build(accountId, accountSpaceId))
                 .retrieve()
                 .bodyToMono(AccountStatementDTO.class);
     }
-    
+
     /**
      * Get a statement by ID.
      *
@@ -94,7 +91,7 @@ public class AccountStatementClient extends BaseClient {
                 .retrieve()
                 .bodyToMono(AccountStatementDTO.class);
     }
-    
+
     /**
      * Get statements for an account with pagination.
      *
@@ -104,10 +101,10 @@ public class AccountStatementClient extends BaseClient {
      * @return a Mono containing a PaginationResponse of AccountStatementDTO
      */
     public Mono<PaginationResponse<AccountStatementDTO>> getStatementsByAccountId(
-            Long accountId, 
-            int page, 
+            Long accountId,
+            int page,
             int size) {
-        
+
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(BASE_PATH + "/account/{accountId}")
@@ -117,7 +114,7 @@ public class AccountStatementClient extends BaseClient {
                 .retrieve()
                 .bodyToMono(createPaginationResponseType(AccountStatementDTO.class));
     }
-    
+
     /**
      * Get statements for a specific account space.
      *
@@ -126,11 +123,11 @@ public class AccountStatementClient extends BaseClient {
      */
     public Flux<AccountStatementDTO> getStatementsByAccountSpace(Long accountSpaceId) {
         return webClient.get()
-                .uri(BASE_PATH + "/space/{accountSpaceId}", accountSpaceId)
+                .uri(BASE_PATH + "/spaces/{accountSpaceId}", accountSpaceId)
                 .retrieve()
                 .bodyToFlux(AccountStatementDTO.class);
     }
-    
+
     /**
      * Mark a statement as viewed.
      *
@@ -143,7 +140,7 @@ public class AccountStatementClient extends BaseClient {
                 .retrieve()
                 .bodyToMono(AccountStatementDTO.class);
     }
-    
+
     /**
      * Get unviewed statements for an account.
      *
@@ -156,7 +153,7 @@ public class AccountStatementClient extends BaseClient {
                 .retrieve()
                 .bodyToFlux(AccountStatementDTO.class);
     }
-    
+
     /**
      * Get statements for an account within a date range with pagination.
      *
@@ -168,14 +165,14 @@ public class AccountStatementClient extends BaseClient {
      * @return a Mono containing a PaginationResponse of AccountStatementDTO
      */
     public Mono<PaginationResponse<AccountStatementDTO>> getStatementsByDateRange(
-            Long accountId, 
-            LocalDate startDate, 
-            LocalDate endDate, 
-            int page, 
+            Long accountId,
+            LocalDate startDate,
+            LocalDate endDate,
+            int page,
             int size) {
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
-        
+
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(BASE_PATH + "/account/{accountId}/date-range")
@@ -187,7 +184,7 @@ public class AccountStatementClient extends BaseClient {
                 .retrieve()
                 .bodyToMono(createPaginationResponseType(AccountStatementDTO.class));
     }
-    
+
     /**
      * Get a statement by statement number.
      *

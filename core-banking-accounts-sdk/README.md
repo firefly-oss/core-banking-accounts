@@ -79,9 +79,11 @@ The SDK provides specialized clients for each resource type:
 
 - `AccountClient`: For managing bank accounts
 - `AccountSpaceClient`: For managing account spaces/buckets
+- `AccountSpaceTransactionClient`: For managing account space transactions
 - `AccountParameterClient`: For managing account parameters
 - `AccountProviderClient`: For managing account providers
 - `AccountStatusHistoryClient`: For managing account status history
+- `AccountStatementClient`: For managing account statements
 
 ### Account Operations
 
@@ -135,12 +137,12 @@ customerAccounts.subscribe(
 );
 
 // Get paginated accounts by customer ID
-Mono<PaginationResponse<AccountDTO>> paginatedAccounts = 
+Mono<PaginationResponse<AccountDTO>> paginatedAccounts =
     accountClient.getAccountsByCustomerIdPaginated(500123L, 0, 10);
 paginatedAccounts.subscribe(
     response -> {
         System.out.println("Total accounts: " + response.getTotalElements());
-        response.getContent().forEach(acc -> 
+        response.getContent().forEach(acc ->
             System.out.println("Account: " + acc.getAccountNumber()));
     },
     error -> System.err.println("Error retrieving paginated accounts: " + error.getMessage())
@@ -224,6 +226,69 @@ autoTransferResult.subscribe(
     space -> System.out.println("Configured automatic transfers for: " + space.getSpaceName()),
     error -> System.err.println("Error configuring automatic transfers: " + error.getMessage())
 );
+
+// Get the account space transaction client
+AccountSpaceTransactionClient spaceTransactionClient = client.getAccountSpaceTransactionClient();
+
+// Record a transaction for an account space
+Mono<SpaceTransactionDTO> transactionResult = spaceTransactionClient.recordTransaction(
+    1000002L, new BigDecimal("50.00"), "Monthly deposit", "TXN-123456");
+transactionResult.subscribe(
+    transaction -> System.out.println("Recorded transaction with ID: " + transaction.getSpaceTransactionId()),
+    error -> System.err.println("Error recording transaction: " + error.getMessage())
+);
+
+// Get transactions for an account space
+Mono<PaginationResponse<SpaceTransactionDTO>> transactions =
+    spaceTransactionClient.getTransactions(1000002L, 0, 10);
+transactions.subscribe(
+    response -> {
+        System.out.println("Total transactions: " + response.getTotalElements());
+        response.getContent().forEach(tx ->
+            System.out.println("Transaction: " + tx.getAmount() + " (" + tx.getTransactionType() + ")"));
+    },
+    error -> System.err.println("Error retrieving transactions: " + error.getMessage())
+);
+
+// Get transactions for a specific date range
+Mono<PaginationResponse<SpaceTransactionDTO>> dateRangeTransactions =
+    spaceTransactionClient.getTransactionsByDateRange(
+        1000002L,
+        LocalDateTime.now().minusMonths(1),
+        LocalDateTime.now(),
+        0, 10);
+dateRangeTransactions.subscribe(
+    response -> {
+        System.out.println("Transactions in date range: " + response.getTotalElements());
+        response.getContent().forEach(tx ->
+            System.out.println("Transaction: " + tx.getAmount() + " on " + tx.getTransactionDateTime()));
+    },
+    error -> System.err.println("Error retrieving date range transactions: " + error.getMessage())
+);
+
+// Calculate total deposits for a date range
+Mono<BigDecimal> totalDeposits = spaceTransactionClient.calculateTotalDeposits(
+    1000002L, LocalDateTime.now().minusMonths(1), LocalDateTime.now());
+totalDeposits.subscribe(
+    amount -> System.out.println("Total deposits: " + amount),
+    error -> System.err.println("Error calculating total deposits: " + error.getMessage())
+);
+
+// Calculate total withdrawals for a date range
+Mono<BigDecimal> totalWithdrawals = spaceTransactionClient.calculateTotalWithdrawals(
+    1000002L, LocalDateTime.now().minusMonths(1), LocalDateTime.now());
+totalWithdrawals.subscribe(
+    amount -> System.out.println("Total withdrawals: " + amount),
+    error -> System.err.println("Error calculating total withdrawals: " + error.getMessage())
+);
+
+// Get balance at a specific point in time
+Mono<BigDecimal> balanceAt = spaceTransactionClient.getBalanceAtDateTime(
+    1000002L, LocalDateTime.now().minusDays(7));
+balanceAt.subscribe(
+    balance -> System.out.println("Balance 7 days ago: " + balance),
+    error -> System.err.println("Error retrieving historical balance: " + error.getMessage())
+);
 ```
 
 ### Account Parameter Operations
@@ -255,8 +320,8 @@ Mono<AccountParameterDTO> parameter = parameterClient.getParameter(100001L, 1000
 parameter.flatMap(existingParameter -> {
     existingParameter.setParamValue(new BigDecimal("0.03"));
     return parameterClient.updateParameter(
-        existingParameter.getAccountId(), 
-        existingParameter.getAccountParameterId(), 
+        existingParameter.getAccountId(),
+        existingParameter.getAccountParameterId(),
         existingParameter
     );
 }).subscribe(
@@ -265,12 +330,12 @@ parameter.flatMap(existingParameter -> {
 );
 
 // List parameters for an account
-Mono<PaginationResponse<AccountParameterDTO>> parameters = 
+Mono<PaginationResponse<AccountParameterDTO>> parameters =
     parameterClient.listParameters(100001L, 0, 10);
 parameters.subscribe(
     response -> {
         System.out.println("Total parameters: " + response.getTotalElements());
-        response.getContent().forEach(param -> 
+        response.getContent().forEach(param ->
             System.out.println("Parameter: " + param.getParamType() + " = " + param.getParamValue()));
     },
     error -> System.err.println("Error retrieving parameters: " + error.getMessage())
@@ -310,8 +375,8 @@ Mono<AccountProviderDTO> provider = providerClient.getProvider(100001L, 10001L);
 provider.flatMap(existingProvider -> {
     existingProvider.setStatus(ProviderStatusEnum.SUSPENDED);
     return providerClient.updateProvider(
-        existingProvider.getAccountId(), 
-        existingProvider.getAccountProviderId(), 
+        existingProvider.getAccountId(),
+        existingProvider.getAccountProviderId(),
         existingProvider
     );
 }).subscribe(
@@ -320,12 +385,12 @@ provider.flatMap(existingProvider -> {
 );
 
 // List providers for an account
-Mono<PaginationResponse<AccountProviderDTO>> providers = 
+Mono<PaginationResponse<AccountProviderDTO>> providers =
     providerClient.listProviders(100001L, 0, 10);
 providers.subscribe(
     response -> {
         System.out.println("Total providers: " + response.getTotalElements());
-        response.getContent().forEach(prov -> 
+        response.getContent().forEach(prov ->
             System.out.println("Provider: " + prov.getProviderName() + " (" + prov.getStatus() + ")"));
     },
     error -> System.err.println("Error retrieving providers: " + error.getMessage())
@@ -339,11 +404,69 @@ spaceProvider.setProviderName("Modulr");
 spaceProvider.setExternalReference("MOD-ACC-001");
 spaceProvider.setStatus(ProviderStatusEnum.ACTIVE);
 
-Mono<AccountProviderDTO> createdSpaceProvider = 
+Mono<AccountProviderDTO> createdSpaceProvider =
     providerClient.createProviderForSpace(100001L, 1000002L, spaceProvider);
 createdSpaceProvider.subscribe(
     provider -> System.out.println("Created space provider with ID: " + provider.getAccountProviderId()),
     error -> System.err.println("Error creating space provider: " + error.getMessage())
+);
+```
+
+### Account Statement Operations
+
+```java
+// Get the account statement client
+AccountStatementClient statementClient = client.getAccountStatementClient();
+
+// Generate a statement for an account
+Mono<AccountStatementDTO> generatedStatement = statementClient.generateStatement(
+    100001L, LocalDate.now().withDayOfMonth(1), LocalDate.now());
+generatedStatement.subscribe(
+    statement -> System.out.println("Generated statement: " + statement.getStatementNumber()),
+    error -> System.err.println("Error generating statement: " + error.getMessage())
+);
+
+// Generate a statement for a specific account space
+Mono<AccountStatementDTO> spaceStatement = statementClient.generateSpaceStatement(
+    100001L, 1000002L, LocalDate.now().withDayOfMonth(1), LocalDate.now());
+spaceStatement.subscribe(
+    statement -> System.out.println("Generated space statement: " + statement.getStatementNumber()),
+    error -> System.err.println("Error generating space statement: " + error.getMessage())
+);
+
+// Get a statement by ID
+Mono<AccountStatementDTO> statement = statementClient.getStatement(1000001L);
+statement.subscribe(
+    stmt -> System.out.println("Statement: " + stmt.getStatementNumber() +
+        " (" + stmt.getPeriodStartDate() + " to " + stmt.getPeriodEndDate() + ")"),
+    error -> System.err.println("Error retrieving statement: " + error.getMessage())
+);
+
+// Get statements for an account
+Mono<PaginationResponse<AccountStatementDTO>> statements =
+    statementClient.getStatementsByAccountId(100001L, 0, 10);
+statements.subscribe(
+    response -> {
+        System.out.println("Total statements: " + response.getTotalElements());
+        response.getContent().forEach(stmt ->
+            System.out.println("Statement: " + stmt.getStatementNumber() +
+                " (" + stmt.getPeriodStartDate() + " to " + stmt.getPeriodEndDate() + ")"));
+    },
+    error -> System.err.println("Error retrieving statements: " + error.getMessage())
+);
+
+// Get statements for a specific account space
+Flux<AccountStatementDTO> spaceStatements = statementClient.getStatementsByAccountSpace(1000002L);
+spaceStatements.subscribe(
+    stmt -> System.out.println("Space statement: " + stmt.getStatementNumber()),
+    error -> System.err.println("Error retrieving space statements: " + error.getMessage())
+);
+
+// Mark a statement as viewed
+Mono<AccountStatementDTO> viewedStatement = statementClient.markStatementAsViewed(1000001L);
+viewedStatement.subscribe(
+    stmt -> System.out.println("Marked statement as viewed: " + stmt.getStatementNumber()),
+    error -> System.err.println("Error marking statement as viewed: " + error.getMessage())
 );
 ```
 
@@ -360,7 +483,7 @@ newStatusHistory.setStatusCode(StatusCodeEnum.OPEN);
 newStatusHistory.setStatusStartDatetime(LocalDateTime.now());
 newStatusHistory.setReason("Account opened by customer request");
 
-Mono<AccountStatusHistoryDTO> createdStatusHistory = 
+Mono<AccountStatusHistoryDTO> createdStatusHistory =
     statusHistoryClient.createStatusHistory(100001L, newStatusHistory);
 createdStatusHistory.subscribe(
     history -> System.out.println("Created status history with ID: " + history.getAccountStatusHistoryId()),
@@ -368,15 +491,15 @@ createdStatusHistory.subscribe(
 );
 
 // Get a status history record by ID
-Mono<AccountStatusHistoryDTO> statusHistory = 
+Mono<AccountStatusHistoryDTO> statusHistory =
     statusHistoryClient.getStatusHistory(100001L, 10001L);
 
 // Update a status history record
 statusHistory.flatMap(existingHistory -> {
     existingHistory.setStatusEndDatetime(LocalDateTime.now());
     return statusHistoryClient.updateStatusHistory(
-        existingHistory.getAccountId(), 
-        existingHistory.getAccountStatusHistoryId(), 
+        existingHistory.getAccountId(),
+        existingHistory.getAccountStatusHistoryId(),
         existingHistory
     );
 }).subscribe(
@@ -385,14 +508,14 @@ statusHistory.flatMap(existingHistory -> {
 );
 
 // List status history records for an account
-Mono<PaginationResponse<AccountStatusHistoryDTO>> statusHistoryRecords = 
+Mono<PaginationResponse<AccountStatusHistoryDTO>> statusHistoryRecords =
     statusHistoryClient.listStatusHistory(100001L, 0, 10);
 statusHistoryRecords.subscribe(
     response -> {
         System.out.println("Total status history records: " + response.getTotalElements());
-        response.getContent().forEach(history -> 
-            System.out.println("Status: " + history.getStatusCode() + 
-                " from " + history.getStatusStartDatetime() + 
+        response.getContent().forEach(history ->
+            System.out.println("Status: " + history.getStatusCode() +
+                " from " + history.getStatusStartDatetime() +
                 (history.getStatusEndDatetime() != null ? " to " + history.getStatusEndDatetime() : "")));
     },
     error -> System.err.println("Error retrieving status history: " + error.getMessage())
@@ -488,8 +611,8 @@ CoreBankingAccountsClient client = new CoreBankingAccountsClient(config);
 
    ```java
    CoreBankingAccountsClientConfig config = new CoreBankingAccountsClientConfig();
-   config.setHttpClientCustomizer(httpClient -> 
-       httpClient.secure(sslContextSpec -> 
+   config.setHttpClientCustomizer(httpClient ->
+       httpClient.secure(sslContextSpec ->
            sslContextSpec.sslContext(SslContextBuilder.forClient().build())
        )
    );

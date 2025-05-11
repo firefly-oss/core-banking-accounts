@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 public class AccountSpaceTransactionClient extends BaseClient {
 
     private static final String BASE_PATH = "/api/v1/account-spaces/{accountSpaceId}/transactions";
-    
+
     /**
      * Constructs a new AccountSpaceTransactionClient with the given WebClient.
      *
@@ -25,7 +25,7 @@ public class AccountSpaceTransactionClient extends BaseClient {
     public AccountSpaceTransactionClient(WebClient webClient) {
         super(webClient);
     }
-    
+
     /**
      * Record a transaction for an account space.
      *
@@ -36,28 +36,28 @@ public class AccountSpaceTransactionClient extends BaseClient {
      * @return a Mono containing the created SpaceTransactionDTO
      */
     public Mono<SpaceTransactionDTO> recordTransaction(
-            Long accountSpaceId, 
-            BigDecimal amount, 
-            String description, 
+            Long accountSpaceId,
+            BigDecimal amount,
+            String description,
             String referenceId) {
-        
+
         StringBuilder uriBuilder = new StringBuilder(BASE_PATH);
         uriBuilder.append("?amount=").append(amount);
-        
+
         if (description != null && !description.isEmpty()) {
             uriBuilder.append("&description=").append(encodeParam(description));
         }
-        
+
         if (referenceId != null && !referenceId.isEmpty()) {
             uriBuilder.append("&referenceId=").append(encodeParam(referenceId));
         }
-        
+
         return webClient.post()
                 .uri(uriBuilder.toString(), accountSpaceId)
                 .retrieve()
                 .bodyToMono(SpaceTransactionDTO.class);
     }
-    
+
     /**
      * Get transactions for an account space with pagination.
      *
@@ -67,10 +67,10 @@ public class AccountSpaceTransactionClient extends BaseClient {
      * @return a Mono containing a PaginationResponse of SpaceTransactionDTO
      */
     public Mono<PaginationResponse<SpaceTransactionDTO>> getTransactions(
-            Long accountSpaceId, 
-            int page, 
+            Long accountSpaceId,
+            int page,
             int size) {
-        
+
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(BASE_PATH)
@@ -80,7 +80,7 @@ public class AccountSpaceTransactionClient extends BaseClient {
                 .retrieve()
                 .bodyToMono(createPaginationResponseType(SpaceTransactionDTO.class));
     }
-    
+
     /**
      * Get transactions for an account space within a date range with pagination.
      *
@@ -92,17 +92,17 @@ public class AccountSpaceTransactionClient extends BaseClient {
      * @return a Mono containing a PaginationResponse of SpaceTransactionDTO
      */
     public Mono<PaginationResponse<SpaceTransactionDTO>> getTransactionsByDateRange(
-            Long accountSpaceId, 
-            LocalDateTime startDate, 
-            LocalDateTime endDate, 
-            int page, 
+            Long accountSpaceId,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            int page,
             int size) {
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-        
+
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(BASE_PATH + "/date-range")
+                        .path(BASE_PATH + "/filter/date")
                         .queryParam("startDate", startDate.format(formatter))
                         .queryParam("endDate", endDate.format(formatter))
                         .queryParam("page", page)
@@ -111,7 +111,7 @@ public class AccountSpaceTransactionClient extends BaseClient {
                 .retrieve()
                 .bodyToMono(createPaginationResponseType(SpaceTransactionDTO.class));
     }
-    
+
     /**
      * Calculate total deposits for an account space within a date range.
      *
@@ -121,22 +121,22 @@ public class AccountSpaceTransactionClient extends BaseClient {
      * @return a Mono containing the total deposits amount
      */
     public Mono<BigDecimal> calculateTotalDeposits(
-            Long accountSpaceId, 
-            LocalDateTime startDate, 
+            Long accountSpaceId,
+            LocalDateTime startDate,
             LocalDateTime endDate) {
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-        
+
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(BASE_PATH + "/total-deposits")
+                        .path(BASE_PATH + "/analytics/deposits")
                         .queryParam("startDate", startDate.format(formatter))
                         .queryParam("endDate", endDate.format(formatter))
                         .build(accountSpaceId))
                 .retrieve()
                 .bodyToMono(BigDecimal.class);
     }
-    
+
     /**
      * Calculate total withdrawals for an account space within a date range.
      *
@@ -146,22 +146,22 @@ public class AccountSpaceTransactionClient extends BaseClient {
      * @return a Mono containing the total withdrawals amount
      */
     public Mono<BigDecimal> calculateTotalWithdrawals(
-            Long accountSpaceId, 
-            LocalDateTime startDate, 
+            Long accountSpaceId,
+            LocalDateTime startDate,
             LocalDateTime endDate) {
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-        
+
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(BASE_PATH + "/total-withdrawals")
+                        .path(BASE_PATH + "/analytics/withdrawals")
                         .queryParam("startDate", startDate.format(formatter))
                         .queryParam("endDate", endDate.format(formatter))
                         .build(accountSpaceId))
                 .retrieve()
                 .bodyToMono(BigDecimal.class);
     }
-    
+
     /**
      * Get the balance of an account space at a specific point in time.
      *
@@ -170,14 +170,14 @@ public class AccountSpaceTransactionClient extends BaseClient {
      * @return a Mono containing the balance amount
      */
     public Mono<BigDecimal> getBalanceAtDateTime(
-            Long accountSpaceId, 
+            Long accountSpaceId,
             LocalDateTime dateTime) {
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-        
+
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(BASE_PATH + "/balance-at")
+                        .path(BASE_PATH + "/history/balance")
                         .queryParam("dateTime", dateTime.format(formatter))
                         .build(accountSpaceId))
                 .retrieve()

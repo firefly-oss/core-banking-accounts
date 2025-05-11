@@ -4,6 +4,7 @@ import com.catalis.common.core.filters.FilterRequest;
 import com.catalis.common.core.queries.PaginationResponse;
 import com.catalis.core.banking.accounts.core.services.space.v1.AccountSpaceService;
 import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.AccountSpaceDTO;
+import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.SpaceAnalyticsDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.space.v1.AccountSpaceTypeEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.space.v1.TransferFrequencyEnum;
 import io.swagger.v3.oas.annotations.Operation;
@@ -369,5 +370,77 @@ public class AccountSpaceController {
     ) {
         Flux<AccountSpaceDTO> spaces = service.getSpacesByType(accountId, spaceType);
         return Mono.just(ResponseEntity.ok(spaces));
+    }
+
+    // ===== Status Management Endpoints =====
+
+    @Operation(
+            summary = "Freeze Account Space",
+            description = "Freezes an account space, preventing withdrawals and transfers from it."
+    )
+    @PostMapping(value = "/{accountSpaceId}/freeze", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<AccountSpaceDTO>> freezeAccountSpace(
+            @Parameter(description = "Unique identifier of the account space to freeze", required = true)
+            @PathVariable Long accountSpaceId
+    ) {
+        return service.freezeAccountSpace(accountSpaceId)
+                .map(ResponseEntity::ok)
+                .onErrorResume(this::handleError);
+    }
+
+    @Operation(
+            summary = "Unfreeze Account Space",
+            description = "Unfreezes a previously frozen account space, allowing normal operations again."
+    )
+    @PostMapping(value = "/{accountSpaceId}/unfreeze", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<AccountSpaceDTO>> unfreezeAccountSpace(
+            @Parameter(description = "Unique identifier of the account space to unfreeze", required = true)
+            @PathVariable Long accountSpaceId
+    ) {
+        return service.unfreezeAccountSpace(accountSpaceId)
+                .map(ResponseEntity::ok)
+                .onErrorResume(this::handleError);
+    }
+
+    @Operation(
+            summary = "Update Account Space Balance",
+            description = "Updates the balance of an account space directly. For administrative adjustments only."
+    )
+    @PutMapping(value = "/{accountSpaceId}/balance", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<AccountSpaceDTO>> updateAccountSpaceBalance(
+            @Parameter(description = "Unique identifier of the account space", required = true)
+            @PathVariable Long accountSpaceId,
+
+            @Parameter(description = "New balance to set", required = true)
+            @RequestParam BigDecimal newBalance,
+
+            @Parameter(description = "Reason for the balance adjustment", required = true)
+            @RequestParam String reason
+    ) {
+        return service.updateAccountSpaceBalance(accountSpaceId, newBalance, reason)
+                .map(ResponseEntity::ok)
+                .onErrorResume(this::handleError);
+    }
+
+    // ===== Analytics Endpoints =====
+
+    @Operation(
+            summary = "Get Space Analytics",
+            description = "Generates detailed analytics for a specific account space over a period."
+    )
+    @GetMapping(value = "/{accountSpaceId}/analytics", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<SpaceAnalyticsDTO>> getSpaceAnalytics(
+            @Parameter(description = "Unique identifier of the account space", required = true)
+            @PathVariable Long accountSpaceId,
+
+            @Parameter(description = "Start date for the analysis period (optional)")
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+
+            @Parameter(description = "End date for the analysis period (optional)")
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+    ) {
+        return service.getSpaceAnalytics(accountSpaceId, startDate, endDate)
+                .map(ResponseEntity::ok)
+                .onErrorResume(this::handleError);
     }
 }
