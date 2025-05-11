@@ -1,11 +1,13 @@
 package com.catalis.core.banking.accounts.sdk.client;
 
-import com.catalis.common.core.queries.PaginationResponse;
+import com.catalis.core.banking.accounts.sdk.model.PaginationResponse;
 import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.SpaceTransactionDTO;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -24,6 +26,16 @@ public class AccountSpaceTransactionClient extends BaseClient {
      */
     public AccountSpaceTransactionClient(WebClient webClient) {
         super(webClient);
+    }
+
+    /**
+     * Encodes a parameter value for use in a URL.
+     *
+     * @param value the value to encode
+     * @return the encoded value
+     */
+    private String encodeParam(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
     /**
@@ -78,7 +90,7 @@ public class AccountSpaceTransactionClient extends BaseClient {
                         .queryParam("size", size)
                         .build(accountSpaceId))
                 .retrieve()
-                .bodyToMono(createPaginationResponseType(SpaceTransactionDTO.class));
+                .bodyToMono(createPaginationTypeReference(SpaceTransactionDTO.class));
     }
 
     /**
@@ -109,7 +121,7 @@ public class AccountSpaceTransactionClient extends BaseClient {
                         .queryParam("size", size)
                         .build(accountSpaceId))
                 .retrieve()
-                .bodyToMono(createPaginationResponseType(SpaceTransactionDTO.class));
+                .bodyToMono(createPaginationTypeReference(SpaceTransactionDTO.class));
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.catalis.core.banking.accounts.sdk.client;
 
-import com.catalis.common.core.queries.PaginationResponse;
+import com.catalis.core.banking.accounts.sdk.model.PaginationResponse;
 import com.catalis.core.banking.accounts.interfaces.dtos.statement.v1.AccountStatementDTO;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -112,7 +112,7 @@ public class AccountStatementClient extends BaseClient {
                         .queryParam("size", size)
                         .build(accountId))
                 .retrieve()
-                .bodyToMono(createPaginationResponseType(AccountStatementDTO.class));
+                .bodyToMono(createPaginationTypeReference(AccountStatementDTO.class));
     }
 
     /**
@@ -182,7 +182,7 @@ public class AccountStatementClient extends BaseClient {
                         .queryParam("size", size)
                         .build(accountId))
                 .retrieve()
-                .bodyToMono(createPaginationResponseType(AccountStatementDTO.class));
+                .bodyToMono(createPaginationTypeReference(AccountStatementDTO.class));
     }
 
     /**
