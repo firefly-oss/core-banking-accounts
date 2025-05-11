@@ -97,21 +97,36 @@ erDiagram
     Account ||--o{ AccountProvider : "has"
     Account ||--o{ AccountStatusHistory : "has"
     Account ||--o{ AccountSpace : "has"
+    Account ||--o{ AccountRestriction : "has"
+    Account ||--o{ AccountStatement : "has"
+    Account ||--o{ AccountNotification : "has"
     AccountSpace ||--o{ AccountBalance : "has"
     AccountSpace ||--o{ AccountProvider : "has"
     AccountSpace ||--o| AccountSpace : "transfers from"
+    AccountSpace ||--o{ SpaceTransaction : "has"
+    AccountSpace ||--o{ AccountStatement : "generates"
 
     Account {
         Long accountId PK
         Long contractId
         String accountNumber
         String accountType
+        AccountSubTypeEnum accountSubType
         String currency
         LocalDate openDate
         LocalDate closeDate
         AccountStatusEnum accountStatus
         Long branchId
         String description
+        TaxReportingStatusEnum taxReportingStatus
+        RegulatoryStatusEnum regulatoryStatus
+        LocalDate maturityDate
+        InterestAccrualMethodEnum interestAccrualMethod
+        InterestPaymentFrequencyEnum interestPaymentFrequency
+        BigDecimal minimumBalance
+        BigDecimal overdraftLimit
+        StatementFrequencyEnum statementFrequency
+        StatementDeliveryMethodEnum statementDeliveryMethod
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
@@ -181,6 +196,79 @@ erDiagram
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
+
+    AccountRestriction {
+        Long accountRestrictionId PK
+        Long accountId FK
+        RestrictionTypeEnum restrictionType
+        LocalDateTime startDateTime
+        LocalDateTime endDateTime
+        BigDecimal restrictedAmount
+        String referenceNumber
+        String reason
+        String appliedBy
+        String removedBy
+        String notes
+        Boolean isActive
+        LocalDateTime dateCreated
+        LocalDateTime dateUpdated
+    }
+
+    AccountStatement {
+        Long accountStatementId PK
+        Long accountId FK
+        String statementNumber
+        LocalDate periodStartDate
+        LocalDate periodEndDate
+        BigDecimal openingBalance
+        BigDecimal closingBalance
+        BigDecimal totalDeposits
+        BigDecimal totalWithdrawals
+        BigDecimal totalFees
+        BigDecimal totalInterest
+        LocalDateTime generationDateTime
+        StatementDeliveryMethodEnum deliveryMethod
+        LocalDateTime deliveryDateTime
+        String documentUrl
+        Boolean isViewed
+        LocalDateTime firstViewedDateTime
+        String metadata
+        LocalDateTime dateCreated
+        LocalDateTime dateUpdated
+    }
+
+    SpaceTransaction {
+        Long spaceTransactionId PK
+        Long accountSpaceId FK
+        BigDecimal amount
+        BigDecimal balanceAfterTransaction
+        LocalDateTime transactionDateTime
+        String description
+        String referenceId
+        String transactionType
+        LocalDateTime dateCreated
+        LocalDateTime dateUpdated
+    }
+
+    AccountNotification {
+        Long accountNotificationId PK
+        Long accountId FK
+        NotificationTypeEnum notificationType
+        String title
+        String message
+        LocalDateTime creationDateTime
+        LocalDateTime expiryDateTime
+        Boolean isRead
+        LocalDateTime readDateTime
+        Integer priority
+        String deliveryChannels
+        String eventReference
+        BigDecimal relatedAmount
+        String actionUrl
+        String actionText
+        LocalDateTime dateCreated
+        LocalDateTime dateUpdated
+    }
 ```
 
 ### Key Entities
@@ -191,34 +279,131 @@ erDiagram
 - **AccountProvider**: Manages connections to external banking providers
 - **AccountStatusHistory**: Tracks the history of account status changes
 - **AccountSpace**: Represents spaces or buckets within an account for organizing money
+- **SpaceTransaction**: Tracks transaction history for account spaces
+- **AccountRestriction**: Represents restrictions or holds placed on an account
+- **AccountStatement**: Represents periodic account statements (both account-level and space-specific)
+- **AccountNotification**: Represents notifications or alerts for an account
 
 ### Business Rules
 
 - Each account must have at least one MAIN space
 - Spaces can have their own balance, but the sum of all space balances must equal the account's total balance
+- Spaces can have their own transaction history and statements
 - Parameters can have different values for different time periods
 - Every status change must be recorded with start and end dates
 - Each account can have multiple providers
 - Balance amounts are stored with 4 decimal places for high precision
+- Space transactions affect the space balance and are recorded with a timestamp
 
 ## API Documentation
 
 The service provides a comprehensive API for managing all aspects of banking accounts:
 
-### Main API Endpoints
+### Core Account Endpoints
 
 - `/api/v1/accounts`: Account management endpoints
 - `/api/v1/accounts/{accountId}/balances`: Account balance endpoints
 - `/api/v1/account-parameters`: Account parameter endpoints
 - `/api/v1/account-providers`: Account provider endpoints
 - `/api/v1/account-status-history`: Account status history endpoints
-- `/api/v1/account-spaces`: Account space endpoints
+
+### Account Space Endpoints
+
+- `/api/v1/account-spaces`: Account space management endpoints
+  - `GET /`: List all account spaces with filtering
+  - `POST /`: Create a new account space
+  - `GET /{accountSpaceId}`: Get an account space by ID
+  - `PUT /{accountSpaceId}`: Update an account space
+  - `DELETE /{accountSpaceId}`: Delete an account space
+  - `GET /account/{accountId}`: Get all spaces for an account
+  - `POST /{sourceSpaceId}/transfer/{targetSpaceId}`: Transfer between spaces
+  - `GET /{accountSpaceId}/goal-progress`: Calculate goal progress
+  - `POST /{accountSpaceId}/configure-automatic-transfers`: Configure automatic transfers
+
+- `/api/v1/account-spaces/{accountSpaceId}/transactions`: Account space transaction endpoints
+  - `POST /`: Record a new transaction for an account space
+  - `GET /`: Get all transactions for an account space
+  - `GET /filter/date`: Get transactions within a date range
+  - `GET /analytics/deposits`: Calculate total deposits for a date range
+  - `GET /analytics/withdrawals`: Calculate total withdrawals for a date range
+  - `GET /history/balance`: Get the balance at a specific point in time
+
+### Account Restrictions and Statements Endpoints
+
+#### Account Restrictions API
+- `GET /api/v1/account-restrictions`: Filter account restrictions
+- `POST /api/v1/account-restrictions`: Create a new account restriction
+- `GET /api/v1/account-restrictions/{accountRestrictionId}`: Get an account restriction by ID
+- `PUT /api/v1/account-restrictions/{accountRestrictionId}`: Update an account restriction
+- `DELETE /api/v1/account-restrictions/{accountRestrictionId}`: Delete an account restriction
+- `GET /api/v1/account-restrictions/account/{accountId}`: Get all restrictions for an account
+- `GET /api/v1/account-restrictions/account/{accountId}/active`: Get active restrictions for an account
+- `POST /api/v1/account-restrictions/{accountRestrictionId}/remove`: Remove a restriction
+
+#### Account Statements API
+- `GET /api/v1/account-statements`: Filter account statements
+- `POST /api/v1/account-statements`: Create a new account statement
+- `GET /api/v1/account-statements/{accountStatementId}`: Get an account statement by ID
+- `PUT /api/v1/account-statements/{accountStatementId}`: Update an account statement
+- `DELETE /api/v1/account-statements/{accountStatementId}`: Delete an account statement
+- `GET /api/v1/account-statements/account/{accountId}`: Get all statements for an account
+- `GET /api/v1/account-statements/account/{accountId}/date-range`: Get statements for an account within a date range
+- `GET /api/v1/account-statements/number/{statementNumber}`: Get a statement by statement number
+- `POST /api/v1/account-statements/{accountStatementId}/mark-viewed`: Mark a statement as viewed
+- `POST /api/v1/account-statements/accounts/{accountId}/generate`: Generate a new statement for an account
+- `POST /api/v1/account-statements/accounts/{accountId}/spaces/{accountSpaceId}/generate`: Generate a statement for a specific account space
+- `GET /api/v1/account-statements/spaces/{accountSpaceId}`: Get statements for a specific account space
+- `GET /api/v1/account-statements/account/{accountId}/unviewed`: Get unviewed statements for an account
+
+#### Account Notifications API
+- `GET /api/v1/account-notifications`: Filter account notifications
+- `POST /api/v1/account-notifications`: Create a new account notification
+- `GET /api/v1/account-notifications/{accountNotificationId}`: Get an account notification by ID
+- `PUT /api/v1/account-notifications/{accountNotificationId}`: Update an account notification
+- `DELETE /api/v1/account-notifications/{accountNotificationId}`: Delete an account notification
+- `GET /api/v1/account-notifications/account/{accountId}`: Get all notifications for an account
+- `GET /api/v1/account-notifications/account/{accountId}/unread`: Get unread notifications for an account
+- `GET /api/v1/account-notifications/account/{accountId}/type/{notificationType}`: Get notifications by type
+- `POST /api/v1/account-notifications/{accountNotificationId}/mark-read`: Mark a notification as read
+- `POST /api/v1/account-notifications/account/{accountId}/mark-all-read`: Mark all notifications as read
+- `GET /api/v1/account-notifications/account/{accountId}/active`: Get active notifications for an account
 
 For detailed API documentation, access the Swagger UI when running the application:
 
 ```
 http://localhost:8080/swagger-ui.html
 ```
+
+The Swagger UI provides comprehensive documentation for all endpoints, including:
+
+- **Account Management**: Create, read, update, and delete accounts
+- **Account Space Management**: Create and manage spaces within accounts
+- **Account Space Transactions**: Record and retrieve transaction history for spaces
+- **Statement Generation**: Generate statements for both accounts and specific spaces
+- **Balance Management**: Track and update balances for accounts and spaces
+- **Parameter Management**: Configure and manage account parameters
+- **Provider Integration**: Connect accounts to external banking providers
+- **Status History**: Track the history of account status changes
+- **Restrictions**: Apply and manage restrictions on accounts
+- **Notifications**: Configure and manage account notifications
+
+Each API endpoint is documented with:
+
+- **Detailed Markdown Descriptions**: Comprehensive explanations of each endpoint's purpose and functionality
+- **Business Rules**: Important rules and constraints that apply to the operation
+- **Request Parameters**: All parameters with descriptions, data types, and whether they're required
+- **Response Schemas**: Detailed structure of response objects
+- **Status Codes**: All possible response codes with explanations
+- **Example Requests**: Sample requests to help with implementation
+
+The API follows RESTful design principles with resource-oriented URLs and appropriate HTTP methods:
+
+- **Resource-Oriented URLs**: Endpoints are organized around resources (e.g., `/accounts/{accountId}/spaces/{accountSpaceId}`)
+- **HTTP Methods**: Using appropriate methods for operations (GET for retrieval, POST for creation, etc.)
+- **Hierarchical Structure**: Resources are organized in a logical hierarchy (e.g., spaces belong to accounts)
+- **Consistent Naming**: Consistent naming conventions across all endpoints
+- **Filtering and Pagination**: Support for filtering, sorting, and pagination on collection resources
+- **Hypermedia Links**: Where appropriate, responses include links to related resources
 
 ### API Examples by Flow
 
@@ -321,7 +506,7 @@ curl -X PUT http://localhost:8080/api/v1/accounts/100001 \
 
 #### 2. Account Space Management Flow
 
-This flow demonstrates how to create and manage spaces within an account.
+This flow demonstrates how to create and manage spaces within an account, including transaction history and space-specific statements.
 
 ##### Step 1: Create the main account space
 
@@ -439,7 +624,145 @@ curl -X POST "http://localhost:8080/api/v1/account-spaces/1000002/automatic-tran
 }
 ```
 
-##### Step 5: Check goal progress
+##### Step 5: Record a transaction for a space
+
+```bash
+# Request
+curl -X POST "http://localhost:8080/api/v1/account-spaces/1000002/transactions?amount=50.00&description=Monthly%20deposit&referenceId=TXN-123456"
+
+# Response (201 Created)
+{
+  "spaceTransactionId": 1000001,
+  "accountSpaceId": 1000002,
+  "amount": 50.0000,
+  "balanceAfterTransaction": 250.0000,
+  "transactionDateTime": "2024-01-15T12:00:00.000000",
+  "description": "Monthly deposit",
+  "referenceId": "TXN-123456",
+  "transactionType": "DEPOSIT",
+  "spaceName": "Vacation Fund",
+  "accountId": 100001,
+  "dateCreated": "15/01/2024T12:00:00.000000",
+  "dateUpdated": "15/01/2024T12:00:00.000000"
+}
+```
+
+##### Step 6: Get transaction history for a space
+
+```bash
+# Request
+curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions?page=0&size=10"
+
+# Response (200 OK)
+{
+  "content": [
+    {
+      "spaceTransactionId": 1000001,
+      "accountSpaceId": 1000002,
+      "amount": 50.0000,
+      "balanceAfterTransaction": 250.0000,
+      "transactionDateTime": "2024-01-15T12:00:00.000000",
+      "description": "Monthly deposit",
+      "referenceId": "TXN-123456",
+      "transactionType": "DEPOSIT",
+      "spaceName": "Vacation Fund",
+      "accountId": 100001,
+      "dateCreated": "15/01/2024T12:00:00.000000",
+      "dateUpdated": "15/01/2024T12:00:00.000000"
+    }
+  ],
+  "page": 0,
+  "size": 10,
+  "totalElements": 1,
+  "totalPages": 1
+}
+```
+
+##### Step 6.1: Get transactions by date range
+
+```bash
+# Request
+curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions/filter/date?startDate=2024-01-01T00:00:00&endDate=2024-01-31T23:59:59&page=0&size=10"
+
+# Response (200 OK)
+{
+  "content": [
+    {
+      "spaceTransactionId": 1000001,
+      "accountSpaceId": 1000002,
+      "amount": 50.0000,
+      "balanceAfterTransaction": 250.0000,
+      "transactionDateTime": "2024-01-15T12:00:00.000000",
+      "description": "Monthly deposit",
+      "referenceId": "TXN-123456",
+      "transactionType": "DEPOSIT",
+      "spaceName": "Vacation Fund",
+      "accountId": 100001,
+      "dateCreated": "15/01/2024T12:00:00.000000",
+      "dateUpdated": "15/01/2024T12:00:00.000000"
+    }
+  ],
+  "page": 0,
+  "size": 10,
+  "totalElements": 1,
+  "totalPages": 1
+}
+```
+
+##### Step 6.2: Get transaction analytics
+
+```bash
+# Request - Calculate total deposits
+curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions/analytics/deposits?startDate=2024-01-01T00:00:00&endDate=2024-01-31T23:59:59"
+
+# Response (200 OK)
+250.00
+
+# Request - Calculate total withdrawals
+curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions/analytics/withdrawals?startDate=2024-01-01T00:00:00&endDate=2024-01-31T23:59:59"
+
+# Response (200 OK)
+0.00
+
+# Request - Get historical balance
+curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions/history/balance?dateTime=2024-01-10T00:00:00"
+
+# Response (200 OK)
+200.00
+```
+
+##### Step 7: Generate a space-specific statement
+
+```bash
+# Request
+curl -X POST "http://localhost:8080/api/v1/account-statements/accounts/100001/spaces/1000002/generate?startDate=2024-01-01&endDate=2024-01-31"
+
+# Response (201 Created)
+{
+  "accountStatementId": 1000001,
+  "accountId": 100001,
+  "statementNumber": "SPACE-STMT-20240131-100001-1000002",
+  "periodStartDate": "2024-01-01",
+  "periodEndDate": "2024-01-31",
+  "openingBalance": 0.0000,
+  "closingBalance": 250.0000,
+  "totalDeposits": 250.0000,
+  "totalWithdrawals": 0.0000,
+  "totalFees": 0.0000,
+  "totalInterest": 0.0000,
+  "generationDateTime": "2024-01-15T12:30:00.000000",
+  "deliveryMethod": "ONLINE",
+  "deliveryDateTime": null,
+  "documentUrl": null,
+  "isViewed": false,
+  "firstViewedDateTime": null,
+  "metadata": "{\"accountSpaceId\":1000002,\"spaceName\":\"Vacation Fund\",\"spaceType\":\"VACATION\"}",
+  "dateCreated": "15/01/2024T12:30:00.000000",
+  "dateUpdated": "15/01/2024T12:30:00.000000"
+}
+```
+
+##### Step 8: Check goal progress
 
 ```bash
 # Request
@@ -451,7 +774,7 @@ curl -X GET http://localhost:8080/api/v1/account-spaces/1000002/goal-progress
   "accountId": 100001,
   "spaceName": "Vacation Fund",
   "spaceType": "VACATION",
-  "balance": 200.0000,
+  "balance": 250.0000,
   "targetAmount": 2000.0000,
   "targetDate": "2024-06-30T00:00:00.000000",
   "iconId": "vacation_icon",
@@ -464,9 +787,9 @@ curl -X GET http://localhost:8080/api/v1/account-spaces/1000002/goal-progress
   "sourceSpaceId": 1000001,
   "dateCreated": "15/01/2024T11:15:00.000000",
   "dateUpdated": "15/01/2024T11:30:00.000000",
-  "progressPercentage": 10.0,
-  "remainingAmount": 1800.0000,
-  "estimatedCompletionDate": "2024-07-15T00:00:00.000000",
+  "progressPercentage": 12.5,
+  "remainingAmount": 1750.0000,
+  "estimatedCompletionDate": "2024-07-10T00:00:00.000000",
   "onTrack": false
 }
 ```
