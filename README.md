@@ -119,6 +119,7 @@ erDiagram
         TaxReportingStatusEnum taxReportingStatus
         RegulatoryStatusEnum regulatoryStatus
         LocalDate maturityDate
+        BigDecimal interestRate
         InterestAccrualMethodEnum interestAccrualMethod
         InterestPaymentFrequencyEnum interestPaymentFrequency
         BigDecimal minimumBalance
@@ -189,6 +190,8 @@ erDiagram
         TransferFrequencyEnum transferFrequency
         BigDecimal transferAmount
         Long sourceSpaceId FK
+        Boolean isFrozen
+        LocalDateTime frozenDatetime
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
@@ -209,6 +212,7 @@ erDiagram
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
+
 
     SpaceTransaction {
         Long spaceTransactionId PK
@@ -313,7 +317,7 @@ The service provides a comprehensive API for managing all aspects of banking acc
 - `GET /api/v1/account-restrictions/account/{accountId}/active`: Get active restrictions for an account
 - `POST /api/v1/account-restrictions/{accountRestrictionId}/remove`: Remove a restriction
 
-#### Account Notifications API
+### Account Notifications API
 - `GET /api/v1/account-notifications`: Filter account notifications
 - `POST /api/v1/account-notifications`: Create a new account notification
 - `GET /api/v1/account-notifications/{accountNotificationId}`: Get an account notification by ID
