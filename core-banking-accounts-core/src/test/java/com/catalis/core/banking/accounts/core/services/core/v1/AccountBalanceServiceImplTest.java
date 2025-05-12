@@ -3,7 +3,7 @@ package com.catalis.core.banking.accounts.core.services.core.v1;
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
 import com.catalis.common.core.queries.PaginationUtils;
-import com.catalis.core.banking.accounts.core.mappers.models.core.v1.AccountBalanceMapper;
+import com.catalis.core.banking.accounts.core.mappers.core.v1.AccountBalanceMapper;
 import com.catalis.core.banking.accounts.interfaces.dtos.core.v1.AccountBalanceDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.core.v1.BalanceTypeEnum;
 import com.catalis.core.banking.accounts.models.entities.core.v1.AccountBalance;
@@ -15,14 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Pageable;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 

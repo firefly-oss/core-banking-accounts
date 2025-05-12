@@ -5,7 +5,6 @@ import com.catalis.core.banking.accounts.sdk.client.AccountParameterClient;
 import com.catalis.core.banking.accounts.sdk.client.AccountProviderClient;
 import com.catalis.core.banking.accounts.sdk.client.AccountSpaceClient;
 import com.catalis.core.banking.accounts.sdk.client.AccountSpaceTransactionClient;
-import com.catalis.core.banking.accounts.sdk.client.AccountStatementClient;
 import com.catalis.core.banking.accounts.sdk.client.AccountStatusHistoryClient;
 import com.catalis.core.banking.accounts.sdk.config.CoreBankingAccountsClientConfig;
 import lombok.Getter;
@@ -36,8 +35,7 @@ public class CoreBankingAccountsClient {
     @Getter
     private final AccountSpaceTransactionClient accountSpaceTransactionClient;
 
-    @Getter
-    private final AccountStatementClient accountStatementClient;
+
 
     /**
      * Creates a new CoreBankingAccountsClient with default configuration.
@@ -61,7 +59,6 @@ public class CoreBankingAccountsClient {
         this.accountProviderClient = new AccountProviderClient(webClient);
         this.accountStatusHistoryClient = new AccountStatusHistoryClient(webClient);
         this.accountSpaceTransactionClient = new AccountSpaceTransactionClient(webClient);
-        this.accountStatementClient = new AccountStatementClient(webClient);
     }
 
     /**
@@ -77,7 +74,6 @@ public class CoreBankingAccountsClient {
         this.accountProviderClient = new AccountProviderClient(webClient);
         this.accountStatusHistoryClient = new AccountStatusHistoryClient(webClient);
         this.accountSpaceTransactionClient = new AccountSpaceTransactionClient(webClient);
-        this.accountStatementClient = new AccountStatementClient(webClient);
     }
 
     /**
@@ -94,7 +90,6 @@ public class CoreBankingAccountsClient {
         this.accountProviderClient = new AccountProviderClient(webClient);
         this.accountStatusHistoryClient = new AccountStatusHistoryClient(webClient);
         this.accountSpaceTransactionClient = new AccountSpaceTransactionClient(webClient);
-        this.accountStatementClient = new AccountStatementClient(webClient);
     }
 
     /**

@@ -1,9 +1,6 @@
 package com.catalis.core.banking.accounts.core.services.core.v1;
 
-import com.catalis.common.core.filters.FilterRequest;
-import com.catalis.common.core.filters.FilterUtils;
-import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.banking.accounts.core.mappers.models.core.v1.AccountMapper;
+import com.catalis.core.banking.accounts.core.mappers.core.v1.AccountMapper;
 import com.catalis.core.banking.accounts.core.services.space.v1.AccountSpaceService;
 import com.catalis.core.banking.accounts.interfaces.dtos.core.v1.AccountDTO;
 import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.AccountSpaceDTO;
@@ -16,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;

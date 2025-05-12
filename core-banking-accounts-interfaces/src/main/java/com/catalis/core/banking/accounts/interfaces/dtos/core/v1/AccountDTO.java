@@ -7,8 +7,6 @@ import com.catalis.core.banking.accounts.interfaces.enums.interest.v1.InterestAc
 import com.catalis.core.banking.accounts.interfaces.enums.interest.v1.InterestPaymentFrequencyEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.regulatory.v1.RegulatoryStatusEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.regulatory.v1.TaxReportingStatusEnum;
-import com.catalis.core.banking.accounts.interfaces.enums.statement.v1.StatementDeliveryMethodEnum;
-import com.catalis.core.banking.accounts.interfaces.enums.statement.v1.StatementFrequencyEnum;
 import com.catalis.core.utils.annotations.FilterableId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -52,6 +50,4 @@ public class AccountDTO extends BaseDTO {
     private InterestPaymentFrequencyEnum interestPaymentFrequency;
     private BigDecimal minimumBalance;
     private BigDecimal overdraftLimit;
-    private StatementFrequencyEnum statementFrequency;
-    private StatementDeliveryMethodEnum statementDeliveryMethod;
 }

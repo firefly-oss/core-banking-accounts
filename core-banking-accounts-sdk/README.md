@@ -83,7 +83,6 @@ The SDK provides specialized clients for each resource type:
 - `AccountParameterClient`: For managing account parameters
 - `AccountProviderClient`: For managing account providers
 - `AccountStatusHistoryClient`: For managing account status history
-- `AccountStatementClient`: For managing account statements
 
 ### Account Operations
 
@@ -412,63 +411,7 @@ createdSpaceProvider.subscribe(
 );
 ```
 
-### Account Statement Operations
 
-```java
-// Get the account statement client
-AccountStatementClient statementClient = client.getAccountStatementClient();
-
-// Generate a statement for an account
-Mono<AccountStatementDTO> generatedStatement = statementClient.generateStatement(
-    100001L, LocalDate.now().withDayOfMonth(1), LocalDate.now());
-generatedStatement.subscribe(
-    statement -> System.out.println("Generated statement: " + statement.getStatementNumber()),
-    error -> System.err.println("Error generating statement: " + error.getMessage())
-);
-
-// Generate a statement for a specific account space
-Mono<AccountStatementDTO> spaceStatement = statementClient.generateSpaceStatement(
-    100001L, 1000002L, LocalDate.now().withDayOfMonth(1), LocalDate.now());
-spaceStatement.subscribe(
-    statement -> System.out.println("Generated space statement: " + statement.getStatementNumber()),
-    error -> System.err.println("Error generating space statement: " + error.getMessage())
-);
-
-// Get a statement by ID
-Mono<AccountStatementDTO> statement = statementClient.getStatement(1000001L);
-statement.subscribe(
-    stmt -> System.out.println("Statement: " + stmt.getStatementNumber() +
-        " (" + stmt.getPeriodStartDate() + " to " + stmt.getPeriodEndDate() + ")"),
-    error -> System.err.println("Error retrieving statement: " + error.getMessage())
-);
-
-// Get statements for an account
-Mono<PaginationResponse<AccountStatementDTO>> statements =
-    statementClient.getStatementsByAccountId(100001L, 0, 10);
-statements.subscribe(
-    response -> {
-        System.out.println("Total statements: " + response.getTotalElements());
-        response.getContent().forEach(stmt ->
-            System.out.println("Statement: " + stmt.getStatementNumber() +
-                " (" + stmt.getPeriodStartDate() + " to " + stmt.getPeriodEndDate() + ")"));
-    },
-    error -> System.err.println("Error retrieving statements: " + error.getMessage())
-);
-
-// Get statements for a specific account space
-Flux<AccountStatementDTO> spaceStatements = statementClient.getStatementsByAccountSpace(1000002L);
-spaceStatements.subscribe(
-    stmt -> System.out.println("Space statement: " + stmt.getStatementNumber()),
-    error -> System.err.println("Error retrieving space statements: " + error.getMessage())
-);
-
-// Mark a statement as viewed
-Mono<AccountStatementDTO> viewedStatement = statementClient.markStatementAsViewed(1000001L);
-viewedStatement.subscribe(
-    stmt -> System.out.println("Marked statement as viewed: " + stmt.getStatementNumber()),
-    error -> System.err.println("Error marking statement as viewed: " + error.getMessage())
-);
-```
 
 ### Account Status History Operations
 

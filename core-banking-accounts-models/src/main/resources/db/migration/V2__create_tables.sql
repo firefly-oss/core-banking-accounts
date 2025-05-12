@@ -24,6 +24,8 @@ CREATE TABLE account (
     interest_rate NUMERIC(10, 4),
     interest_accrual_method interest_accrual_method_enum,
     interest_payment_frequency interest_payment_frequency_enum,
+    minimum_balance NUMERIC(19, 4),
+    overdraft_limit NUMERIC(19, 4),
     date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     date_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -98,6 +100,8 @@ CREATE TABLE account_parameter (
     param_value NUMERIC(19, 4) NOT NULL,
     param_unit VARCHAR(20) NOT NULL,
     effective_date TIMESTAMP NOT NULL,
+    expiry_date TIMESTAMP,
+    description TEXT,
     date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     date_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

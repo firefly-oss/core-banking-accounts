@@ -3,7 +3,7 @@ package com.catalis.core.banking.accounts.core.services.restriction.v1;
 import com.catalis.common.core.filters.FilterRequest;
 import com.catalis.common.core.filters.FilterUtils;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.banking.accounts.core.mappers.models.restriction.v1.AccountRestrictionMapper;
+import com.catalis.core.banking.accounts.core.mappers.restriction.v1.AccountRestrictionMapper;
 import com.catalis.core.banking.accounts.interfaces.dtos.restriction.v1.AccountRestrictionDTO;
 import com.catalis.core.banking.accounts.models.entities.restriction.v1.AccountRestriction;
 import com.catalis.core.banking.accounts.models.repositories.restriction.v1.AccountRestrictionRepository;

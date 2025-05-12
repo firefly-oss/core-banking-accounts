@@ -3,7 +3,7 @@ package com.catalis.core.banking.accounts.core.services.status.v1;
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
 import com.catalis.common.core.queries.PaginationUtils;
-import com.catalis.core.banking.accounts.core.mappers.models.status.v1.AccountStatusHistoryMapper;
+import com.catalis.core.banking.accounts.core.mappers.status.v1.AccountStatusHistoryMapper;
 import com.catalis.core.banking.accounts.interfaces.dtos.status.v1.AccountStatusHistoryDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.status.v1.StatusCodeEnum;
 import com.catalis.core.banking.accounts.models.entities.status.v1.AccountStatusHistory;

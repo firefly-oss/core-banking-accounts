@@ -1,4 +1,4 @@
-package com.catalis.core.banking.accounts.core.mappers.models.provider.v1;
+package com.catalis.core.banking.accounts.core.mappers.provider.v1;
 
 import com.catalis.core.banking.accounts.interfaces.dtos.provider.v1.AccountProviderDTO;
 import com.catalis.core.banking.accounts.models.entities.provider.v1.AccountProvider;

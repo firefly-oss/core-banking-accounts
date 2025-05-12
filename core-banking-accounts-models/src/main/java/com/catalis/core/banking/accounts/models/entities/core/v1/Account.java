@@ -6,8 +6,6 @@ import com.catalis.core.banking.accounts.interfaces.enums.interest.v1.InterestAc
 import com.catalis.core.banking.accounts.interfaces.enums.interest.v1.InterestPaymentFrequencyEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.regulatory.v1.RegulatoryStatusEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.regulatory.v1.TaxReportingStatusEnum;
-import com.catalis.core.banking.accounts.interfaces.enums.statement.v1.StatementDeliveryMethodEnum;
-import com.catalis.core.banking.accounts.interfaces.enums.statement.v1.StatementFrequencyEnum;
 import com.catalis.core.banking.accounts.models.entities.BaseEntity;
 import com.catalis.core.banking.accounts.models.entities.status.v1.AccountStatusHistory;
 import lombok.*;
@@ -189,21 +187,5 @@ public class Account extends BaseEntity {
      */
     private BigDecimal overdraftLimit;
 
-    /**
-     * Frequency of account statements
-     * Examples:
-     * - MONTHLY: Statements generated monthly
-     * - QUARTERLY: Statements generated quarterly
-     * - ON_DEMAND: Statements generated only when requested
-     */
-    private StatementFrequencyEnum statementFrequency;
 
-    /**
-     * Method of delivering account statements
-     * Examples:
-     * - MAIL: Statements sent by postal mail
-     * - EMAIL: Statements sent by email
-     * - ONLINE: Statements available online only
-     */
-    private StatementDeliveryMethodEnum statementDeliveryMethod;
 }

@@ -1,4 +1,4 @@
-package com.catalis.core.banking.accounts.core.mappers.models.space.v1;
+package com.catalis.core.banking.accounts.core.mappers.space.v1;
 
 import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.AccountSpaceDTO;
 import com.catalis.core.banking.accounts.models.entities.space.v1.AccountSpace;

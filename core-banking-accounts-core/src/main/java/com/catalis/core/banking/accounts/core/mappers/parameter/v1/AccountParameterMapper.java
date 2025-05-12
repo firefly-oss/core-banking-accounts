@@ -1,4 +1,4 @@
-package com.catalis.core.banking.accounts.core.mappers.models.parameter.v1;
+package com.catalis.core.banking.accounts.core.mappers.parameter.v1;
 
 import com.catalis.core.banking.accounts.interfaces.dtos.parameter.v1.AccountParameterDTO;
 import com.catalis.core.banking.accounts.models.entities.parameter.v1.AccountParameter;

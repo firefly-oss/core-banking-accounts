@@ -1,9 +1,6 @@
 package com.catalis.core.banking.accounts.core.services.restriction.v1;
 
-import com.catalis.common.core.filters.FilterRequest;
-import com.catalis.common.core.filters.FilterUtils;
-import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.banking.accounts.core.mappers.models.restriction.v1.AccountRestrictionMapper;
+import com.catalis.core.banking.accounts.core.mappers.restriction.v1.AccountRestrictionMapper;
 import com.catalis.core.banking.accounts.interfaces.dtos.restriction.v1.AccountRestrictionDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.restriction.v1.RestrictionTypeEnum;
 import com.catalis.core.banking.accounts.models.entities.restriction.v1.AccountRestriction;
@@ -13,13 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;

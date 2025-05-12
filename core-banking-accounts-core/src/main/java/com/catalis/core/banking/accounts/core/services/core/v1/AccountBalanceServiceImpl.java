@@ -3,7 +3,7 @@ package com.catalis.core.banking.accounts.core.services.core.v1;
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
 import com.catalis.common.core.queries.PaginationUtils;
-import com.catalis.core.banking.accounts.core.mappers.models.core.v1.AccountBalanceMapper;
+import com.catalis.core.banking.accounts.core.mappers.core.v1.AccountBalanceMapper;
 import com.catalis.core.banking.accounts.interfaces.dtos.core.v1.AccountBalanceDTO;
 import com.catalis.core.banking.accounts.models.entities.core.v1.AccountBalance;
 import com.catalis.core.banking.accounts.models.repositories.core.v1.AccountBalanceRepository;

@@ -1,11 +1,9 @@
 package com.catalis.core.banking.accounts.core.services.space.v1;
 
-import com.catalis.core.banking.accounts.core.mappers.models.space.v1.AccountSpaceMapper;
+import com.catalis.core.banking.accounts.core.mappers.space.v1.AccountSpaceMapper;
 import com.catalis.core.banking.accounts.core.services.core.v1.AccountBalanceService;
 import com.catalis.core.banking.accounts.interfaces.dtos.core.v1.AccountBalanceDTO;
 import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.AccountSpaceDTO;
-import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.SpaceAnalyticsDTO;
-import com.catalis.core.banking.accounts.interfaces.enums.core.v1.BalanceTypeEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.space.v1.AccountSpaceTypeEnum;
 import com.catalis.core.banking.accounts.models.entities.space.v1.AccountSpace;
 import com.catalis.core.banking.accounts.models.repositories.space.v1.AccountSpaceRepository;
@@ -16,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 

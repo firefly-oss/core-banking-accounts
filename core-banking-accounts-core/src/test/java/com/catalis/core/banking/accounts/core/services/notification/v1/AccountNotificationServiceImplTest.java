@@ -1,7 +1,6 @@
 package com.catalis.core.banking.accounts.core.services.notification.v1;
 
-import com.catalis.common.core.filters.FilterRequest;
-import com.catalis.core.banking.accounts.core.mappers.models.notification.v1.AccountNotificationMapper;
+import com.catalis.core.banking.accounts.core.mappers.notification.v1.AccountNotificationMapper;
 import com.catalis.core.banking.accounts.interfaces.dtos.notification.v1.AccountNotificationDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.notification.v1.NotificationTypeEnum;
 import com.catalis.core.banking.accounts.models.entities.notification.v1.AccountNotification;

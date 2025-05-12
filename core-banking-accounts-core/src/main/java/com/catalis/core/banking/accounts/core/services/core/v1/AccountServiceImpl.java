@@ -3,7 +3,7 @@ package com.catalis.core.banking.accounts.core.services.core.v1;
 import com.catalis.common.core.filters.FilterRequest;
 import com.catalis.common.core.filters.FilterUtils;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.banking.accounts.core.mappers.models.core.v1.AccountMapper;
+import com.catalis.core.banking.accounts.core.mappers.core.v1.AccountMapper;
 import com.catalis.core.banking.accounts.interfaces.dtos.core.v1.AccountDTO;
 import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.AccountSpaceDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.space.v1.AccountSpaceTypeEnum;
