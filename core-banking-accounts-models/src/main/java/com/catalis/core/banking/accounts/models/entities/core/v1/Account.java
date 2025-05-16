@@ -2,6 +2,7 @@ package com.catalis.core.banking.accounts.models.entities.core.v1;
 
 import com.catalis.core.banking.accounts.interfaces.enums.core.v1.AccountStatusEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.core.v1.AccountSubTypeEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.core.v1.AccountTypeEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.interest.v1.InterestAccrualMethodEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.interest.v1.InterestPaymentFrequencyEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.regulatory.v1.RegulatoryStatusEnum;
@@ -61,12 +62,12 @@ public class Account extends BaseEntity {
     /**
      * Type of account defining its basic characteristics and rules
      * Examples:
-     * - "CHECKING" - Regular current account
-     * - "SAVINGS" - Interest-bearing savings account
-     * - "BUSINESS" - Corporate account
-     * - "LOAN" - Credit account
+     * - CHECKING - Regular current account
+     * - SAVINGS - Interest-bearing savings account
+     * - BUSINESS_CHECKING - Corporate account
+     * - LOAN - Credit account
      */
-    private String accountType;
+    private AccountTypeEnum accountType;
 
     /**
      * ISO 4217 currency code for the account

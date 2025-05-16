@@ -2,9 +2,11 @@
 
 ## Overview
 
-The Core Banking Accounts Service is a comprehensive microservice for managing banking accounts and related operations. It provides a robust API for creating, updating, and managing bank accounts, account balances, account parameters, account providers, account spaces, and account status history.
+The Core Banking Accounts Service is a comprehensive microservice for managing banking accounts and related operations. It provides a robust API for creating, updating, and managing bank accounts, account balances, account parameters, account providers, account spaces, and account restrictions.
 
 This service is built with a reactive architecture using Spring WebFlux and R2DBC for non-blocking database operations, making it highly scalable and efficient for handling a large number of concurrent requests.
+
+The service is designed to handle all types of accounts (deposit, current, investment, etc.) through a flexible account type system. Account ownership is managed by an external contract management system via contractId, allowing this service to focus solely on account management.
 
 ## Quick Start
 
@@ -106,11 +108,11 @@ erDiagram
 
     Account {
         Long accountId PK
-        Long contractId
+        Long contractId FK "Links to contract management system"
         String accountNumber
-        String accountType
+        AccountTypeEnum accountType "CHECKING, SAVINGS, etc."
         AccountSubTypeEnum accountSubType
-        String currency
+        String currency "ISO 4217 code"
         LocalDate openDate
         LocalDate closeDate
         AccountStatusEnum accountStatus
@@ -119,7 +121,6 @@ erDiagram
         TaxReportingStatusEnum taxReportingStatus
         RegulatoryStatusEnum regulatoryStatus
         LocalDate maturityDate
-        BigDecimal interestRate
         InterestAccrualMethodEnum interestAccrualMethod
         InterestPaymentFrequencyEnum interestPaymentFrequency
         BigDecimal minimumBalance
@@ -251,6 +252,8 @@ erDiagram
 ### Key Entities
 
 - **Account**: The core entity representing a banking account
+  - Uses `AccountTypeEnum` to support various account types (CHECKING, SAVINGS, TERM_DEPOSIT, LOAN, CREDIT_CARD, INVESTMENT, MORTGAGE, etc.)
+  - Uses `AccountSubTypeEnum` for more granular classification
 - **AccountBalance**: Tracks different types of balances for accounts and spaces
 - **AccountParameter**: Stores configurable parameters with effective dates
 - **AccountProvider**: Manages connections to external banking providers
@@ -258,7 +261,6 @@ erDiagram
 - **AccountSpace**: Represents spaces or buckets within an account for organizing money
 - **SpaceTransaction**: Tracks transaction history for account spaces
 - **AccountRestriction**: Represents restrictions or holds placed on an account
-
 - **AccountNotification**: Represents notifications or alerts for an account
 
 ### Business Rules
@@ -271,6 +273,8 @@ erDiagram
 - Each account can have multiple providers
 - Balance amounts are stored with 4 decimal places for high precision
 - Space transactions affect the space balance and are recorded with a timestamp
+- Account ownership is managed by the external contract management system via contractId
+- Account types are defined using enums for type safety and consistency
 
 ## API Documentation
 
@@ -899,6 +903,8 @@ curl -X PUT http://localhost:8080/api/v1/account-providers/1000001 \
   "dateUpdated": "15/01/2024T12:30:00.000000"
 }
 ```
+
+
 
 ## Configuration Profiles
 

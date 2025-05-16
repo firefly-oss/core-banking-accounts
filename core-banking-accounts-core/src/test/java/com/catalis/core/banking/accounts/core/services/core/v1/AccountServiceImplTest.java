@@ -5,6 +5,7 @@ import com.catalis.core.banking.accounts.core.services.space.v1.AccountSpaceServ
 import com.catalis.core.banking.accounts.interfaces.dtos.core.v1.AccountDTO;
 import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.AccountSpaceDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.core.v1.AccountStatusEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.core.v1.AccountTypeEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.space.v1.AccountSpaceTypeEnum;
 import com.catalis.core.banking.accounts.models.entities.core.v1.Account;
 import com.catalis.core.banking.accounts.models.repositories.core.v1.AccountRepository;
@@ -50,7 +51,7 @@ class AccountServiceImplTest {
         testAccount.setAccountId(TEST_ACCOUNT_ID);
         testAccount.setContractId(100L);
         testAccount.setAccountNumber("TEST-ACCOUNT-001");
-        testAccount.setAccountType("CHECKING");
+        testAccount.setAccountType(AccountTypeEnum.CHECKING);
         testAccount.setCurrency("USD");
         testAccount.setOpenDate(LocalDate.now());
         testAccount.setAccountStatus(AccountStatusEnum.OPEN);
@@ -62,7 +63,7 @@ class AccountServiceImplTest {
                 .accountId(TEST_ACCOUNT_ID)
                 .contractId(100L)
                 .accountNumber("TEST-ACCOUNT-001")
-                .accountType("CHECKING")
+                .accountType(AccountTypeEnum.CHECKING)
                 .currency("USD")
                 .openDate(LocalDate.now())
                 .accountStatus(AccountStatusEnum.OPEN)
@@ -97,7 +98,7 @@ class AccountServiceImplTest {
         verify(accountRepository).save(testAccount);
 
         // Verify that createAccountSpace was called with a DTO containing the correct values
-        verify(accountSpaceService).createAccountSpace(argThat(spaceDTO -> 
+        verify(accountSpaceService).createAccountSpace(argThat(spaceDTO ->
                 spaceDTO.getAccountId().equals(TEST_ACCOUNT_ID) &&
                 spaceDTO.getSpaceType() == AccountSpaceTypeEnum.MAIN &&
                 "Main Account".equals(spaceDTO.getSpaceName())

@@ -3,6 +3,7 @@ package com.catalis.core.banking.accounts.interfaces.dtos.core.v1;
 import com.catalis.core.banking.accounts.interfaces.dtos.BaseDTO;
 import com.catalis.core.banking.accounts.interfaces.enums.core.v1.AccountStatusEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.core.v1.AccountSubTypeEnum;
+import com.catalis.core.banking.accounts.interfaces.enums.core.v1.AccountTypeEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.interest.v1.InterestAccrualMethodEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.interest.v1.InterestPaymentFrequencyEnum;
 import com.catalis.core.banking.accounts.interfaces.enums.regulatory.v1.RegulatoryStatusEnum;
@@ -31,7 +32,7 @@ public class AccountDTO extends BaseDTO {
     private Long contractId;
 
     private String accountNumber;
-    private String accountType;
+    private AccountTypeEnum accountType;
     private String currency;
     private LocalDate openDate;
     private LocalDate closeDate;
