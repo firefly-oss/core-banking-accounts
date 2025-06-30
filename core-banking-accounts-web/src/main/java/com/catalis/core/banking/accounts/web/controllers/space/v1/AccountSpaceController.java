@@ -60,7 +60,7 @@ public class AccountSpaceController {
     )
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<AccountSpaceDTO>>> filterAccountSpaces(
-            @ParameterObject @ModelAttribute FilterRequest<AccountSpaceDTO> filterRequest
+            @RequestBody FilterRequest<AccountSpaceDTO> filterRequest
     ) {
         return service.filterAccountSpaces(filterRequest)
                 .map(ResponseEntity::ok)

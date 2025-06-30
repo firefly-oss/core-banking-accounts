@@ -29,7 +29,7 @@ public class AccountController {
     )
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<AccountDTO>>> filterAccounts(
-            @ParameterObject @ModelAttribute FilterRequest<AccountDTO> filterRequest
+            @RequestBody FilterRequest<AccountDTO> filterRequest
     ) {
         return service.filterAccounts(filterRequest)
                 .map(ResponseEntity::ok)

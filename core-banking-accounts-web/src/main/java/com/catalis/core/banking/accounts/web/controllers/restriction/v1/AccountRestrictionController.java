@@ -62,7 +62,7 @@ public class AccountRestrictionController {
     })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<AccountRestrictionDTO>>> filterAccountRestrictions(
-            @ParameterObject @ModelAttribute FilterRequest<AccountRestrictionDTO> filterRequest
+            @RequestBody FilterRequest<AccountRestrictionDTO> filterRequest
     ) {
         return service.listAccountRestrictions(filterRequest)
                 .map(ResponseEntity::ok)

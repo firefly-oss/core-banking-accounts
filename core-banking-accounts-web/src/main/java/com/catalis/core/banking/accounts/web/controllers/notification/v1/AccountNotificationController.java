@@ -63,7 +63,7 @@ public class AccountNotificationController {
     })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<AccountNotificationDTO>>> filterAccountNotifications(
-            @ParameterObject @ModelAttribute FilterRequest<AccountNotificationDTO> filterRequest
+            @RequestBody FilterRequest<AccountNotificationDTO> filterRequest
     ) {
         return service.listAccountNotifications(filterRequest)
                 .map(ResponseEntity::ok)

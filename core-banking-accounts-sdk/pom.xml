@@ -3,7 +3,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>com.catalis</groupId>
         <artifactId>core-banking-accounts</artifactId>
@@ -11,11 +10,6 @@
     </parent>
 
     <artifactId>core-banking-accounts-sdk</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
-
-    <name>Core Banking Accounts SDK</name>
-    <description>WebClient SDK for Core Banking Accounts API</description>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -30,8 +24,6 @@
         <jackson.dataformat.version>2.17.0</jackson.dataformat.version>
         <javax.annotation.version>1.3.2</javax.annotation.version>
     </properties>
-
-
 
     <dependencies>
         <!-- Web module for OpenAPI spec -->
@@ -96,10 +88,12 @@
             <artifactId>jackson-dataformat-yaml</artifactId>
             <version>${jackson.dataformat.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
+
             <!-- OpenAPI Generator Maven Plugin -->
             <plugin>
                 <groupId>org.openapitools</groupId>
@@ -107,14 +101,13 @@
                 <version>${openapi-generator.version}</version>
                 <executions>
                     <execution>
-                        <id>generate-accounts-sdk</id>
+                        <id>core-banking-accounts-sdk</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
                             <!-- Use the OpenAPI spec from the running web application -->
-                            <inputSpec>http://localhost:8084/v3/api-docs</inputSpec>
-
+                            <inputSpec>${project.basedir}/src/main/resources/api-spec/openapi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>webclient</library>
                             <output>${generated-sources-dir}</output>
@@ -136,4 +129,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
