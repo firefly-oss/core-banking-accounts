@@ -1471,19 +1471,28 @@ paths:
                 $ref: '#/components/schemas/AccountBalanceDTO'
         '400':
           description: Invalid balance data provided
-  /api/v1/accounts:
-    get:
+  /api/v1/accounts/filter:
+    post:
       tags:
         - Accounts
       summary: Filter Accounts
       description: Retrieve a paginated list of all bank accounts based on filter criteria.
       operationId: filterAccounts
       parameters:
-        - name: filterRequest
-          in: query
-          required: true
+        - name: X-Idempotency-Key
+          in: header
+          description: >-
+            Unique key for idempotent requests. If provided, ensures that
+            identical requests with the same key will only be processed once.
+          required: false
           schema:
-            $ref: '#/components/schemas/FilterRequestAccountDTO'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterRequestAccountDTO'
+        required: true
       responses:
         '200':
           description: OK
@@ -1491,6 +1500,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginationResponseAccountDTO'
+  /api/v1/accounts:
     post:
       tags:
         - Accounts
@@ -3422,68 +3432,6 @@ components:
           type: string
         actionText:
           type: string
-    SpaceTransactionDTO:
-      type: object
-      properties:
-        dateCreated:
-          type: string
-          format: date-time
-          readOnly: true
-        dateUpdated:
-          type: string
-          format: date-time
-          readOnly: true
-        spaceTransactionId:
-          type: integer
-          format: int64
-          readOnly: true
-        accountSpaceId:
-          type: integer
-          format: int64
-        amount:
-          type: number
-        balanceAfterTransaction:
-          type: number
-        transactionDateTime:
-          type: string
-          format: date-time
-        description:
-          type: string
-        referenceId:
-          type: string
-        transactionType:
-          type: string
-        spaceName:
-          type: string
-          readOnly: true
-        accountId:
-          type: integer
-          format: int64
-          readOnly: true
-    PaginationResponse:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            type: object
-            description: The list of items for the current page.
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
     FilterOptions:
       type: object
       properties:
@@ -3560,6 +3508,68 @@ components:
           description: The list of items for the current page.
           items:
             $ref: '#/components/schemas/AccountDTO'
+        totalElements:
+          type: integer
+          description: The total number of elements across all pages.
+          format: int64
+        totalPages:
+          type: integer
+          description: The total number of pages based on the data size and page size.
+          format: int32
+        currentPage:
+          type: integer
+          description: 'The current page number, typically zero-based.'
+          format: int32
+      description: >-
+        Represents a paginated response containing a list of items and
+        pagination metadata.
+    SpaceTransactionDTO:
+      type: object
+      properties:
+        dateCreated:
+          type: string
+          format: date-time
+          readOnly: true
+        dateUpdated:
+          type: string
+          format: date-time
+          readOnly: true
+        spaceTransactionId:
+          type: integer
+          format: int64
+          readOnly: true
+        accountSpaceId:
+          type: integer
+          format: int64
+        amount:
+          type: number
+        balanceAfterTransaction:
+          type: number
+        transactionDateTime:
+          type: string
+          format: date-time
+        description:
+          type: string
+        referenceId:
+          type: string
+        transactionType:
+          type: string
+        spaceName:
+          type: string
+          readOnly: true
+        accountId:
+          type: integer
+          format: int64
+          readOnly: true
+    PaginationResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          description: The list of items for the current page.
+          items:
+            type: object
+            description: The list of items for the current page.
         totalElements:
           type: integer
           description: The total number of elements across all pages.

@@ -6,6 +6,7 @@ import com.catalis.core.banking.accounts.core.services.core.v1.AccountService;
 import com.catalis.core.banking.accounts.interfaces.dtos.core.v1.AccountDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
@@ -27,7 +28,7 @@ public class AccountController {
             summary = "Filter Accounts",
             description = "Retrieve a paginated list of all bank accounts based on filter criteria."
     )
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<AccountDTO>>> filterAccounts(
             @RequestBody FilterRequest<AccountDTO> filterRequest
     ) {

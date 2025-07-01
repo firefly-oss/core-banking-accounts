@@ -70,9 +70,9 @@ public class AccountServiceImpl implements AccountService {
     public Mono<AccountDTO> updateAccount(Long accountId, AccountDTO accountDTO) {
         return repository.findById(accountId)
                 .flatMap(existingAccount -> {
-                    Account updatedAccount = mapper.toEntity(accountDTO);
-                    updatedAccount.setAccountId(accountId);
-                    return repository.save(updatedAccount);
+                    mapper.updateEntityFromDto(accountDTO, existingAccount);
+                    existingAccount.setAccountId(accountId);
+                    return repository.save(existingAccount);
                 })
                 .map(mapper::toDTO);
     }
