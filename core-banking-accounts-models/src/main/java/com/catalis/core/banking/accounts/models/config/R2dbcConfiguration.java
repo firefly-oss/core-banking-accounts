@@ -34,6 +34,24 @@ import java.util.List;
 @Configuration
 public class R2dbcConfiguration extends AbstractR2dbcConfiguration {
 
+    @Value("${DB_HOST:localhost}")
+    private String host;
+
+    @Value("${DB_PORT:5432}")
+    private int port;
+
+    @Value("${DB_NAME:postgres}")
+    private String database;
+
+    @Value("${DB_USERNAME:postgres}")
+    private String username;
+
+    @Value("${DB_PASSWORD:postgres}")
+    private String password;
+
+    @Value("${DB_SSL_MODE:disable}")
+    private String sslMode;
+
     @WritingConverter
     static class AccountTypeEnumConverter implements Converter<AccountTypeEnum, AccountTypeEnum> {
         @Override
@@ -153,24 +171,6 @@ public class R2dbcConfiguration extends AbstractR2dbcConfiguration {
             return source;
         }
     }
-
-    @Value("${DB_HOST:localhost}")
-    private String host;
-
-    @Value("${DB_PORT:5432}")
-    private int port;
-
-    @Value("${DB_NAME:postgres}")
-    private String database;
-
-    @Value("${DB_USERNAME:postgres}")
-    private String username;
-
-    @Value("${DB_PASSWORD:postgres}")
-    private String password;
-
-    @Value("${DB_SSL_MODE:disable}")
-    private String sslMode;
 
     @Override
     protected List<Object> getCustomConverters() {
