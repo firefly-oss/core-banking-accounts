@@ -30,7 +30,7 @@ spring:
       enabled: true
 
 server:
-  port: 8084
+  port: 8080
   shutdown: graceful
 
 springdoc:
