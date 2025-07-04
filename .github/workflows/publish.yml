@@ -19,7 +19,7 @@ jobs:
     with:
       dockerfile-path: "./Dockerfile"
       image-name: "k8-infra-dev-repo"
-      docker-image-tag: "core-banking-accounts-1.0.0-SNAPSHOT"
+      docker-image-tag: "core-banking-accounts-1.0.1-SNAPSHOT"
     secrets:
       REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
       REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
