@@ -113,6 +113,126 @@ class AccountBalanceServiceImplTest {
         verify(repository).save(testAccountBalance);
         verify(mapper).toDTO(testAccountBalance);
     }
+    
+    @Test
+    void createBalance_ShouldCreateStakedCryptoBalance() {
+        // Arrange
+        AccountBalance stakedBalance = new AccountBalance();
+        stakedBalance.setAccountBalanceId(200L);
+        stakedBalance.setAccountId(TEST_ACCOUNT_ID);
+        stakedBalance.setBalanceType(BalanceTypeEnum.STAKED);
+        stakedBalance.setBalanceAmount(new BigDecimal("0.5"));
+        stakedBalance.setAsOfDatetime(LocalDateTime.now());
+        stakedBalance.setAssetSymbol("ETH");
+        stakedBalance.setAssetDecimals("18");
+        stakedBalance.setTransactionHash("0x742d35Cc6634C0532925a3b844Bc454e4438f44e123456789abcdef0123456789");
+        stakedBalance.setConfirmations(12);
+        
+        AccountBalanceDTO stakedBalanceDTO = AccountBalanceDTO.builder()
+                .accountBalanceId(200L)
+                .accountId(TEST_ACCOUNT_ID)
+                .balanceType(BalanceTypeEnum.STAKED)
+                .balanceAmount(new BigDecimal("0.5"))
+                .asOfDatetime(LocalDateTime.now())
+                .assetSymbol("ETH")
+                .assetDecimals("18")
+                .transactionHash("0x742d35Cc6634C0532925a3b844Bc454e4438f44e123456789abcdef0123456789")
+                .confirmations(12)
+                .build();
+        
+        when(mapper.toEntity(any(AccountBalanceDTO.class))).thenReturn(stakedBalance);
+        when(repository.save(any(AccountBalance.class))).thenReturn(Mono.just(stakedBalance));
+        when(mapper.toDTO(any(AccountBalance.class))).thenReturn(stakedBalanceDTO);
+
+        // Act & Assert
+        StepVerifier.create(accountBalanceService.createBalance(TEST_ACCOUNT_ID, stakedBalanceDTO))
+                .expectNext(stakedBalanceDTO)
+                .verifyComplete();
+
+        verify(mapper).toEntity(stakedBalanceDTO);
+        verify(repository).save(stakedBalance);
+        verify(mapper).toDTO(stakedBalance);
+    }
+    
+    @Test
+    void createBalance_ShouldCreateLockedCryptoBalance() {
+        // Arrange
+        AccountBalance lockedBalance = new AccountBalance();
+        lockedBalance.setAccountBalanceId(300L);
+        lockedBalance.setAccountId(TEST_ACCOUNT_ID);
+        lockedBalance.setBalanceType(BalanceTypeEnum.LOCKED);
+        lockedBalance.setBalanceAmount(new BigDecimal("100"));
+        lockedBalance.setAsOfDatetime(LocalDateTime.now());
+        lockedBalance.setAssetSymbol("USDC");
+        lockedBalance.setAssetDecimals("6");
+        lockedBalance.setTransactionHash("0x842d35Cc6634C0532925a3b844Bc454e4438f44e123456789abcdef0123456789");
+        lockedBalance.setConfirmations(15);
+        
+        AccountBalanceDTO lockedBalanceDTO = AccountBalanceDTO.builder()
+                .accountBalanceId(300L)
+                .accountId(TEST_ACCOUNT_ID)
+                .balanceType(BalanceTypeEnum.LOCKED)
+                .balanceAmount(new BigDecimal("100"))
+                .asOfDatetime(LocalDateTime.now())
+                .assetSymbol("USDC")
+                .assetDecimals("6")
+                .transactionHash("0x842d35Cc6634C0532925a3b844Bc454e4438f44e123456789abcdef0123456789")
+                .confirmations(15)
+                .build();
+        
+        when(mapper.toEntity(any(AccountBalanceDTO.class))).thenReturn(lockedBalance);
+        when(repository.save(any(AccountBalance.class))).thenReturn(Mono.just(lockedBalance));
+        when(mapper.toDTO(any(AccountBalance.class))).thenReturn(lockedBalanceDTO);
+
+        // Act & Assert
+        StepVerifier.create(accountBalanceService.createBalance(TEST_ACCOUNT_ID, lockedBalanceDTO))
+                .expectNext(lockedBalanceDTO)
+                .verifyComplete();
+
+        verify(mapper).toEntity(lockedBalanceDTO);
+        verify(repository).save(lockedBalance);
+        verify(mapper).toDTO(lockedBalance);
+    }
+    
+    @Test
+    void createBalance_ShouldCreatePendingConfirmationCryptoBalance() {
+        // Arrange
+        AccountBalance pendingBalance = new AccountBalance();
+        pendingBalance.setAccountBalanceId(400L);
+        pendingBalance.setAccountId(TEST_ACCOUNT_ID);
+        pendingBalance.setBalanceType(BalanceTypeEnum.PENDING_CONFIRMATION);
+        pendingBalance.setBalanceAmount(new BigDecimal("0.01"));
+        pendingBalance.setAsOfDatetime(LocalDateTime.now());
+        pendingBalance.setAssetSymbol("BTC");
+        pendingBalance.setAssetDecimals("8");
+        pendingBalance.setTransactionHash("3a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u");
+        pendingBalance.setConfirmations(2);
+        
+        AccountBalanceDTO pendingBalanceDTO = AccountBalanceDTO.builder()
+                .accountBalanceId(400L)
+                .accountId(TEST_ACCOUNT_ID)
+                .balanceType(BalanceTypeEnum.PENDING_CONFIRMATION)
+                .balanceAmount(new BigDecimal("0.01"))
+                .asOfDatetime(LocalDateTime.now())
+                .assetSymbol("BTC")
+                .assetDecimals("8")
+                .transactionHash("3a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u")
+                .confirmations(2)
+                .build();
+        
+        when(mapper.toEntity(any(AccountBalanceDTO.class))).thenReturn(pendingBalance);
+        when(repository.save(any(AccountBalance.class))).thenReturn(Mono.just(pendingBalance));
+        when(mapper.toDTO(any(AccountBalance.class))).thenReturn(pendingBalanceDTO);
+
+        // Act & Assert
+        StepVerifier.create(accountBalanceService.createBalance(TEST_ACCOUNT_ID, pendingBalanceDTO))
+                .expectNext(pendingBalanceDTO)
+                .verifyComplete();
+
+        verify(mapper).toEntity(pendingBalanceDTO);
+        verify(repository).save(pendingBalance);
+        verify(mapper).toDTO(pendingBalance);
+    }
 
     @Test
     void getBalance_ShouldReturnBalance_WhenBalanceExistsForAccount() {

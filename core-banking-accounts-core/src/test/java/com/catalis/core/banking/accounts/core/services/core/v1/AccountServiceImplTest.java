@@ -193,4 +193,130 @@ class AccountServiceImplTest {
         verify(accountRepository).findById(TEST_ACCOUNT_ID);
         verifyNoMoreInteractions(accountRepository);
     }
+    
+    @Test
+    void createAccount_ShouldCreateCryptoWalletAccount() {
+        // Arrange
+        AccountDTO cryptoAccountDTO = AccountDTO.builder()
+                .contractId(100L)
+                .accountNumber("CRYPTO-001")
+                .accountType(AccountTypeEnum.CRYPTO_WALLET)
+                .currency("USD")
+                .openDate(LocalDate.now())
+                .accountStatus(AccountStatusEnum.OPEN)
+                .branchId(200L)
+                .description("Bitcoin Wallet")
+                .walletAddress("0x742d35Cc6634C0532925a3b844Bc454e4438f44e")
+                .blockchainNetwork("Ethereum")
+                .isCustodial(true)
+                .build();
+                
+        Account cryptoAccount = new Account();
+        cryptoAccount.setAccountId(2L);
+        cryptoAccount.setContractId(100L);
+        cryptoAccount.setAccountNumber("CRYPTO-001");
+        cryptoAccount.setAccountType(AccountTypeEnum.CRYPTO_WALLET);
+        cryptoAccount.setCurrency("USD");
+        cryptoAccount.setOpenDate(LocalDate.now());
+        cryptoAccount.setAccountStatus(AccountStatusEnum.OPEN);
+        cryptoAccount.setBranchId(200L);
+        cryptoAccount.setDescription("Bitcoin Wallet");
+        cryptoAccount.setWalletAddress("0x742d35Cc6634C0532925a3b844Bc454e4438f44e");
+        cryptoAccount.setBlockchainNetwork("Ethereum");
+        cryptoAccount.setIsCustodial(true);
+        
+        when(accountMapper.toEntity(any(AccountDTO.class))).thenReturn(cryptoAccount);
+        when(accountRepository.save(any(Account.class))).thenReturn(Mono.just(cryptoAccount));
+        when(accountMapper.toDTO(any(Account.class))).thenReturn(cryptoAccountDTO);
+        when(accountSpaceService.createAccountSpace(any(AccountSpaceDTO.class))).thenReturn(Mono.just(
+                AccountSpaceDTO.builder()
+                        .accountSpaceId(2L)
+                        .accountId(2L)
+                        .spaceName("Main Account")
+                        .spaceType(AccountSpaceTypeEnum.MAIN)
+                        .build()
+        ));
+
+        // Act & Assert
+        StepVerifier.create(accountService.createAccount(cryptoAccountDTO))
+                .expectNext(cryptoAccountDTO)
+                .verifyComplete();
+
+        verify(accountMapper).toEntity(cryptoAccountDTO);
+        verify(accountRepository).save(cryptoAccount);
+        
+        // Verify that createAccountSpace was called with a DTO containing the correct values
+        verify(accountSpaceService).createAccountSpace(argThat(spaceDTO ->
+                spaceDTO.getAccountId().equals(2L) &&
+                spaceDTO.getSpaceType() == AccountSpaceTypeEnum.MAIN &&
+                "Main Account".equals(spaceDTO.getSpaceName())
+        ));
+        
+        verify(accountMapper).toDTO(cryptoAccount);
+    }
+    
+    @Test
+    void createAccount_ShouldCreateTokenizedAssetAccount() {
+        // Arrange
+        AccountDTO tokenizedAssetDTO = AccountDTO.builder()
+                .contractId(100L)
+                .accountNumber("TOKEN-001")
+                .accountType(AccountTypeEnum.TOKENIZED_ASSET)
+                .currency("USD")
+                .openDate(LocalDate.now())
+                .accountStatus(AccountStatusEnum.OPEN)
+                .branchId(200L)
+                .description("USDT Token")
+                .walletAddress("0x742d35Cc6634C0532925a3b844Bc454e4438f44e")
+                .blockchainNetwork("Ethereum")
+                .tokenContractAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7")
+                .tokenStandard("ERC-20")
+                .isCustodial(true)
+                .build();
+                
+        Account tokenizedAsset = new Account();
+        tokenizedAsset.setAccountId(3L);
+        tokenizedAsset.setContractId(100L);
+        tokenizedAsset.setAccountNumber("TOKEN-001");
+        tokenizedAsset.setAccountType(AccountTypeEnum.TOKENIZED_ASSET);
+        tokenizedAsset.setCurrency("USD");
+        tokenizedAsset.setOpenDate(LocalDate.now());
+        tokenizedAsset.setAccountStatus(AccountStatusEnum.OPEN);
+        tokenizedAsset.setBranchId(200L);
+        tokenizedAsset.setDescription("USDT Token");
+        tokenizedAsset.setWalletAddress("0x742d35Cc6634C0532925a3b844Bc454e4438f44e");
+        tokenizedAsset.setBlockchainNetwork("Ethereum");
+        tokenizedAsset.setTokenContractAddress("0xdAC17F958D2ee523a2206206994597C13D831ec7");
+        tokenizedAsset.setTokenStandard("ERC-20");
+        tokenizedAsset.setIsCustodial(true);
+        
+        when(accountMapper.toEntity(any(AccountDTO.class))).thenReturn(tokenizedAsset);
+        when(accountRepository.save(any(Account.class))).thenReturn(Mono.just(tokenizedAsset));
+        when(accountMapper.toDTO(any(Account.class))).thenReturn(tokenizedAssetDTO);
+        when(accountSpaceService.createAccountSpace(any(AccountSpaceDTO.class))).thenReturn(Mono.just(
+                AccountSpaceDTO.builder()
+                        .accountSpaceId(3L)
+                        .accountId(3L)
+                        .spaceName("Main Account")
+                        .spaceType(AccountSpaceTypeEnum.MAIN)
+                        .build()
+        ));
+
+        // Act & Assert
+        StepVerifier.create(accountService.createAccount(tokenizedAssetDTO))
+                .expectNext(tokenizedAssetDTO)
+                .verifyComplete();
+
+        verify(accountMapper).toEntity(tokenizedAssetDTO);
+        verify(accountRepository).save(tokenizedAsset);
+        
+        // Verify that createAccountSpace was called with a DTO containing the correct values
+        verify(accountSpaceService).createAccountSpace(argThat(spaceDTO ->
+                spaceDTO.getAccountId().equals(3L) &&
+                spaceDTO.getSpaceType() == AccountSpaceTypeEnum.MAIN &&
+                "Main Account".equals(spaceDTO.getSpaceName())
+        ));
+        
+        verify(accountMapper).toDTO(tokenizedAsset);
+    }
 }

@@ -1,5 +1,6 @@
 package com.catalis.core.banking.accounts.core.services.space.v1;
 
+import com.catalis.common.core.queries.PaginationResponse;
 import com.catalis.core.banking.accounts.core.mappers.space.v1.AccountSpaceMapper;
 import com.catalis.core.banking.accounts.core.services.core.v1.AccountBalanceService;
 import com.catalis.core.banking.accounts.interfaces.dtos.core.v1.AccountBalanceDTO;
@@ -7,7 +8,6 @@ import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.AccountSpaceDT
 import com.catalis.core.banking.accounts.interfaces.enums.space.v1.AccountSpaceTypeEnum;
 import com.catalis.core.banking.accounts.models.entities.space.v1.AccountSpace;
 import com.catalis.core.banking.accounts.models.repositories.space.v1.AccountSpaceRepository;
-import com.catalis.common.core.queries.PaginationResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +23,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
