@@ -78,5 +78,30 @@ public enum AccountTypeEnum {
     /**
      * Account for government benefits
      */
-    GOVERNMENT_BENEFITS
+    GOVERNMENT_BENEFITS,
+    
+    /**
+     * Account for cryptocurrency storage and transactions
+     */
+    CRYPTO_WALLET,
+    
+    /**
+     * Account for tokenized traditional assets
+     */
+    TOKENIZED_ASSET,
+    
+    /**
+     * Account for general digital assets
+     */
+    DIGITAL_ASSET,
+    
+    /**
+     * Account for stablecoins (cryptocurrencies pegged to fiat)
+     */
+    STABLECOIN,
+    
+    /**
+     * Account for non-fungible token collections
+     */
+    NFT_COLLECTION
 }

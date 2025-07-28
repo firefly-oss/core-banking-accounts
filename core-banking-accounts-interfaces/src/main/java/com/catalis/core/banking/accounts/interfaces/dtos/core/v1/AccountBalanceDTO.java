@@ -32,5 +32,10 @@ public class AccountBalanceDTO extends BaseDTO {
     private BalanceTypeEnum balanceType;
     private BigDecimal balanceAmount;
     private LocalDateTime asOfDatetime;
-
+    
+    // Crypto-specific fields
+    private String assetSymbol;
+    private String assetDecimals;
+    private String transactionHash;
+    private Integer confirmations;
 }

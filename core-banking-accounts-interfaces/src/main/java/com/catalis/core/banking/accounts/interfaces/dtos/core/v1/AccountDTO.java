@@ -51,4 +51,11 @@ public class AccountDTO extends BaseDTO {
     private InterestPaymentFrequencyEnum interestPaymentFrequency;
     private BigDecimal minimumBalance;
     private BigDecimal overdraftLimit;
+    
+    // Crypto-specific fields
+    private String walletAddress;
+    private String blockchainNetwork;
+    private String tokenContractAddress;
+    private String tokenStandard;
+    private Boolean isCustodial;
 }

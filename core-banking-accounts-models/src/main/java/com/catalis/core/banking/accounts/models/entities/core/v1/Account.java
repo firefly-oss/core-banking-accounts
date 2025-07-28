@@ -9,7 +9,10 @@ import com.catalis.core.banking.accounts.interfaces.enums.regulatory.v1.Regulato
 import com.catalis.core.banking.accounts.interfaces.enums.regulatory.v1.TaxReportingStatusEnum;
 import com.catalis.core.banking.accounts.models.entities.BaseEntity;
 import com.catalis.core.banking.accounts.models.entities.status.v1.AccountStatusHistory;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -188,5 +191,53 @@ public class Account extends BaseEntity {
      */
     private BigDecimal overdraftLimit;
 
+    /**
+     * Public blockchain address for crypto accounts
+     * Used for sending and receiving crypto assets
+     * Examples:
+     * - Bitcoin: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+     * - Ethereum: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e"
+     * Null for non-crypto accounts
+     */
+    private String walletAddress;
 
+    /**
+     * Blockchain network for the crypto account
+     * Examples:
+     * - "Bitcoin" - Bitcoin mainnet
+     * - "Ethereum" - Ethereum mainnet
+     * - "Solana" - Solana mainnet
+     * - "Polygon" - Polygon network
+     * Null for non-crypto accounts
+     */
+    private String blockchainNetwork;
+
+    /**
+     * Smart contract address for tokenized assets
+     * Examples:
+     * - ERC-20 token: "0xdAC17F958D2ee523a2206206994597C13D831ec7" (USDT on Ethereum)
+     * - ERC-721 NFT: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D" (BAYC on Ethereum)
+     * Null for non-tokenized accounts
+     */
+    private String tokenContractAddress;
+
+    /**
+     * Token standard for the crypto asset
+     * Examples:
+     * - "ERC-20" - Ethereum fungible token standard
+     * - "ERC-721" - Ethereum non-fungible token standard
+     * - "BEP-20" - Binance Smart Chain token standard
+     * - "SPL" - Solana Program Library token standard
+     * Null for non-tokenized accounts
+     */
+    private String tokenStandard;
+
+    /**
+     * Indicates whether the bank holds the private keys (custodial)
+     * or the customer manages their own keys (non-custodial)
+     * True - Bank holds the keys (custodial service)
+     * False - Customer holds the keys (non-custodial service)
+     * Null for non-crypto accounts
+     */
+    private Boolean isCustodial;
 }
