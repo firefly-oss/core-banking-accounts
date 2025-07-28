@@ -3,7 +3,6 @@ package com.catalis.core.banking.accounts.core.mappers.space.v1;
 import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.SpaceTransactionDTO;
 import com.catalis.core.banking.accounts.models.entities.space.v1.SpaceTransaction;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 

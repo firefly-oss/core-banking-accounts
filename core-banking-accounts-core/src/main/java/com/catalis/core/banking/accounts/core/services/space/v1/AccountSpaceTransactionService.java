@@ -3,7 +3,6 @@ package com.catalis.core.banking.accounts.core.services.space.v1;
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
 import com.catalis.core.banking.accounts.interfaces.dtos.space.v1.SpaceTransactionDTO;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;

@@ -1,7 +1,10 @@
 package com.catalis.core.banking.accounts.models.entities.space.v1;
 
 import com.catalis.core.banking.accounts.models.entities.BaseEntity;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
