@@ -2,9 +2,13 @@ package com.catalis.core.banking.accounts.models.entities.parameter.v1;
 
 import com.catalis.core.banking.accounts.interfaces.enums.parameter.v1.ParamTypeEnum;
 import com.catalis.core.banking.accounts.models.entities.BaseEntity;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 

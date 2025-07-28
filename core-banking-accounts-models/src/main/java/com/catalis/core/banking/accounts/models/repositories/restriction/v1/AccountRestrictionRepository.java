@@ -2,7 +2,6 @@ package com.catalis.core.banking.accounts.models.repositories.restriction.v1;
 
 import com.catalis.core.banking.accounts.models.entities.restriction.v1.AccountRestriction;
 import com.catalis.core.banking.accounts.models.repositories.BaseRepository;
-import org.springframework.data.r2dbc.repository.Query;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

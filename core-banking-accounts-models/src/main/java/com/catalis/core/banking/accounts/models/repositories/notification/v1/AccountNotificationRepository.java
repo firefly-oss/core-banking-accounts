@@ -3,7 +3,6 @@ package com.catalis.core.banking.accounts.models.repositories.notification.v1;
 import com.catalis.core.banking.accounts.interfaces.enums.notification.v1.NotificationTypeEnum;
 import com.catalis.core.banking.accounts.models.entities.notification.v1.AccountNotification;
 import com.catalis.core.banking.accounts.models.repositories.BaseRepository;
-import org.springframework.data.r2dbc.repository.Query;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
