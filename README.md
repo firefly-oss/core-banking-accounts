@@ -6,7 +6,19 @@ The Core Banking Accounts Service is a comprehensive microservice for managing b
 
 This service is built with a reactive architecture using Spring WebFlux and R2DBC for non-blocking database operations, making it highly scalable and efficient for handling a large number of concurrent requests.
 
-The service is designed to handle all types of accounts (deposit, current, investment, etc.) through a flexible account type system. Account ownership is managed by an external contract management system via contractId, allowing this service to focus solely on account management.
+The service is designed to handle all types of accounts (deposit, current, investment, crypto, tokenized assets, etc.) through a flexible account type system. Account ownership is managed by an external contract management system via contractId, allowing this service to focus solely on account management.
+
+### Crypto and Tokenized Asset Support
+
+The service now includes comprehensive support for crypto assets and tokenized accounts:
+
+- **Crypto Wallet Accounts**: Manage cryptocurrency holdings with support for wallet addresses, blockchain networks, and transaction tracking
+- **Tokenized Asset Accounts**: Support for tokenized traditional assets with token contract addresses and standards
+- **Digital Asset Accounts**: General-purpose accounts for various digital assets
+- **Stablecoin Accounts**: Specialized accounts for stablecoins pegged to fiat currencies
+- **NFT Collection Accounts**: Support for non-fungible token collections
+
+The system tracks crypto-specific balance types (STAKED, LOCKED, PENDING_CONFIRMATION) and includes a price tracking system for crypto assets with historical data and multiple quote currencies.
 
 ## Quick Start
 
@@ -88,6 +100,13 @@ The service follows a modular architecture with clear separation of concerns:
 - **Swagger/OpenAPI**: API documentation
 - **Maven**: Build and dependency management
 
+The system is designed with extensibility in mind, allowing for integration with:
+
+- **Blockchain Networks**: Connect to various blockchain networks for crypto transactions
+- **Price Oracles**: Integrate with price feeds for real-time crypto asset pricing
+- **Custody Solutions**: Interface with crypto custody providers for secure key management
+- **Blockchain Explorers**: Verify transaction status and confirmations
+
 ## Data Model
 
 The following diagram shows the relationships between the main entities in the system:
@@ -105,12 +124,13 @@ erDiagram
     AccountSpace ||--o{ AccountProvider : "has"
     AccountSpace ||--o| AccountSpace : "transfers from"
     AccountSpace ||--o{ SpaceTransaction : "has"
+    AssetPrice ||--o{ Account : "prices"
 
     Account {
         Long accountId PK
         Long contractId FK "Links to contract management system"
         String accountNumber
-        AccountTypeEnum accountType "CHECKING, SAVINGS, etc."
+        AccountTypeEnum accountType "CHECKING, SAVINGS, CRYPTO_WALLET, etc."
         AccountSubTypeEnum accountSubType
         String currency "ISO 4217 code"
         LocalDate openDate
@@ -125,6 +145,11 @@ erDiagram
         InterestPaymentFrequencyEnum interestPaymentFrequency
         BigDecimal minimumBalance
         BigDecimal overdraftLimit
+        String walletAddress "Blockchain address for crypto accounts"
+        String blockchainNetwork "Bitcoin, Ethereum, etc."
+        String tokenContractAddress "Smart contract address for tokens"
+        String tokenStandard "ERC-20, ERC-721, etc."
+        Boolean isCustodial "Whether keys are held by the bank"
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
@@ -133,9 +158,24 @@ erDiagram
         Long accountBalanceId PK
         Long accountId FK
         Long accountSpaceId FK
-        BalanceTypeEnum balanceType
+        BalanceTypeEnum balanceType "CURRENT, AVAILABLE, STAKED, etc."
         BigDecimal balanceAmount
         LocalDateTime asOfDatetime
+        String assetSymbol "BTC, ETH, USDC, etc."
+        String assetDecimals "Decimal precision for the token"
+        String transactionHash "Blockchain transaction reference"
+        Integer confirmations "Number of blockchain confirmations"
+        LocalDateTime dateCreated
+        LocalDateTime dateUpdated
+    }
+    
+    AssetPrice {
+        Long assetPriceId PK
+        String assetSymbol "BTC, ETH, USDC, etc."
+        String quoteCurrency "USD, EUR, etc."
+        BigDecimal price
+        LocalDateTime asOfDatetime
+        String priceSource "Exchange or oracle name"
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
@@ -192,7 +232,10 @@ erDiagram
         BigDecimal transferAmount
         Long sourceSpaceId FK
         Boolean isFrozen
-        LocalDateTime frozenDatetime
+        LocalDateTime frozenDateTime
+        LocalDateTime unfrozenDateTime
+        String lastBalanceUpdateReason
+        LocalDateTime lastBalanceUpdateDateTime
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
@@ -253,8 +296,15 @@ erDiagram
 
 - **Account**: The core entity representing a banking account
   - Uses `AccountTypeEnum` to support various account types (CHECKING, SAVINGS, TERM_DEPOSIT, LOAN, CREDIT_CARD, INVESTMENT, MORTGAGE, etc.)
+  - Now supports crypto account types (CRYPTO_WALLET, TOKENIZED_ASSET, DIGITAL_ASSET, STABLECOIN, NFT_COLLECTION)
+  - Includes crypto-specific fields (walletAddress, blockchainNetwork, tokenContractAddress, tokenStandard, isCustodial)
   - Uses `AccountSubTypeEnum` for more granular classification
 - **AccountBalance**: Tracks different types of balances for accounts and spaces
+  - Supports crypto-specific balance types (STAKED, LOCKED, PENDING_CONFIRMATION)
+  - Includes crypto-specific fields (assetSymbol, assetDecimals, transactionHash, confirmations)
+- **AssetPrice**: Tracks price information for crypto assets and tokenized assets
+  - Records historical price data for various assets against different quote currencies
+  - Includes source information for audit purposes
 - **AccountParameter**: Stores configurable parameters with effective dates
 - **AccountProvider**: Manages connections to external banking providers
 - **AccountStatusHistory**: Tracks the history of account status changes
@@ -276,6 +326,17 @@ erDiagram
 - Account ownership is managed by the external contract management system via contractId
 - Account types are defined using enums for type safety and consistency
 
+#### Crypto-Specific Business Rules
+
+- Crypto accounts (CRYPTO_WALLET, TOKENIZED_ASSET, etc.) must have a blockchain network specified
+- Tokenized assets must have a token contract address and token standard
+- Crypto balances can have additional types: STAKED, LOCKED, and PENDING_CONFIRMATION
+- Crypto transactions must track blockchain transaction hashes and confirmation counts
+- Asset prices must be tracked with high precision (up to 18 decimal places) to accommodate crypto assets
+- Custodial accounts (isCustodial=true) are managed by the bank, while non-custodial accounts are managed by the customer
+- Each crypto asset can be priced in multiple quote currencies (USD, EUR, BTC, etc.)
+- Historical price records must be maintained with source information for audit purposes
+
 ## API Documentation
 
 The service provides a comprehensive API for managing all aspects of banking accounts:
@@ -287,6 +348,19 @@ The service provides a comprehensive API for managing all aspects of banking acc
 - `/api/v1/account-parameters`: Account parameter endpoints
 - `/api/v1/account-providers`: Account provider endpoints
 - `/api/v1/account-status-history`: Account status history endpoints
+
+### Crypto Asset Endpoints
+
+- `/api/v1/asset-prices`: Asset price management endpoints
+  - `GET /`: List all asset prices with filtering
+  - `POST /`: Create a new asset price record
+  - `GET /{assetPriceId}`: Get an asset price by ID
+  - `PUT /{assetPriceId}`: Update an asset price
+  - `DELETE /{assetPriceId}`: Delete an asset price
+  - `GET /asset/{assetSymbol}`: Get all prices for a specific asset
+  - `GET /asset/{assetSymbol}/currency/{quoteCurrency}`: Get prices for an asset in a specific currency
+  - `GET /asset/{assetSymbol}/currency/{quoteCurrency}/latest`: Get the latest price for an asset
+  - `GET /asset/{assetSymbol}/history`: Get historical price data for an asset
 
 ### Account Space Endpoints
 
@@ -374,6 +448,164 @@ The API follows RESTful design principles with resource-oriented URLs and approp
 ### API Examples by Flow
 
 Below are examples of common workflows and how to use the API to accomplish them:
+
+#### 0. Crypto Account Management Flow
+
+This flow demonstrates how to create and manage a crypto wallet account.
+
+##### Step 1: Create a new crypto wallet account
+
+```bash
+# Request
+curl -X POST http://localhost:8080/api/v1/accounts \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contractId": 500124,
+    "accountNumber": "2024-00002-001",
+    "accountType": "CRYPTO_WALLET",
+    "currency": "USD",
+    "openDate": "2024-01-15",
+    "accountStatus": "OPEN",
+    "branchId": 1001,
+    "description": "Bitcoin wallet account",
+    "walletAddress": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+    "blockchainNetwork": "Bitcoin",
+    "isCustodial": true
+  }'
+
+# Response (201 Created)
+{
+  "accountId": 100002,
+  "contractId": 500124,
+  "accountNumber": "2024-00002-001",
+  "accountType": "CRYPTO_WALLET",
+  "currency": "USD",
+  "openDate": "2024-01-15",
+  "closeDate": null,
+  "accountStatus": "OPEN",
+  "branchId": 1001,
+  "description": "Bitcoin wallet account",
+  "walletAddress": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+  "blockchainNetwork": "Bitcoin",
+  "tokenContractAddress": null,
+  "tokenStandard": null,
+  "isCustodial": true,
+  "dateCreated": "15/01/2024T10:30:00.000000",
+  "dateUpdated": "15/01/2024T10:30:00.000000"
+}
+```
+
+##### Step 2: Create a balance record for the crypto account
+
+```bash
+# Request
+curl -X POST http://localhost:8080/api/v1/accounts/100002/balances \
+  -H "Content-Type: application/json" \
+  -d '{
+    "balanceType": "CURRENT",
+    "balanceAmount": 0.25,
+    "asOfDatetime": "2024-01-15T11:00:00",
+    "assetSymbol": "BTC",
+    "assetDecimals": "8",
+    "transactionHash": "3a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u",
+    "confirmations": 6
+  }'
+
+# Response (201 Created)
+{
+  "accountBalanceId": 1000003,
+  "accountId": 100002,
+  "accountSpaceId": null,
+  "balanceType": "CURRENT",
+  "balanceAmount": 0.2500,
+  "asOfDatetime": "2024-01-15T11:00:00.000000",
+  "assetSymbol": "BTC",
+  "assetDecimals": "8",
+  "transactionHash": "3a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u",
+  "confirmations": 6,
+  "dateCreated": "15/01/2024T11:00:00.000000",
+  "dateUpdated": "15/01/2024T11:00:00.000000"
+}
+```
+
+##### Step 3: Record an asset price
+
+```bash
+# Request
+curl -X POST http://localhost:8080/api/v1/asset-prices \
+  -H "Content-Type: application/json" \
+  -d '{
+    "assetSymbol": "BTC",
+    "quoteCurrency": "USD",
+    "price": 45000.00,
+    "asOfDatetime": "2024-01-15T11:00:00",
+    "priceSource": "Coinbase"
+  }'
+
+# Response (201 Created)
+{
+  "assetPriceId": 1000001,
+  "assetSymbol": "BTC",
+  "quoteCurrency": "USD",
+  "price": 45000.00,
+  "asOfDatetime": "2024-01-15T11:00:00.000000",
+  "priceSource": "Coinbase",
+  "dateCreated": "15/01/2024T11:00:00.000000",
+  "dateUpdated": "15/01/2024T11:00:00.000000"
+}
+```
+
+##### Step 4: Get the latest price for an asset
+
+```bash
+# Request
+curl -X GET http://localhost:8080/api/v1/asset-prices/asset/BTC/currency/USD/latest
+
+# Response (200 OK)
+{
+  "assetPriceId": 1000001,
+  "assetSymbol": "BTC",
+  "quoteCurrency": "USD",
+  "price": 45000.00,
+  "asOfDatetime": "2024-01-15T11:00:00.000000",
+  "priceSource": "Coinbase",
+  "dateCreated": "15/01/2024T11:00:00.000000",
+  "dateUpdated": "15/01/2024T11:00:00.000000"
+}
+```
+
+##### Step 5: Create a staked balance record
+
+```bash
+# Request
+curl -X POST http://localhost:8080/api/v1/accounts/100002/balances \
+  -H "Content-Type: application/json" \
+  -d '{
+    "balanceType": "STAKED",
+    "balanceAmount": 0.10,
+    "asOfDatetime": "2024-01-15T12:00:00",
+    "assetSymbol": "BTC",
+    "assetDecimals": "8",
+    "transactionHash": "4b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0v",
+    "confirmations": 6
+  }'
+
+# Response (201 Created)
+{
+  "accountBalanceId": 1000004,
+  "accountId": 100002,
+  "accountSpaceId": null,
+  "balanceType": "STAKED",
+  "balanceAmount": 0.1000,
+  "asOfDatetime": "2024-01-15T12:00:00.000000",
+  "assetSymbol": "BTC",
+  "assetDecimals": "8",
+  "transactionHash": "4b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0v",
+  "confirmations": 6,
+  "dateCreated": "15/01/2024T12:00:00.000000",
+  "dateUpdated": "15/01/2024T12:00:00.000000"
+}
+```
 
 #### 1. Account Creation and Management Flow
 
@@ -946,6 +1178,14 @@ core-banking-accounts-models/src/main/resources/db/migration
 ```
 
 To add a new migration, create a new SQL file with the naming convention `V{number}__{description}.sql`.
+
+Recent migrations related to crypto support include:
+
+- `V6__add_crypto_account_types.sql`: Adds crypto-specific account types to the account_type_enum
+- `V7__add_crypto_account_columns.sql`: Adds crypto-specific columns to the account table
+- `V8__add_crypto_balance_types.sql`: Adds crypto-specific balance types to the balance_type_enum
+- `V9__add_crypto_balance_columns.sql`: Adds crypto-specific columns to the account_balance table
+- `V10__create_asset_price_table.sql`: Creates the asset_price table for tracking crypto asset prices
 
 ## Contributing
 
