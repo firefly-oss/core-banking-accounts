@@ -1,0 +1,11 @@
+package com.firefly.core.banking.accounts.core.mappers.core.v1;
+
+import com.firefly.core.banking.accounts.interfaces.dtos.core.v1.AccountBalanceDTO;
+import com.firefly.core.banking.accounts.models.entities.core.v1.AccountBalance;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface AccountBalanceMapper {
+    AccountBalanceDTO toDTO (AccountBalance accountBalance);
+    AccountBalance toEntity (AccountBalanceDTO accountBalanceDTO);
+}
