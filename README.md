@@ -127,8 +127,8 @@ erDiagram
     AssetPrice ||--o{ Account : "prices"
 
     Account {
-        Long accountId PK
-        Long contractId FK "Links to contract management system"
+        UUID accountId PK
+        UUID contractId FK "Links to contract management system"
         String accountNumber
         AccountTypeEnum accountType "CHECKING, SAVINGS, CRYPTO_WALLET, etc."
         AccountSubTypeEnum accountSubType
@@ -136,7 +136,7 @@ erDiagram
         LocalDate openDate
         LocalDate closeDate
         AccountStatusEnum accountStatus
-        Long branchId
+        UUID branchId
         String description
         TaxReportingStatusEnum taxReportingStatus
         RegulatoryStatusEnum regulatoryStatus
@@ -155,9 +155,9 @@ erDiagram
     }
 
     AccountBalance {
-        Long accountBalanceId PK
-        Long accountId FK
-        Long accountSpaceId FK
+        UUID accountBalanceId PK
+        UUID accountId FK
+        UUID accountSpaceId FK
         BalanceTypeEnum balanceType "CURRENT, AVAILABLE, STAKED, etc."
         BigDecimal balanceAmount
         LocalDateTime asOfDatetime
@@ -170,7 +170,7 @@ erDiagram
     }
     
     AssetPrice {
-        Long assetPriceId PK
+        UUID assetPriceId PK
         String assetSymbol "BTC, ETH, USDC, etc."
         String quoteCurrency "USD, EUR, etc."
         BigDecimal price
@@ -181,8 +181,8 @@ erDiagram
     }
 
     AccountParameter {
-        Long accountParameterId PK
-        Long accountId FK
+        UUID accountParameterId PK
+        UUID accountId FK
         ParamTypeEnum paramType
         BigDecimal paramValue
         String paramUnit
@@ -194,19 +194,19 @@ erDiagram
     }
 
     AccountProvider {
-        Long accountProviderId PK
-        Long accountId FK
+        UUID accountProviderId PK
+        UUID accountId FK
         String providerName
         String externalReference
         ProviderStatusEnum status
-        Long accountSpaceId FK
+        UUID accountSpaceId FK
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
 
     AccountStatusHistory {
-        Long accountStatusHistoryId PK
-        Long accountId FK
+        UUID accountStatusHistoryId PK
+        UUID accountId FK
         StatusCodeEnum statusCode
         LocalDateTime statusStartDatetime
         LocalDateTime statusEndDatetime
@@ -216,8 +216,8 @@ erDiagram
     }
 
     AccountSpace {
-        Long accountSpaceId PK
-        Long accountId FK
+        UUID accountSpaceId PK
+        UUID accountId FK
         String spaceName
         AccountSpaceTypeEnum spaceType
         BigDecimal balance
@@ -230,7 +230,7 @@ erDiagram
         Boolean enableAutomaticTransfers
         TransferFrequencyEnum transferFrequency
         BigDecimal transferAmount
-        Long sourceSpaceId FK
+        UUID sourceSpaceId FK
         Boolean isFrozen
         LocalDateTime frozenDateTime
         LocalDateTime unfrozenDateTime
@@ -241,8 +241,8 @@ erDiagram
     }
 
     AccountRestriction {
-        Long accountRestrictionId PK
-        Long accountId FK
+        UUID accountRestrictionId PK
+        UUID accountId FK
         RestrictionTypeEnum restrictionType
         LocalDateTime startDateTime
         LocalDateTime endDateTime
@@ -259,8 +259,8 @@ erDiagram
 
 
     SpaceTransaction {
-        Long spaceTransactionId PK
-        Long accountSpaceId FK
+        UUID spaceTransactionId PK
+        UUID accountSpaceId FK
         BigDecimal amount
         BigDecimal balanceAfterTransaction
         LocalDateTime transactionDateTime
@@ -272,8 +272,8 @@ erDiagram
     }
 
     AccountNotification {
-        Long accountNotificationId PK
-        Long accountId FK
+        UUID accountNotificationId PK
+        UUID accountId FK
         NotificationTypeEnum notificationType
         String title
         String message
@@ -460,13 +460,13 @@ This flow demonstrates how to create and manage a crypto wallet account.
 curl -X POST http://localhost:8080/api/v1/accounts \
   -H "Content-Type: application/json" \
   -d '{
-    "contractId": 500124,
+    "contractId": "550e8400-e29b-41d4-a716-446655440030",
     "accountNumber": "2024-00002-001",
     "accountType": "CRYPTO_WALLET",
     "currency": "USD",
     "openDate": "2024-01-15",
     "accountStatus": "OPEN",
-    "branchId": 1001,
+    "branchId": "550e8400-e29b-41d4-a716-446655440031",
     "description": "Bitcoin wallet account",
     "walletAddress": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
     "blockchainNetwork": "Bitcoin",
@@ -475,15 +475,15 @@ curl -X POST http://localhost:8080/api/v1/accounts \
 
 # Response (201 Created)
 {
-  "accountId": 100002,
-  "contractId": 500124,
+  "accountId": "550e8400-e29b-41d4-a716-446655440032",
+  "contractId": "550e8400-e29b-41d4-a716-446655440030",
   "accountNumber": "2024-00002-001",
   "accountType": "CRYPTO_WALLET",
   "currency": "USD",
   "openDate": "2024-01-15",
   "closeDate": null,
   "accountStatus": "OPEN",
-  "branchId": 1001,
+  "branchId": "550e8400-e29b-41d4-a716-446655440031",
   "description": "Bitcoin wallet account",
   "walletAddress": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
   "blockchainNetwork": "Bitcoin",
@@ -499,7 +499,7 @@ curl -X POST http://localhost:8080/api/v1/accounts \
 
 ```bash
 # Request
-curl -X POST http://localhost:8080/api/v1/accounts/100002/balances \
+curl -X POST http://localhost:8080/api/v1/accounts/550e8400-e29b-41d4-a716-446655440032/balances \
   -H "Content-Type: application/json" \
   -d '{
     "balanceType": "CURRENT",
@@ -513,8 +513,8 @@ curl -X POST http://localhost:8080/api/v1/accounts/100002/balances \
 
 # Response (201 Created)
 {
-  "accountBalanceId": 1000003,
-  "accountId": 100002,
+  "accountBalanceId": "550e8400-e29b-41d4-a716-446655440033",
+  "accountId": "550e8400-e29b-41d4-a716-446655440032",
   "accountSpaceId": null,
   "balanceType": "CURRENT",
   "balanceAmount": 0.2500,
@@ -544,7 +544,7 @@ curl -X POST http://localhost:8080/api/v1/asset-prices \
 
 # Response (201 Created)
 {
-  "assetPriceId": 1000001,
+  "assetPriceId": "550e8400-e29b-41d4-a716-446655440034",
   "assetSymbol": "BTC",
   "quoteCurrency": "USD",
   "price": 45000.00,
@@ -563,7 +563,7 @@ curl -X GET http://localhost:8080/api/v1/asset-prices/asset/BTC/currency/USD/lat
 
 # Response (200 OK)
 {
-  "assetPriceId": 1000001,
+  "assetPriceId": "550e8400-e29b-41d4-a716-446655440034",
   "assetSymbol": "BTC",
   "quoteCurrency": "USD",
   "price": 45000.00,
@@ -578,7 +578,7 @@ curl -X GET http://localhost:8080/api/v1/asset-prices/asset/BTC/currency/USD/lat
 
 ```bash
 # Request
-curl -X POST http://localhost:8080/api/v1/accounts/100002/balances \
+curl -X POST http://localhost:8080/api/v1/accounts/550e8400-e29b-41d4-a716-446655440032/balances \
   -H "Content-Type: application/json" \
   -d '{
     "balanceType": "STAKED",
@@ -592,8 +592,8 @@ curl -X POST http://localhost:8080/api/v1/accounts/100002/balances \
 
 # Response (201 Created)
 {
-  "accountBalanceId": 1000004,
-  "accountId": 100002,
+  "accountBalanceId": "550e8400-e29b-41d4-a716-446655440035",
+  "accountId": "550e8400-e29b-41d4-a716-446655440032",
   "accountSpaceId": null,
   "balanceType": "STAKED",
   "balanceAmount": 0.1000,
@@ -618,27 +618,27 @@ This flow demonstrates how to create and manage a bank account.
 curl -X POST http://localhost:8080/api/v1/accounts \
   -H "Content-Type: application/json" \
   -d '{
-    "contractId": 500123,
+    "contractId": "550e8400-e29b-41d4-a716-446655440036",
     "accountNumber": "2024-00001-001",
     "accountType": "CHECKING",
     "currency": "EUR",
     "openDate": "2024-01-15",
     "accountStatus": "OPEN",
-    "branchId": 1001,
+    "branchId": "550e8400-e29b-41d4-a716-446655440037",
     "description": "Primary checking account"
   }'
 
 # Response (201 Created)
 {
-  "accountId": 100001,
-  "contractId": 500123,
+  "accountId": "550e8400-e29b-41d4-a716-446655440038",
+  "contractId": "550e8400-e29b-41d4-a716-446655440036",
   "accountNumber": "2024-00001-001",
   "accountType": "CHECKING",
   "currency": "EUR",
   "openDate": "2024-01-15",
   "closeDate": null,
   "accountStatus": "OPEN",
-  "branchId": 1001,
+  "branchId": "550e8400-e29b-41d4-a716-446655440037",
   "description": "Primary checking account",
   "dateCreated": "15/01/2024T10:30:00.000000",
   "dateUpdated": "15/01/2024T10:30:00.000000"
@@ -649,19 +649,19 @@ curl -X POST http://localhost:8080/api/v1/accounts \
 
 ```bash
 # Request
-curl -X GET http://localhost:8080/api/v1/accounts/100001
+curl -X GET http://localhost:8080/api/v1/accounts/550e8400-e29b-41d4-a716-446655440038
 
 # Response (200 OK)
 {
-  "accountId": 100001,
-  "contractId": 500123,
+  "accountId": "550e8400-e29b-41d4-a716-446655440038",
+  "contractId": "550e8400-e29b-41d4-a716-446655440036",
   "accountNumber": "2024-00001-001",
   "accountType": "CHECKING",
   "currency": "EUR",
   "openDate": "2024-01-15",
   "closeDate": null,
   "accountStatus": "OPEN",
-  "branchId": 1001,
+  "branchId": "550e8400-e29b-41d4-a716-446655440037",
   "description": "Primary checking account",
   "dateCreated": "15/01/2024T10:30:00.000000",
   "dateUpdated": "15/01/2024T10:30:00.000000"
@@ -672,30 +672,30 @@ curl -X GET http://localhost:8080/api/v1/accounts/100001
 
 ```bash
 # Request
-curl -X PUT http://localhost:8080/api/v1/accounts/100001 \
+curl -X PUT http://localhost:8080/api/v1/accounts/550e8400-e29b-41d4-a716-446655440038 \
   -H "Content-Type: application/json" \
   -d '{
-    "contractId": 500123,
+    "contractId": "550e8400-e29b-41d4-a716-446655440036",
     "accountNumber": "2024-00001-001",
     "accountType": "CHECKING",
     "currency": "EUR",
     "openDate": "2024-01-15",
     "accountStatus": "OPEN",
-    "branchId": 1001,
+    "branchId": "550e8400-e29b-41d4-a716-446655440037",
     "description": "Primary checking account - VIP Customer"
   }'
 
 # Response (200 OK)
 {
-  "accountId": 100001,
-  "contractId": 500123,
+  "accountId": "550e8400-e29b-41d4-a716-446655440038",
+  "contractId": "550e8400-e29b-41d4-a716-446655440036",
   "accountNumber": "2024-00001-001",
   "accountType": "CHECKING",
   "currency": "EUR",
   "openDate": "2024-01-15",
   "closeDate": null,
   "accountStatus": "OPEN",
-  "branchId": 1001,
+  "branchId": "550e8400-e29b-41d4-a716-446655440037",
   "description": "Primary checking account - VIP Customer",
   "dateCreated": "15/01/2024T10:30:00.000000",
   "dateUpdated": "15/01/2024T10:45:00.000000"
@@ -713,7 +713,7 @@ This flow demonstrates how to create and manage spaces within an account, includ
 curl -X POST http://localhost:8080/api/v1/account-spaces \
   -H "Content-Type: application/json" \
   -d '{
-    "accountId": 100001,
+    "accountId": "550e8400-e29b-41d4-a716-446655440038",
     "spaceName": "Main Account",
     "spaceType": "MAIN",
     "balance": 1000.00,
@@ -723,8 +723,8 @@ curl -X POST http://localhost:8080/api/v1/account-spaces \
 
 # Response (201 Created)
 {
-  "accountSpaceId": 1000001,
-  "accountId": 100001,
+  "accountSpaceId": "550e8400-e29b-41d4-a716-446655440039",
+  "accountId": "550e8400-e29b-41d4-a716-446655440038",
   "spaceName": "Main Account",
   "spaceType": "MAIN",
   "balance": 1000.0000,
@@ -750,7 +750,7 @@ curl -X POST http://localhost:8080/api/v1/account-spaces \
 curl -X POST http://localhost:8080/api/v1/account-spaces \
   -H "Content-Type: application/json" \
   -d '{
-    "accountId": 100001,
+    "accountId": "550e8400-e29b-41d4-a716-446655440038",
     "spaceName": "Vacation Fund",
     "spaceType": "VACATION",
     "balance": 0.00,
@@ -764,8 +764,8 @@ curl -X POST http://localhost:8080/api/v1/account-spaces \
 
 # Response (201 Created)
 {
-  "accountSpaceId": 1000002,
-  "accountId": 100001,
+  "accountSpaceId": "550e8400-e29b-41d4-a716-446655440040",
+  "accountId": "550e8400-e29b-41d4-a716-446655440038",
   "spaceName": "Vacation Fund",
   "spaceType": "VACATION",
   "balance": 0.0000,
@@ -788,7 +788,7 @@ curl -X POST http://localhost:8080/api/v1/account-spaces \
 
 ```bash
 # Request
-curl -X POST "http://localhost:8080/api/v1/account-spaces/transfer?fromAccountSpaceId=1000001&toAccountSpaceId=1000002&amount=200.00"
+curl -X POST "http://localhost:8080/api/v1/account-spaces/transfer?fromAccountSpaceId=550e8400-e29b-41d4-a716-446655440039&toAccountSpaceId=550e8400-e29b-41d4-a716-446655440040&amount=200.00"
 
 # Response (200 OK)
 true
@@ -798,12 +798,12 @@ true
 
 ```bash
 # Request
-curl -X POST "http://localhost:8080/api/v1/account-spaces/1000002/automatic-transfers?enabled=true&frequency=MONTHLY&amount=100.00&sourceSpaceId=1000001"
+curl -X POST "http://localhost:8080/api/v1/account-spaces/550e8400-e29b-41d4-a716-446655440040/automatic-transfers?enabled=true&frequency=MONTHLY&amount=100.00&sourceSpaceId=550e8400-e29b-41d4-a716-446655440039"
 
 # Response (200 OK)
 {
-  "accountSpaceId": 1000002,
-  "accountId": 100001,
+  "accountSpaceId": "550e8400-e29b-41d4-a716-446655440040",
+  "accountId": "550e8400-e29b-41d4-a716-446655440038",
   "spaceName": "Vacation Fund",
   "spaceType": "VACATION",
   "balance": 200.0000,
@@ -816,7 +816,7 @@ curl -X POST "http://localhost:8080/api/v1/account-spaces/1000002/automatic-tran
   "enableAutomaticTransfers": true,
   "transferFrequency": "MONTHLY",
   "transferAmount": 100.0000,
-  "sourceSpaceId": 1000001,
+  "sourceSpaceId": "550e8400-e29b-41d4-a716-446655440039",
   "dateCreated": "15/01/2024T11:15:00.000000",
   "dateUpdated": "15/01/2024T11:30:00.000000"
 }
@@ -826,12 +826,12 @@ curl -X POST "http://localhost:8080/api/v1/account-spaces/1000002/automatic-tran
 
 ```bash
 # Request
-curl -X POST "http://localhost:8080/api/v1/account-spaces/1000002/transactions?amount=50.00&description=Monthly%20deposit&referenceId=TXN-123456"
+curl -X POST "http://localhost:8080/api/v1/account-spaces/550e8400-e29b-41d4-a716-446655440040/transactions?amount=50.00&description=Monthly%20deposit&referenceId=TXN-123456"
 
 # Response (201 Created)
 {
-  "spaceTransactionId": 1000001,
-  "accountSpaceId": 1000002,
+  "spaceTransactionId": "550e8400-e29b-41d4-a716-446655440041",
+  "accountSpaceId": "550e8400-e29b-41d4-a716-446655440040",
   "amount": 50.0000,
   "balanceAfterTransaction": 250.0000,
   "transactionDateTime": "2024-01-15T12:00:00.000000",
@@ -839,7 +839,7 @@ curl -X POST "http://localhost:8080/api/v1/account-spaces/1000002/transactions?a
   "referenceId": "TXN-123456",
   "transactionType": "DEPOSIT",
   "spaceName": "Vacation Fund",
-  "accountId": 100001,
+  "accountId": "550e8400-e29b-41d4-a716-446655440038",
   "dateCreated": "15/01/2024T12:00:00.000000",
   "dateUpdated": "15/01/2024T12:00:00.000000"
 }
@@ -849,14 +849,14 @@ curl -X POST "http://localhost:8080/api/v1/account-spaces/1000002/transactions?a
 
 ```bash
 # Request
-curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions?page=0&size=10"
+curl -X GET "http://localhost:8080/api/v1/account-spaces/550e8400-e29b-41d4-a716-446655440040/transactions?page=0&size=10"
 
 # Response (200 OK)
 {
   "content": [
     {
-      "spaceTransactionId": 1000001,
-      "accountSpaceId": 1000002,
+      "spaceTransactionId": "550e8400-e29b-41d4-a716-446655440041",
+      "accountSpaceId": "550e8400-e29b-41d4-a716-446655440040",
       "amount": 50.0000,
       "balanceAfterTransaction": 250.0000,
       "transactionDateTime": "2024-01-15T12:00:00.000000",
@@ -864,7 +864,7 @@ curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions?pa
       "referenceId": "TXN-123456",
       "transactionType": "DEPOSIT",
       "spaceName": "Vacation Fund",
-      "accountId": 100001,
+      "accountId": "550e8400-e29b-41d4-a716-446655440038",
       "dateCreated": "15/01/2024T12:00:00.000000",
       "dateUpdated": "15/01/2024T12:00:00.000000"
     }
@@ -880,14 +880,14 @@ curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions?pa
 
 ```bash
 # Request
-curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions/filter/date?startDate=2024-01-01T00:00:00&endDate=2024-01-31T23:59:59&page=0&size=10"
+curl -X GET "http://localhost:8080/api/v1/account-spaces/550e8400-e29b-41d4-a716-446655440040/transactions/filter/date?startDate=2024-01-01T00:00:00&endDate=2024-01-31T23:59:59&page=0&size=10"
 
 # Response (200 OK)
 {
   "content": [
     {
-      "spaceTransactionId": 1000001,
-      "accountSpaceId": 1000002,
+      "spaceTransactionId": "550e8400-e29b-41d4-a716-446655440041",
+      "accountSpaceId": "550e8400-e29b-41d4-a716-446655440040",
       "amount": 50.0000,
       "balanceAfterTransaction": 250.0000,
       "transactionDateTime": "2024-01-15T12:00:00.000000",
@@ -895,7 +895,7 @@ curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions/fi
       "referenceId": "TXN-123456",
       "transactionType": "DEPOSIT",
       "spaceName": "Vacation Fund",
-      "accountId": 100001,
+      "accountId": "550e8400-e29b-41d4-a716-446655440038",
       "dateCreated": "15/01/2024T12:00:00.000000",
       "dateUpdated": "15/01/2024T12:00:00.000000"
     }
@@ -911,19 +911,19 @@ curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions/fi
 
 ```bash
 # Request - Calculate total deposits
-curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions/analytics/deposits?startDate=2024-01-01T00:00:00&endDate=2024-01-31T23:59:59"
+curl -X GET "http://localhost:8080/api/v1/account-spaces/550e8400-e29b-41d4-a716-446655440040/transactions/analytics/deposits?startDate=2024-01-01T00:00:00&endDate=2024-01-31T23:59:59"
 
 # Response (200 OK)
 250.00
 
 # Request - Calculate total withdrawals
-curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions/analytics/withdrawals?startDate=2024-01-01T00:00:00&endDate=2024-01-31T23:59:59"
+curl -X GET "http://localhost:8080/api/v1/account-spaces/550e8400-e29b-41d4-a716-446655440040/transactions/analytics/withdrawals?startDate=2024-01-01T00:00:00&endDate=2024-01-31T23:59:59"
 
 # Response (200 OK)
 0.00
 
 # Request - Get historical balance
-curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions/history/balance?dateTime=2024-01-10T00:00:00"
+curl -X GET "http://localhost:8080/api/v1/account-spaces/550e8400-e29b-41d4-a716-446655440040/transactions/history/balance?dateTime=2024-01-10T00:00:00"
 
 # Response (200 OK)
 200.00
@@ -933,12 +933,12 @@ curl -X GET "http://localhost:8080/api/v1/account-spaces/1000002/transactions/hi
 
 ```bash
 # Request
-curl -X GET http://localhost:8080/api/v1/account-spaces/1000002/goal-progress
+curl -X GET http://localhost:8080/api/v1/account-spaces/550e8400-e29b-41d4-a716-446655440040/goal-progress
 
 # Response (200 OK)
 {
-  "accountSpaceId": 1000002,
-  "accountId": 100001,
+  "accountSpaceId": "550e8400-e29b-41d4-a716-446655440040",
+  "accountId": "550e8400-e29b-41d4-a716-446655440038",
   "spaceName": "Vacation Fund",
   "spaceType": "VACATION",
   "balance": 250.0000,
@@ -951,7 +951,7 @@ curl -X GET http://localhost:8080/api/v1/account-spaces/1000002/goal-progress
   "enableAutomaticTransfers": true,
   "transferFrequency": "MONTHLY",
   "transferAmount": 100.0000,
-  "sourceSpaceId": 1000001,
+  "sourceSpaceId": "550e8400-e29b-41d4-a716-446655440039",
   "dateCreated": "15/01/2024T11:15:00.000000",
   "dateUpdated": "15/01/2024T11:30:00.000000",
   "progressPercentage": 12.5,
@@ -969,7 +969,7 @@ This flow demonstrates how to manage account balances.
 
 ```bash
 # Request
-curl -X POST http://localhost:8080/api/v1/accounts/100001/balances \
+curl -X POST http://localhost:8080/api/v1/accounts/550e8400-e29b-41d4-a716-446655440038/balances \
   -H "Content-Type: application/json" \
   -d '{
     "balanceType": "CURRENT",
@@ -979,8 +979,8 @@ curl -X POST http://localhost:8080/api/v1/accounts/100001/balances \
 
 # Response (201 Created)
 {
-  "accountBalanceId": 1000001,
-  "accountId": 100001,
+  "accountBalanceId": "550e8400-e29b-41d4-a716-446655440043",
+  "accountId": "550e8400-e29b-41d4-a716-446655440038",
   "accountSpaceId": null,
   "balanceType": "CURRENT",
   "balanceAmount": 1000.0000,
@@ -994,10 +994,10 @@ curl -X POST http://localhost:8080/api/v1/accounts/100001/balances \
 
 ```bash
 # Request
-curl -X POST http://localhost:8080/api/v1/accounts/100001/balances \
+curl -X POST http://localhost:8080/api/v1/accounts/550e8400-e29b-41d4-a716-446655440038/balances \
   -H "Content-Type: application/json" \
   -d '{
-    "accountSpaceId": 1000002,
+    "accountSpaceId": "550e8400-e29b-41d4-a716-446655440040",
     "balanceType": "CURRENT",
     "balanceAmount": 200.00,
     "asOfDatetime": "2024-01-15T11:30:00"
@@ -1005,9 +1005,9 @@ curl -X POST http://localhost:8080/api/v1/accounts/100001/balances \
 
 # Response (201 Created)
 {
-  "accountBalanceId": 1000002,
-  "accountId": 100001,
-  "accountSpaceId": 1000002,
+  "accountBalanceId": "550e8400-e29b-41d4-a716-446655440044",
+  "accountId": "550e8400-e29b-41d4-a716-446655440038",
+  "accountSpaceId": "550e8400-e29b-41d4-a716-446655440040",
   "balanceType": "CURRENT",
   "balanceAmount": 200.0000,
   "asOfDatetime": "2024-01-15T11:30:00.000000",
@@ -1020,14 +1020,14 @@ curl -X POST http://localhost:8080/api/v1/accounts/100001/balances \
 
 ```bash
 # Request
-curl -X GET "http://localhost:8080/api/v1/accounts/100001/balances?page=0&size=10"
+curl -X GET "http://localhost:8080/api/v1/accounts/550e8400-e29b-41d4-a716-446655440038/balances?page=0&size=10"
 
 # Response (200 OK)
 {
   "content": [
     {
-      "accountBalanceId": 1000001,
-      "accountId": 100001,
+      "accountBalanceId": "550e8400-e29b-41d4-a716-446655440043",
+      "accountId": "550e8400-e29b-41d4-a716-446655440038",
       "accountSpaceId": null,
       "balanceType": "CURRENT",
       "balanceAmount": 1000.0000,
@@ -1036,9 +1036,9 @@ curl -X GET "http://localhost:8080/api/v1/accounts/100001/balances?page=0&size=1
       "dateUpdated": "15/01/2024T11:00:00.000000"
     },
     {
-      "accountBalanceId": 1000002,
-      "accountId": 100001,
-      "accountSpaceId": 1000002,
+      "accountBalanceId": "550e8400-e29b-41d4-a716-446655440044",
+      "accountId": "550e8400-e29b-41d4-a716-446655440038",
+      "accountSpaceId": "550e8400-e29b-41d4-a716-446655440040",
       "balanceType": "CURRENT",
       "balanceAmount": 200.0000,
       "asOfDatetime": "2024-01-15T11:30:00.000000",
@@ -1064,7 +1064,7 @@ This flow demonstrates how to connect accounts to external providers.
 curl -X POST http://localhost:8080/api/v1/account-providers \
   -H "Content-Type: application/json" \
   -d '{
-    "accountId": 100001,
+    "accountId": "550e8400-e29b-41d4-a716-446655440038",
     "providerName": "ClearBank",
     "externalReference": "CB-ACC-123456",
     "status": "ACTIVE"
@@ -1072,8 +1072,8 @@ curl -X POST http://localhost:8080/api/v1/account-providers \
 
 # Response (201 Created)
 {
-  "accountProviderId": 1000001,
-  "accountId": 100001,
+  "accountProviderId": "550e8400-e29b-41d4-a716-446655440045",
+  "accountId": "550e8400-e29b-41d4-a716-446655440038",
   "providerName": "ClearBank",
   "externalReference": "CB-ACC-123456",
   "status": "ACTIVE",
@@ -1090,8 +1090,8 @@ curl -X POST http://localhost:8080/api/v1/account-providers \
 curl -X POST http://localhost:8080/api/v1/account-providers \
   -H "Content-Type: application/json" \
   -d '{
-    "accountId": 100001,
-    "accountSpaceId": 1000002,
+    "accountId": "550e8400-e29b-41d4-a716-446655440038",
+    "accountSpaceId": "550e8400-e29b-41d4-a716-446655440040",
     "providerName": "Modulr",
     "externalReference": "MOD-ACC-001",
     "status": "ACTIVE"
@@ -1099,12 +1099,12 @@ curl -X POST http://localhost:8080/api/v1/account-providers \
 
 # Response (201 Created)
 {
-  "accountProviderId": 1000002,
-  "accountId": 100001,
+  "accountProviderId": "550e8400-e29b-41d4-a716-446655440046",
+  "accountId": "550e8400-e29b-41d4-a716-446655440038",
   "providerName": "Modulr",
   "externalReference": "MOD-ACC-001",
   "status": "ACTIVE",
-  "accountSpaceId": 1000002,
+  "accountSpaceId": "550e8400-e29b-41d4-a716-446655440040",
   "dateCreated": "15/01/2024T12:15:00.000000",
   "dateUpdated": "15/01/2024T12:15:00.000000"
 }
@@ -1114,10 +1114,10 @@ curl -X POST http://localhost:8080/api/v1/account-providers \
 
 ```bash
 # Request
-curl -X PUT http://localhost:8080/api/v1/account-providers/1000001 \
+curl -X PUT http://localhost:8080/api/v1/account-providers/550e8400-e29b-41d4-a716-446655440045 \
   -H "Content-Type: application/json" \
   -d '{
-    "accountId": 100001,
+    "accountId": "550e8400-e29b-41d4-a716-446655440038",
     "providerName": "ClearBank",
     "externalReference": "CB-ACC-123456",
     "status": "SUSPENDED"
@@ -1125,8 +1125,8 @@ curl -X PUT http://localhost:8080/api/v1/account-providers/1000001 \
 
 # Response (200 OK)
 {
-  "accountProviderId": 1000001,
-  "accountId": 100001,
+  "accountProviderId": "550e8400-e29b-41d4-a716-446655440045",
+  "accountId": "550e8400-e29b-41d4-a716-446655440038",
   "providerName": "ClearBank",
   "externalReference": "CB-ACC-123456",
   "status": "SUSPENDED",
