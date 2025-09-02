@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class AccountStatusHistoryServiceImpl implements AccountStatusHistoryServ
     private AccountStatusHistoryMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<AccountStatusHistoryDTO>> listStatusHistory(Long accountId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<AccountStatusHistoryDTO>> listStatusHistory(UUID accountId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDTO,
@@ -33,7 +34,7 @@ public class AccountStatusHistoryServiceImpl implements AccountStatusHistoryServ
     }
 
     @Override
-    public Mono<AccountStatusHistoryDTO> createStatusHistory(Long accountId, AccountStatusHistoryDTO historyDTO) {
+    public Mono<AccountStatusHistoryDTO> createStatusHistory(UUID accountId, AccountStatusHistoryDTO historyDTO) {
         historyDTO.setAccountId(accountId);
         AccountStatusHistory entity = mapper.toEntity(historyDTO);
         return repository.save(entity)
@@ -41,14 +42,14 @@ public class AccountStatusHistoryServiceImpl implements AccountStatusHistoryServ
     }
 
     @Override
-    public Mono<AccountStatusHistoryDTO> getStatusHistory(Long accountId, Long historyId) {
+    public Mono<AccountStatusHistoryDTO> getStatusHistory(UUID accountId, UUID historyId) {
         return repository.findById(historyId)
                 .filter(record -> record.getAccountId().equals(accountId))
                 .map(mapper::toDTO);
     }
 
     @Override
-    public Mono<AccountStatusHistoryDTO> updateStatusHistory(Long accountId, Long historyId, AccountStatusHistoryDTO historyDTO) {
+    public Mono<AccountStatusHistoryDTO> updateStatusHistory(UUID accountId, UUID historyId, AccountStatusHistoryDTO historyDTO) {
         return repository.findById(historyId)
                 .filter(record -> record.getAccountId().equals(accountId))
                 .flatMap(existingRecord -> {
@@ -61,7 +62,7 @@ public class AccountStatusHistoryServiceImpl implements AccountStatusHistoryServ
     }
 
     @Override
-    public Mono<Void> deleteStatusHistory(Long accountId, Long historyId) {
+    public Mono<Void> deleteStatusHistory(UUID accountId, UUID historyId) {
         return repository.findById(historyId)
                 .filter(record -> record.getAccountId().equals(accountId))
                 .flatMap(repository::delete);

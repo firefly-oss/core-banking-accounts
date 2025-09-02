@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class AccountStatusHistoryServiceImplTest {
@@ -40,8 +41,8 @@ class AccountStatusHistoryServiceImplTest {
 
     private AccountStatusHistory testAccountStatusHistory;
     private AccountStatusHistoryDTO testAccountStatusHistoryDTO;
-    private final Long TEST_ACCOUNT_ID = 1L;
-    private final Long TEST_HISTORY_ID = 100L;
+    private final UUID TEST_ACCOUNT_ID = 1L;
+    private final UUID TEST_HISTORY_ID = 100L;
 
     @BeforeEach
     void setUp() {

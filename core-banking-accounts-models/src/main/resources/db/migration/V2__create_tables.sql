@@ -7,15 +7,15 @@
 
 -- Account Table
 CREATE TABLE account (
-    account_id BIGSERIAL PRIMARY KEY,
-    contract_id BIGINT NOT NULL,
+    account_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    contract_id UUID NOT NULL,
     account_number VARCHAR(50) NOT NULL UNIQUE,
     account_type VARCHAR(50) NOT NULL,
     currency VARCHAR(3) NOT NULL,
     open_date DATE NOT NULL,
     close_date DATE,
     account_status account_status_enum NOT NULL,
-    branch_id BIGINT NOT NULL,
+    branch_id UUID NOT NULL,
     description TEXT,
     account_sub_type account_sub_type_enum,
     tax_reporting_status tax_reporting_status_enum,
@@ -32,9 +32,9 @@ CREATE TABLE account (
 
 -- Account Balance Table
 CREATE TABLE account_balance (
-    account_balance_id BIGSERIAL PRIMARY KEY,
-    account_id BIGINT NOT NULL REFERENCES account(account_id),
-    account_space_id BIGINT,
+    account_balance_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    account_id UUID NOT NULL REFERENCES account(account_id),
+    account_space_id UUID,
     balance_type balance_type_enum NOT NULL,
     balance_amount NUMERIC(19, 4) NOT NULL,
     as_of_datetime TIMESTAMP NOT NULL,
@@ -44,8 +44,8 @@ CREATE TABLE account_balance (
 
 -- Account Space Table
 CREATE TABLE account_space (
-    account_space_id BIGSERIAL PRIMARY KEY,
-    account_id BIGINT NOT NULL REFERENCES account(account_id),
+    account_space_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    account_id UUID NOT NULL REFERENCES account(account_id),
     space_name VARCHAR(100) NOT NULL,
     space_type account_space_type_enum NOT NULL,
     balance NUMERIC(19, 4) NOT NULL DEFAULT 0.0000,
@@ -58,7 +58,7 @@ CREATE TABLE account_space (
     enable_automatic_transfers BOOLEAN NOT NULL DEFAULT FALSE,
     transfer_frequency transfer_frequency_enum,
     transfer_amount NUMERIC(19, 4),
-    source_space_id BIGINT,
+    source_space_id UUID,
     is_frozen BOOLEAN NOT NULL DEFAULT FALSE,
     frozen_datetime TIMESTAMP,
     date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -68,8 +68,8 @@ CREATE TABLE account_space (
 
 -- Space Transaction Table
 CREATE TABLE space_transaction (
-    space_transaction_id BIGSERIAL PRIMARY KEY,
-    account_space_id BIGINT NOT NULL REFERENCES account_space(account_space_id),
+    space_transaction_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    account_space_id UUID NOT NULL REFERENCES account_space(account_space_id),
     amount NUMERIC(19, 4) NOT NULL,
     balance_after_transaction NUMERIC(19, 4) NOT NULL,
     transaction_datetime TIMESTAMP NOT NULL,
@@ -82,8 +82,8 @@ CREATE TABLE space_transaction (
 
 -- Account Status History Table
 CREATE TABLE account_status_history (
-    account_status_history_id BIGSERIAL PRIMARY KEY,
-    account_id BIGINT NOT NULL REFERENCES account(account_id),
+    account_status_history_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    account_id UUID NOT NULL REFERENCES account(account_id),
     status_code status_code_enum NOT NULL,
     status_start_datetime TIMESTAMP NOT NULL,
     status_end_datetime TIMESTAMP,
@@ -94,8 +94,8 @@ CREATE TABLE account_status_history (
 
 -- Account Parameter Table
 CREATE TABLE account_parameter (
-    account_parameter_id BIGSERIAL PRIMARY KEY,
-    account_id BIGINT NOT NULL REFERENCES account(account_id),
+    account_parameter_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    account_id UUID NOT NULL REFERENCES account(account_id),
     param_type param_type_enum NOT NULL,
     param_value NUMERIC(19, 4) NOT NULL,
     param_unit VARCHAR(20) NOT NULL,
@@ -108,12 +108,12 @@ CREATE TABLE account_parameter (
 
 -- Account Provider Table
 CREATE TABLE account_provider (
-    account_provider_id BIGSERIAL PRIMARY KEY,
-    account_id BIGINT NOT NULL REFERENCES account(account_id),
+    account_provider_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    account_id UUID NOT NULL REFERENCES account(account_id),
     provider_name VARCHAR(100) NOT NULL,
     external_reference VARCHAR(100) NOT NULL,
     status provider_status_enum NOT NULL,
-    account_space_id BIGINT,
+    account_space_id UUID,
     date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     date_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_account_space FOREIGN KEY (account_space_id) REFERENCES account_space(account_space_id)
@@ -121,8 +121,8 @@ CREATE TABLE account_provider (
 
 -- Account Notification Table
 CREATE TABLE account_notification (
-    account_notification_id BIGSERIAL PRIMARY KEY,
-    account_id BIGINT NOT NULL REFERENCES account(account_id),
+    account_notification_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    account_id UUID NOT NULL REFERENCES account(account_id),
     notification_type notification_type_enum NOT NULL,
     title VARCHAR(200) NOT NULL,
     message TEXT NOT NULL,

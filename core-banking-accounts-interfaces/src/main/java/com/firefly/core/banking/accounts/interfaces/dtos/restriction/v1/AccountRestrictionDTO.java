@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -20,10 +21,10 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class AccountRestrictionDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long accountRestrictionId;
+    private UUID accountRestrictionId;
 
     @FilterableId
-    private Long accountId;
+    private UUID accountId;
 
     private RestrictionTypeEnum restrictionType;
     private LocalDateTime startDateTime;

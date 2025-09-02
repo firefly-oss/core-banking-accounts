@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class AccountProviderServiceImplSpaceTest {
@@ -41,9 +42,9 @@ class AccountProviderServiceImplSpaceTest {
     private AccountProvider testAccountProvider;
     private AccountProviderDTO testAccountProviderDTO;
 
-    private final Long TEST_ACCOUNT_ID = 1000L;
-    private final Long TEST_ACCOUNT_SPACE_ID = 2000L;
-    private final Long TEST_PROVIDER_ID = 100L;
+    private final UUID TEST_ACCOUNT_ID = 1000L;
+    private final UUID TEST_ACCOUNT_SPACE_ID = 2000L;
+    private final UUID TEST_PROVIDER_ID = 100L;
 
     @BeforeEach
     void setUp() {

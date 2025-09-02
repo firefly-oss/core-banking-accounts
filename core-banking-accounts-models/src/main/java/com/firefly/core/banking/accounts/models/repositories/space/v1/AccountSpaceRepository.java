@@ -9,14 +9,15 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-public interface AccountSpaceRepository extends BaseRepository<AccountSpace, Long> {
+public interface AccountSpaceRepository extends BaseRepository<AccountSpace, UUID> {
     /**
      * Find all spaces for a specific account
      * @param accountId the account ID
      * @return a Flux of AccountSpace entities
      */
-    Flux<AccountSpace> findByAccountId(Long accountId);
+    Flux<AccountSpace> findByAccountId(UUID accountId);
 
     /**
      * Find all spaces for a specific account with pagination
@@ -24,14 +25,14 @@ public interface AccountSpaceRepository extends BaseRepository<AccountSpace, Lon
      * @param pageable pagination information
      * @return a Flux of AccountSpace entities
      */
-    Flux<AccountSpace> findByAccountId(Long accountId, Pageable pageable);
+    Flux<AccountSpace> findByAccountId(UUID accountId, Pageable pageable);
 
     /**
      * Count the number of spaces for a specific account
      * @param accountId the account ID
      * @return a Mono with the count
      */
-    Mono<Long> countByAccountId(Long accountId);
+    Mono<Long> countByAccountId(UUID accountId);
 
     /**
      * Find all spaces of a specific type for an account
@@ -39,14 +40,14 @@ public interface AccountSpaceRepository extends BaseRepository<AccountSpace, Lon
      * @param spaceType the space type
      * @return a Flux of AccountSpace entities
      */
-    Flux<AccountSpace> findByAccountIdAndSpaceType(Long accountId, AccountSpaceTypeEnum spaceType);
+    Flux<AccountSpace> findByAccountIdAndSpaceType(UUID accountId, AccountSpaceTypeEnum spaceType);
 
     /**
      * Find all spaces with goals (target amount is not null)
      * @param accountId the account ID
      * @return a Flux of AccountSpace entities
      */
-    Flux<AccountSpace> findByAccountIdAndTargetAmountIsNotNull(Long accountId);
+    Flux<AccountSpace> findByAccountIdAndTargetAmountIsNotNull(UUID accountId);
 
     /**
      * Find all spaces with upcoming target dates
@@ -54,7 +55,7 @@ public interface AccountSpaceRepository extends BaseRepository<AccountSpace, Lon
      * @param currentDate the current date
      * @return a Flux of AccountSpace entities with target dates after the current date
      */
-    Flux<AccountSpace> findByAccountIdAndTargetDateGreaterThanEqual(Long accountId, LocalDateTime currentDate);
+    Flux<AccountSpace> findByAccountIdAndTargetDateGreaterThanEqual(UUID accountId, LocalDateTime currentDate);
 
     /**
      * Find all spaces with target dates that have passed
@@ -62,7 +63,7 @@ public interface AccountSpaceRepository extends BaseRepository<AccountSpace, Lon
      * @param currentDate the current date
      * @return a Flux of AccountSpace entities with target dates before the current date
      */
-    Flux<AccountSpace> findByAccountIdAndTargetDateLessThan(Long accountId, LocalDateTime currentDate);
+    Flux<AccountSpace> findByAccountIdAndTargetDateLessThan(UUID accountId, LocalDateTime currentDate);
 
     /**
      * Calculate the total balance across all spaces for an account
@@ -70,28 +71,28 @@ public interface AccountSpaceRepository extends BaseRepository<AccountSpace, Lon
      * @return a Mono with the total balance
      */
     @Query("SELECT SUM(balance) FROM account_space WHERE account_id = :accountId")
-    Mono<java.math.BigDecimal> calculateTotalBalance(Long accountId);
+    Mono<java.math.BigDecimal> calculateTotalBalance(UUID accountId);
 
     /**
      * Find all frozen spaces for an account
      * @param accountId the account ID
      * @return a Flux of AccountSpace entities that are frozen
      */
-    Flux<AccountSpace> findByAccountIdAndIsFrozenTrue(Long accountId);
+    Flux<AccountSpace> findByAccountIdAndIsFrozenTrue(UUID accountId);
 
     /**
      * Find all unfrozen spaces for an account
      * @param accountId the account ID
      * @return a Flux of AccountSpace entities that are not frozen
      */
-    Flux<AccountSpace> findByAccountIdAndIsFrozenFalse(Long accountId);
+    Flux<AccountSpace> findByAccountIdAndIsFrozenFalse(UUID accountId);
 
     /**
      * Count the number of frozen spaces for an account
      * @param accountId the account ID
      * @return a Mono with the count of frozen spaces
      */
-    Mono<Long> countByAccountIdAndIsFrozenTrue(Long accountId);
+    Mono<Long> countByAccountIdAndIsFrozenTrue(UUID accountId);
 
     /**
      * Find spaces that were frozen after a specific date
@@ -99,5 +100,5 @@ public interface AccountSpaceRepository extends BaseRepository<AccountSpace, Lon
      * @param dateTime the date/time threshold
      * @return a Flux of AccountSpace entities frozen after the specified date/time
      */
-    Flux<AccountSpace> findByAccountIdAndFrozenDateTimeGreaterThanEqual(Long accountId, LocalDateTime dateTime);
+    Flux<AccountSpace> findByAccountIdAndFrozenDateTimeGreaterThanEqual(UUID accountId, LocalDateTime dateTime);
 }

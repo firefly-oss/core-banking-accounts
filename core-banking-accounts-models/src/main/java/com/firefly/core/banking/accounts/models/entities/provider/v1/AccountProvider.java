@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
+import java.util.UUID;
 
 /**
  * Manages the relationship between accounts and external Banking-as-a-Service (BaaS) providers.
@@ -29,13 +30,13 @@ public class AccountProvider extends BaseEntity {
      * Example: 1000001
      */
     @Id
-    private Long accountProviderId;
+    private UUID accountProviderId;
 
     /**
      * Reference to the associated account
      * Example: 100001 (links to Account.accountId)
      */
-    private Long accountId;
+    private UUID accountId;
 
     /**
      * Name of the BaaS provider
@@ -70,5 +71,5 @@ public class AccountProvider extends BaseEntity {
      * If null, the provider is associated with the entire account
      * Example: 1000001 (links to AccountSpace.accountSpaceId)
      */
-    private Long accountSpaceId;
+    private UUID accountSpaceId;
 }

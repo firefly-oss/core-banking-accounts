@@ -11,6 +11,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Represents the balance information for an account.
@@ -36,20 +37,20 @@ public class AccountBalance extends BaseEntity {
      * Example: 1000001
      */
     @Id
-    private Long accountBalanceId;
+    private UUID accountBalanceId;
 
     /**
      * Reference to the associated account
      * Example: 100001 (links to Account.accountId)
      */
-    private Long accountId;
+    private UUID accountId;
 
     /**
      * Optional reference to the associated account space
      * If null, this balance is for the global account (not a specific space)
      * Example: 100001 (links to AccountSpace.accountSpaceId)
      */
-    private Long accountSpaceId;
+    private UUID accountSpaceId;
 
     /**
      * Type of balance being recorded

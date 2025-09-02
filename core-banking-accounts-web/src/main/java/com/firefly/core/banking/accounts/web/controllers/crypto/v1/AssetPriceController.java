@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Tag(name = "Asset Prices", description = "APIs for managing crypto asset prices")
 @RestController
@@ -64,7 +65,7 @@ public class AssetPriceController {
     @GetMapping(value = "/{assetPriceId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AssetPriceDTO>> getAssetPrice(
             @Parameter(description = "Unique identifier of the asset price", required = true)
-            @PathVariable Long assetPriceId
+            @PathVariable UUID assetPriceId
     ) {
         return service.getAssetPrice(assetPriceId)
                 .map(ResponseEntity::ok)
@@ -107,7 +108,7 @@ public class AssetPriceController {
     @PutMapping(value = "/{assetPriceId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AssetPriceDTO>> updateAssetPrice(
             @Parameter(description = "Unique identifier of the asset price to update", required = true)
-            @PathVariable Long assetPriceId,
+            @PathVariable UUID assetPriceId,
 
             @Parameter(description = "Updated data for the asset price record", required = true,
                     schema = @Schema(implementation = AssetPriceDTO.class))
@@ -131,7 +132,7 @@ public class AssetPriceController {
     @DeleteMapping(value = "/{assetPriceId}")
     public Mono<ResponseEntity<Void>> deleteAssetPrice(
             @Parameter(description = "Unique identifier of the asset price to delete", required = true)
-            @PathVariable Long assetPriceId
+            @PathVariable UUID assetPriceId
     ) {
         return service.deleteAssetPrice(assetPriceId)
                 .then(Mono.just(ResponseEntity.noContent().<Void>build()));

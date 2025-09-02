@@ -11,6 +11,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Represents a restriction or hold placed on an account.
@@ -34,13 +35,13 @@ public class AccountRestriction extends BaseEntity {
      * Example: 1000001
      */
     @Id
-    private Long accountRestrictionId;
+    private UUID accountRestrictionId;
 
     /**
      * Reference to the associated account
      * Example: 100001 (links to Account.accountId)
      */
-    private Long accountId;
+    private UUID accountId;
 
     /**
      * Type of restriction being applied

@@ -39,8 +39,8 @@ CREATE TYPE restriction_type_enum AS ENUM (
 
 -- Account Restriction Table
 CREATE TABLE account_restriction (
-    account_restriction_id BIGSERIAL PRIMARY KEY,
-    account_id BIGINT NOT NULL REFERENCES account(account_id),
+    account_restriction_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    account_id UUID NOT NULL REFERENCES account(account_id),
     restriction_type restriction_type_enum NOT NULL,
     start_date_time TIMESTAMP NOT NULL,
     end_date_time TIMESTAMP,

@@ -18,6 +18,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -26,10 +27,10 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 public class AccountDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long accountId;
+    private UUID accountId;
 
     @FilterableId
-    private Long contractId;
+    private UUID contractId;
 
     private String accountNumber;
     private AccountTypeEnum accountType;
@@ -39,7 +40,7 @@ public class AccountDTO extends BaseDTO {
     private AccountStatusEnum accountStatus;
 
     @FilterableId
-    private Long branchId;
+    private UUID branchId;
 
     private String description;
 

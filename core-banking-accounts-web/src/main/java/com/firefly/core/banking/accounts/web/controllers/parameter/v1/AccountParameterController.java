@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Account Parameters", description = "APIs for managing parameter records associated with a specific account")
 @RestController
@@ -40,7 +41,7 @@ public class AccountParameterController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<AccountParameterDTO>>> getAllParameters(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -64,7 +65,7 @@ public class AccountParameterController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountParameterDTO>> createParameter(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Data for the new account parameter", required = true,
                     schema = @Schema(implementation = AccountParameterDTO.class))
@@ -89,10 +90,10 @@ public class AccountParameterController {
     @GetMapping(value = "/{paramId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountParameterDTO>> getParameter(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the parameter record", required = true)
-            @PathVariable Long paramId
+            @PathVariable UUID paramId
     ) {
         return service.getParameter(accountId, paramId)
                 .map(ResponseEntity::ok)
@@ -113,10 +114,10 @@ public class AccountParameterController {
     @PutMapping(value = "/{paramId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountParameterDTO>> updateParameter(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the parameter record to update", required = true)
-            @PathVariable Long paramId,
+            @PathVariable UUID paramId,
 
             @Parameter(description = "Updated parameter data", required = true,
                     schema = @Schema(implementation = AccountParameterDTO.class))
@@ -140,10 +141,10 @@ public class AccountParameterController {
     @DeleteMapping(value = "/{paramId}")
     public Mono<ResponseEntity<Void>> deleteParameter(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the parameter record to delete", required = true)
-            @PathVariable Long paramId
+            @PathVariable UUID paramId
     ) {
         return service.deleteParameter(accountId, paramId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

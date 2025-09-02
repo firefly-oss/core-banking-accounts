@@ -9,13 +9,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Repository for managing AssetPrice entities.
  * Provides methods for CRUD operations and custom queries for asset prices.
  */
 @Repository
-public interface AssetPriceRepository extends ReactiveCrudRepository<AssetPrice, Long> {
+public interface AssetPriceRepository extends ReactiveCrudRepository<AssetPrice, UUID> {
 
     /**
      * Find all asset prices with pagination.

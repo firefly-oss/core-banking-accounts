@@ -5,6 +5,7 @@ import com.firefly.common.core.queries.PaginationResponse;
 import com.firefly.core.banking.accounts.interfaces.dtos.restriction.v1.AccountRestrictionDTO;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 public interface AccountRestrictionService {
     
@@ -20,7 +21,7 @@ public interface AccountRestrictionService {
      * @param accountRestrictionId The account restriction ID
      * @return Mono of AccountRestrictionDTO
      */
-    Mono<AccountRestrictionDTO> getAccountRestriction(Long accountRestrictionId);
+    Mono<AccountRestrictionDTO> getAccountRestriction(UUID accountRestrictionId);
     
     /**
      * Update an account restriction
@@ -28,28 +29,28 @@ public interface AccountRestrictionService {
      * @param accountRestrictionDTO The account restriction DTO
      * @return Mono of AccountRestrictionDTO
      */
-    Mono<AccountRestrictionDTO> updateAccountRestriction(Long accountRestrictionId, AccountRestrictionDTO accountRestrictionDTO);
+    Mono<AccountRestrictionDTO> updateAccountRestriction(UUID accountRestrictionId, AccountRestrictionDTO accountRestrictionDTO);
     
     /**
      * Delete an account restriction
      * @param accountRestrictionId The account restriction ID
      * @return Mono of Void
      */
-    Mono<Void> deleteAccountRestriction(Long accountRestrictionId);
+    Mono<Void> deleteAccountRestriction(UUID accountRestrictionId);
     
     /**
      * Get all account restrictions for an account
      * @param accountId The account ID
      * @return Flux of AccountRestrictionDTO
      */
-    Flux<AccountRestrictionDTO> getAccountRestrictionsByAccountId(Long accountId);
+    Flux<AccountRestrictionDTO> getAccountRestrictionsByAccountId(UUID accountId);
     
     /**
      * Get all active account restrictions for an account
      * @param accountId The account ID
      * @return Flux of AccountRestrictionDTO
      */
-    Flux<AccountRestrictionDTO> getActiveAccountRestrictionsByAccountId(Long accountId);
+    Flux<AccountRestrictionDTO> getActiveAccountRestrictionsByAccountId(UUID accountId);
     
     /**
      * Remove a restriction (mark as inactive)
@@ -57,7 +58,7 @@ public interface AccountRestrictionService {
      * @param removedBy The user or system that removed the restriction
      * @return Mono of AccountRestrictionDTO
      */
-    Mono<AccountRestrictionDTO> removeRestriction(Long accountRestrictionId, String removedBy);
+    Mono<AccountRestrictionDTO> removeRestriction(UUID accountRestrictionId, String removedBy);
     
     /**
      * List account restrictions with pagination and filtering

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class AccountParameterServiceImpl implements AccountParameterService {
     private AccountParameterMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<AccountParameterDTO>> listParameters(Long accountId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<AccountParameterDTO>> listParameters(UUID accountId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDTO,
@@ -33,7 +34,7 @@ public class AccountParameterServiceImpl implements AccountParameterService {
     }
 
     @Override
-    public Mono<AccountParameterDTO> createParameter(Long accountId, AccountParameterDTO parameterDTO) {
+    public Mono<AccountParameterDTO> createParameter(UUID accountId, AccountParameterDTO parameterDTO) {
         parameterDTO.setAccountId(accountId);
         AccountParameter accountParameter = mapper.toEntity(parameterDTO);
         return repository.save(accountParameter)
@@ -41,14 +42,14 @@ public class AccountParameterServiceImpl implements AccountParameterService {
     }
 
     @Override
-    public Mono<AccountParameterDTO> getParameter(Long accountId, Long paramId) {
+    public Mono<AccountParameterDTO> getParameter(UUID accountId, UUID paramId) {
         return repository.findById(paramId)
                 .filter(param -> param.getAccountId().equals(accountId))
                 .map(mapper::toDTO);
     }
 
     @Override
-    public Mono<AccountParameterDTO> updateParameter(Long accountId, Long paramId, AccountParameterDTO parameterDTO) {
+    public Mono<AccountParameterDTO> updateParameter(UUID accountId, UUID paramId, AccountParameterDTO parameterDTO) {
         return repository.findById(paramId)
                 .filter(param -> param.getAccountId().equals(accountId))
                 .flatMap(existingParam -> {
@@ -61,7 +62,7 @@ public class AccountParameterServiceImpl implements AccountParameterService {
     }
 
     @Override
-    public Mono<Void> deleteParameter(Long accountId, Long paramId) {
+    public Mono<Void> deleteParameter(UUID accountId, UUID paramId) {
         return repository.findById(paramId)
                 .filter(param -> param.getAccountId().equals(accountId))
                 .flatMap(repository::delete);

@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class AccountRestrictionServiceImplTest {
@@ -34,8 +35,8 @@ class AccountRestrictionServiceImplTest {
 
     private AccountRestriction accountRestriction;
     private AccountRestrictionDTO accountRestrictionDTO;
-    private final Long RESTRICTION_ID = 1L;
-    private final Long ACCOUNT_ID = 100L;
+    private final UUID RESTRICTION_ID = 1L;
+    private final UUID ACCOUNT_ID = 100L;
 
     @BeforeEach
     void setUp() {

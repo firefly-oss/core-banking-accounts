@@ -24,6 +24,7 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 @Tag(name = "Account Spaces", description = "APIs for managing account spaces/buckets within bank accounts")
 @RestController
@@ -88,7 +89,7 @@ public class AccountSpaceController {
     @GetMapping(value = "/{accountSpaceId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountSpaceDTO>> getAccountSpace(
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable("accountSpaceId") Long accountSpaceId
+            @PathVariable("accountSpaceId") UUID accountSpaceId
     ) {
         return service.getAccountSpace(accountSpaceId)
                 .map(ResponseEntity::ok)
@@ -102,7 +103,7 @@ public class AccountSpaceController {
     @PutMapping(value = "/{accountSpaceId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountSpaceDTO>> updateAccountSpace(
             @Parameter(description = "Unique identifier of the account space to update", required = true)
-            @PathVariable("accountSpaceId") Long accountSpaceId,
+            @PathVariable("accountSpaceId") UUID accountSpaceId,
 
             @Parameter(description = "Updated account space data", required = true,
                     schema = @Schema(implementation = AccountSpaceDTO.class))
@@ -120,7 +121,7 @@ public class AccountSpaceController {
     @DeleteMapping(value = "/{accountSpaceId}")
     public Mono<ResponseEntity<Void>> deleteAccountSpace(
             @Parameter(description = "Unique identifier of the account space to delete", required = true)
-            @PathVariable("accountSpaceId") Long accountSpaceId
+            @PathVariable("accountSpaceId") UUID accountSpaceId
     ) {
         return service.deleteAccountSpace(accountSpaceId)
                 .then(Mono.just(ResponseEntity.noContent().<Void>build()))
@@ -142,7 +143,7 @@ public class AccountSpaceController {
     @GetMapping(value = "/by-account/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Flux<AccountSpaceDTO>>> getAccountSpacesByAccountId(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId
+            @PathVariable("accountId") UUID accountId
     ) {
         Flux<AccountSpaceDTO> spaces = service.getAccountSpacesByAccountId(accountId);
         return Mono.just(ResponseEntity.ok(spaces));
@@ -155,7 +156,7 @@ public class AccountSpaceController {
     @GetMapping(value = "/by-account/{accountId}/paginated", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<AccountSpaceDTO>>> getAccountSpacesByAccountIdPaginated(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId,
+            @PathVariable("accountId") UUID accountId,
 
             @Parameter(description = "Page number (0-based)", required = true)
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -175,10 +176,10 @@ public class AccountSpaceController {
     @PostMapping(value = "/transfer", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Boolean>> transferBetweenSpaces(
             @Parameter(description = "Source account space ID", required = true)
-            @RequestParam("fromSpaceId") Long fromAccountSpaceId,
+            @RequestParam("fromSpaceId") UUID fromAccountSpaceId,
 
             @Parameter(description = "Destination account space ID", required = true)
-            @RequestParam("toSpaceId") Long toAccountSpaceId,
+            @RequestParam("toSpaceId") UUID toAccountSpaceId,
 
             @Parameter(description = "Amount to transfer", required = true)
             @RequestParam("amount") BigDecimal amount
@@ -204,7 +205,7 @@ public class AccountSpaceController {
     @GetMapping(value = "/{accountSpaceId}/goal-progress", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountSpaceDTO>> calculateGoalProgress(
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable("accountSpaceId") Long accountSpaceId
+            @PathVariable("accountSpaceId") UUID accountSpaceId
     ) {
         return service.calculateGoalProgress(accountSpaceId)
                 .map(ResponseEntity::ok)
@@ -218,7 +219,7 @@ public class AccountSpaceController {
     @GetMapping(value = "/with-goals/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Flux<AccountSpaceDTO>>> getSpacesWithGoals(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId
+            @PathVariable("accountId") UUID accountId
     ) {
         Flux<AccountSpaceDTO> spaces = service.getSpacesWithGoals(accountId);
         return Mono.just(ResponseEntity.ok(spaces));
@@ -231,7 +232,7 @@ public class AccountSpaceController {
     @GetMapping(value = "/with-upcoming-targets/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Flux<AccountSpaceDTO>>> getSpacesWithUpcomingTargetDates(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId,
+            @PathVariable("accountId") UUID accountId,
 
             @Parameter(description = "Number of days in the future to consider 'upcoming'", required = true)
             @RequestParam(value = "daysThreshold", defaultValue = "30") int daysThreshold
@@ -249,7 +250,7 @@ public class AccountSpaceController {
     @PostMapping(value = "/{accountSpaceId}/configure-transfers", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountSpaceDTO>> configureAutomaticTransfers(
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable("accountSpaceId") Long accountSpaceId,
+            @PathVariable("accountSpaceId") UUID accountSpaceId,
 
             @Parameter(description = "Whether automatic transfers are enabled", required = true)
             @RequestParam("enabled") Boolean enabled,
@@ -261,7 +262,7 @@ public class AccountSpaceController {
             @RequestParam(value = "amount", required = false) BigDecimal amount,
 
             @Parameter(description = "Source space ID (null for main account)", required = false)
-            @RequestParam(value = "sourceSpaceId", required = false) Long sourceSpaceId
+            @RequestParam(value = "sourceSpaceId", required = false) UUID sourceSpaceId
     ) {
         return service.configureAutomaticTransfers(accountSpaceId, enabled, frequency, amount, sourceSpaceId)
                 .map(ResponseEntity::ok)
@@ -279,7 +280,7 @@ public class AccountSpaceController {
     @PostMapping(value = "/execute-transfers/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Integer>> executeAutomaticTransfers(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId
+            @PathVariable("accountId") UUID accountId
     ) {
         return service.executeAutomaticTransfers(accountId)
                 .map(ResponseEntity::ok)
@@ -295,9 +296,9 @@ public class AccountSpaceController {
             description = "Simulate future balances based on automatic transfers."
     )
     @GetMapping(value = "/simulate-balances/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<Map<Long, BigDecimal>>> simulateFutureBalances(
+    public Mono<ResponseEntity<Map<UUID, BigDecimal>>> simulateFutureBalances(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId,
+            @PathVariable("accountId") UUID accountId,
 
             @Parameter(description = "Number of months to simulate", required = true)
             @RequestParam(value = "months", defaultValue = "12") int months
@@ -318,9 +319,9 @@ public class AccountSpaceController {
             description = "Calculate the distribution of funds across spaces for a specific account."
     )
     @GetMapping(value = "/balance-distribution/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<Map<Long, BigDecimal>>> calculateBalanceDistribution(
+    public Mono<ResponseEntity<Map<UUID, BigDecimal>>> calculateBalanceDistribution(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId
+            @PathVariable("accountId") UUID accountId
     ) {
         return service.calculateBalanceDistribution(accountId)
                 .map(ResponseEntity::ok)
@@ -336,9 +337,9 @@ public class AccountSpaceController {
             description = "Calculate the growth rate for each space over a period."
     )
     @GetMapping(value = "/growth-rates/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<Map<Long, BigDecimal>>> calculateGrowthRates(
+    public Mono<ResponseEntity<Map<UUID, BigDecimal>>> calculateGrowthRates(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId,
+            @PathVariable("accountId") UUID accountId,
 
             @Parameter(description = "Start date for the calculation", required = true)
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
@@ -362,7 +363,7 @@ public class AccountSpaceController {
     @GetMapping(value = "/by-type/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Flux<AccountSpaceDTO>>> getSpacesByType(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId,
+            @PathVariable("accountId") UUID accountId,
 
             @Parameter(description = "Space type", required = true)
             @RequestParam("spaceType") AccountSpaceTypeEnum spaceType
@@ -380,7 +381,7 @@ public class AccountSpaceController {
     @PostMapping(value = "/{accountSpaceId}/freeze", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountSpaceDTO>> freezeAccountSpace(
             @Parameter(description = "Unique identifier of the account space to freeze", required = true)
-            @PathVariable Long accountSpaceId
+            @PathVariable UUID accountSpaceId
     ) {
         return service.freezeAccountSpace(accountSpaceId)
                 .map(ResponseEntity::ok)
@@ -394,7 +395,7 @@ public class AccountSpaceController {
     @PostMapping(value = "/{accountSpaceId}/unfreeze", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountSpaceDTO>> unfreezeAccountSpace(
             @Parameter(description = "Unique identifier of the account space to unfreeze", required = true)
-            @PathVariable Long accountSpaceId
+            @PathVariable UUID accountSpaceId
     ) {
         return service.unfreezeAccountSpace(accountSpaceId)
                 .map(ResponseEntity::ok)
@@ -408,7 +409,7 @@ public class AccountSpaceController {
     @PutMapping(value = "/{accountSpaceId}/balance", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountSpaceDTO>> updateAccountSpaceBalance(
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable Long accountSpaceId,
+            @PathVariable UUID accountSpaceId,
 
             @Parameter(description = "New balance to set", required = true)
             @RequestParam BigDecimal newBalance,
@@ -430,7 +431,7 @@ public class AccountSpaceController {
     @GetMapping(value = "/{accountSpaceId}/analytics", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<SpaceAnalyticsDTO>> getSpaceAnalytics(
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable Long accountSpaceId,
+            @PathVariable UUID accountSpaceId,
 
             @Parameter(description = "Start date for the analysis period (optional)")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,

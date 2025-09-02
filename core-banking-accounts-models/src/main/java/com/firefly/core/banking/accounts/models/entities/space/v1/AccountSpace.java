@@ -11,6 +11,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Represents a space or bucket within a banking account.
@@ -34,13 +35,13 @@ public class AccountSpace extends BaseEntity {
      * Example: 1000001
      */
     @Id
-    private Long accountSpaceId;
+    private UUID accountSpaceId;
 
     /**
      * Reference to the associated account
      * Example: 100001 (links to Account.accountId)
      */
-    private Long accountId;
+    private UUID accountId;
 
     /**
      * Name of the space
@@ -137,7 +138,7 @@ public class AccountSpace extends BaseEntity {
      * If null, transfers come from the main account
      * Example: 1000002 (ID of another space)
      */
-    private Long sourceSpaceId;
+    private UUID sourceSpaceId;
 
     /**
      * Indicates whether the space is frozen (no withdrawals or transfers allowed)

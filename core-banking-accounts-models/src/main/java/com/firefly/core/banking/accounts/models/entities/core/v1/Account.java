@@ -18,6 +18,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * Represents a banking account in the system.
@@ -46,13 +47,13 @@ public class Account extends BaseEntity {
      * Example: 100001
      */
     @Id
-    private Long accountId;
+    private UUID accountId;
 
     /**
      * Reference to the customer contract in the contract system
      * Example: 500123 (corresponds to contract ID in Contract Management System)
      */
-    private Long contractId;
+    private UUID contractId;
 
     /**
      * Official account number, typically in IBAN format for international accounts
@@ -114,7 +115,7 @@ public class Account extends BaseEntity {
      * - Reporting
      * - Service assignment
      */
-    private Long branchId;
+    private UUID branchId;
 
     /**
      * Optional free-text description for special notes

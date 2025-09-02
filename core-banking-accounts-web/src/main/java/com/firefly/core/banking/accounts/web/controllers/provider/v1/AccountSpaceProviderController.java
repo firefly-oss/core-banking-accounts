@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Account Space Providers", description = "APIs for managing provider records associated with a specific account space")
 @RestController
@@ -40,10 +41,10 @@ public class AccountSpaceProviderController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<AccountProviderDTO>>> getAllProvidersForSpace(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable Long accountSpaceId,
+            @PathVariable UUID accountSpaceId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -67,10 +68,10 @@ public class AccountSpaceProviderController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountProviderDTO>> createProviderForSpace(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable Long accountSpaceId,
+            @PathVariable UUID accountSpaceId,
 
             @Parameter(description = "Data for the new account provider record", required = true,
                     schema = @Schema(implementation = AccountProviderDTO.class))
@@ -95,13 +96,13 @@ public class AccountSpaceProviderController {
     @GetMapping(value = "/{providerId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountProviderDTO>> getProviderForSpace(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable Long accountSpaceId,
+            @PathVariable UUID accountSpaceId,
 
             @Parameter(description = "Unique identifier of the provider record", required = true)
-            @PathVariable Long providerId
+            @PathVariable UUID providerId
     ) {
         return service.getProviderForSpace(accountId, accountSpaceId, providerId)
                 .map(ResponseEntity::ok)
@@ -122,13 +123,13 @@ public class AccountSpaceProviderController {
     @PutMapping(value = "/{providerId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountProviderDTO>> updateProviderForSpace(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable Long accountSpaceId,
+            @PathVariable UUID accountSpaceId,
 
             @Parameter(description = "Unique identifier of the provider record to update", required = true)
-            @PathVariable Long providerId,
+            @PathVariable UUID providerId,
 
             @Parameter(description = "Updated provider data", required = true,
                     schema = @Schema(implementation = AccountProviderDTO.class))
@@ -152,13 +153,13 @@ public class AccountSpaceProviderController {
     @DeleteMapping(value = "/{providerId}")
     public Mono<ResponseEntity<Void>> deleteProviderForSpace(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable Long accountSpaceId,
+            @PathVariable UUID accountSpaceId,
 
             @Parameter(description = "Unique identifier of the provider record to delete", required = true)
-            @PathVariable Long providerId
+            @PathVariable UUID providerId
     ) {
         return service.deleteProviderForSpace(accountId, accountSpaceId, providerId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

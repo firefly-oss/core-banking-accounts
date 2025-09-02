@@ -4,7 +4,7 @@
 -- Create asset_price table
 CREATE TABLE asset_price (
     -- Primary key and identifiers
-    asset_price_id BIGSERIAL PRIMARY KEY,
+    asset_price_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     
     -- Asset information
     asset_symbol VARCHAR(20) NOT NULL,

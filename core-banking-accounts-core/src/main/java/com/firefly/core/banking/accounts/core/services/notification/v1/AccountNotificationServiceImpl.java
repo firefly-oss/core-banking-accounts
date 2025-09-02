@@ -17,6 +17,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -73,7 +74,7 @@ public class AccountNotificationServiceImpl implements AccountNotificationServic
     }
 
     @Override
-    public Mono<AccountNotificationDTO> getAccountNotification(Long accountNotificationId) {
+    public Mono<AccountNotificationDTO> getAccountNotification(UUID accountNotificationId) {
         if (accountNotificationId == null) {
             return Mono.error(new IllegalArgumentException(ERROR_NOTIFICATION_ID_REQUIRED));
         }
@@ -85,7 +86,7 @@ public class AccountNotificationServiceImpl implements AccountNotificationServic
     }
 
     @Override
-    public Mono<AccountNotificationDTO> updateAccountNotification(Long accountNotificationId, AccountNotificationDTO accountNotificationDTO) {
+    public Mono<AccountNotificationDTO> updateAccountNotification(UUID accountNotificationId, AccountNotificationDTO accountNotificationDTO) {
         if (accountNotificationId == null) {
             return Mono.error(new IllegalArgumentException(ERROR_NOTIFICATION_ID_REQUIRED));
         }
@@ -141,7 +142,7 @@ public class AccountNotificationServiceImpl implements AccountNotificationServic
     }
 
     @Override
-    public Mono<Void> deleteAccountNotification(Long accountNotificationId) {
+    public Mono<Void> deleteAccountNotification(UUID accountNotificationId) {
         if (accountNotificationId == null) {
             return Mono.error(new IllegalArgumentException(ERROR_NOTIFICATION_ID_REQUIRED));
         }
@@ -153,7 +154,7 @@ public class AccountNotificationServiceImpl implements AccountNotificationServic
     }
 
     @Override
-    public Flux<AccountNotificationDTO> getAccountNotificationsByAccountId(Long accountId) {
+    public Flux<AccountNotificationDTO> getAccountNotificationsByAccountId(UUID accountId) {
         if (accountId == null) {
             return Flux.error(new IllegalArgumentException(ERROR_ACCOUNT_ID_REQUIRED));
         }
@@ -163,7 +164,7 @@ public class AccountNotificationServiceImpl implements AccountNotificationServic
     }
 
     @Override
-    public Flux<AccountNotificationDTO> getUnreadAccountNotifications(Long accountId) {
+    public Flux<AccountNotificationDTO> getUnreadAccountNotifications(UUID accountId) {
         if (accountId == null) {
             return Flux.error(new IllegalArgumentException(ERROR_ACCOUNT_ID_REQUIRED));
         }
@@ -173,7 +174,7 @@ public class AccountNotificationServiceImpl implements AccountNotificationServic
     }
 
     @Override
-    public Flux<AccountNotificationDTO> getAccountNotificationsByType(Long accountId, NotificationTypeEnum notificationType) {
+    public Flux<AccountNotificationDTO> getAccountNotificationsByType(UUID accountId, NotificationTypeEnum notificationType) {
         if (accountId == null) {
             return Flux.error(new IllegalArgumentException(ERROR_ACCOUNT_ID_REQUIRED));
         }
@@ -186,7 +187,7 @@ public class AccountNotificationServiceImpl implements AccountNotificationServic
     }
 
     @Override
-    public Mono<AccountNotificationDTO> markNotificationAsRead(Long accountNotificationId) {
+    public Mono<AccountNotificationDTO> markNotificationAsRead(UUID accountNotificationId) {
         if (accountNotificationId == null) {
             return Mono.error(new IllegalArgumentException(ERROR_NOTIFICATION_ID_REQUIRED));
         }
@@ -208,7 +209,7 @@ public class AccountNotificationServiceImpl implements AccountNotificationServic
     }
 
     @Override
-    public Mono<Long> markAllNotificationsAsRead(Long accountId) {
+    public Mono<Long> markAllNotificationsAsRead(UUID accountId) {
         if (accountId == null) {
             return Mono.error(new IllegalArgumentException(ERROR_ACCOUNT_ID_REQUIRED));
         }
@@ -225,7 +226,7 @@ public class AccountNotificationServiceImpl implements AccountNotificationServic
     }
 
     @Override
-    public Flux<AccountNotificationDTO> getActiveNotifications(Long accountId) {
+    public Flux<AccountNotificationDTO> getActiveNotifications(UUID accountId) {
         if (accountId == null) {
             return Flux.error(new IllegalArgumentException(ERROR_ACCOUNT_ID_REQUIRED));
         }

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -21,10 +22,10 @@ import java.time.LocalDateTime;
 public class AccountStatusHistoryDTO extends BaseDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long accountStatusHistoryId;
+    private UUID accountStatusHistoryId;
 
     @FilterableId
-    private Long accountId;
+    private UUID accountId;
 
     private StatusCodeEnum statusCode;
     private LocalDateTime statusStartDatetime;

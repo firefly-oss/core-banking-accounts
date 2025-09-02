@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Account Providers", description = "APIs for managing provider records associated with a specific account")
 @RestController
@@ -40,7 +41,7 @@ public class AccountProviderController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<AccountProviderDTO>>> getAllProviders(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -64,7 +65,7 @@ public class AccountProviderController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountProviderDTO>> createProvider(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Data for the new account provider record", required = true,
                     schema = @Schema(implementation = AccountProviderDTO.class))
@@ -89,10 +90,10 @@ public class AccountProviderController {
     @GetMapping(value = "/{providerId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountProviderDTO>> getProvider(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the provider record", required = true)
-            @PathVariable Long providerId
+            @PathVariable UUID providerId
     ) {
         return service.getProvider(accountId, providerId)
                 .map(ResponseEntity::ok)
@@ -113,10 +114,10 @@ public class AccountProviderController {
     @PutMapping(value = "/{providerId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountProviderDTO>> updateProvider(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the provider record to update", required = true)
-            @PathVariable Long providerId,
+            @PathVariable UUID providerId,
 
             @Parameter(description = "Updated provider data", required = true,
                     schema = @Schema(implementation = AccountProviderDTO.class))
@@ -140,10 +141,10 @@ public class AccountProviderController {
     @DeleteMapping(value = "/{providerId}")
     public Mono<ResponseEntity<Void>> deleteProvider(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the provider record to delete", required = true)
-            @PathVariable Long providerId
+            @PathVariable UUID providerId
     ) {
         return service.deleteProvider(accountId, providerId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

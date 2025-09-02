@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Account Notifications", description = "APIs for managing account notifications and alerts")
 @RestController
@@ -105,7 +106,7 @@ public class AccountNotificationController {
     @GetMapping(value = "/{accountNotificationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountNotificationDTO>> getAccountNotification(
             @Parameter(description = "Unique identifier of the account notification", required = true)
-            @PathVariable("accountNotificationId") Long accountNotificationId
+            @PathVariable("accountNotificationId") UUID accountNotificationId
     ) {
         return service.getAccountNotification(accountNotificationId)
                 .map(ResponseEntity::ok)
@@ -134,7 +135,7 @@ public class AccountNotificationController {
     @PutMapping(value = "/{accountNotificationId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountNotificationDTO>> updateAccountNotification(
             @Parameter(description = "Unique identifier of the account notification to update", required = true)
-            @PathVariable("accountNotificationId") Long accountNotificationId,
+            @PathVariable("accountNotificationId") UUID accountNotificationId,
 
             @Parameter(description = "Updated data for the account notification", required = true,
                     schema = @Schema(implementation = AccountNotificationDTO.class))
@@ -163,7 +164,7 @@ public class AccountNotificationController {
     @DeleteMapping(value = "/{accountNotificationId}")
     public Mono<ResponseEntity<Void>> deleteAccountNotification(
             @Parameter(description = "Unique identifier of the account notification to delete", required = true)
-            @PathVariable("accountNotificationId") Long accountNotificationId
+            @PathVariable("accountNotificationId") UUID accountNotificationId
     ) {
         return service.deleteAccountNotification(accountNotificationId)
                 .then(Mono.just(ResponseEntity.noContent().<Void>build()))
@@ -190,7 +191,7 @@ public class AccountNotificationController {
     @GetMapping(value = "/account/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Flux<AccountNotificationDTO>>> getAccountNotificationsByAccountId(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId
+            @PathVariable("accountId") UUID accountId
     ) {
         return Mono.just(service.getAccountNotificationsByAccountId(accountId))
                 .map(ResponseEntity::ok)
@@ -214,7 +215,7 @@ public class AccountNotificationController {
     @GetMapping(value = "/account/{accountId}/unread", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Flux<AccountNotificationDTO>>> getUnreadAccountNotifications(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId
+            @PathVariable("accountId") UUID accountId
     ) {
         return Mono.just(service.getUnreadAccountNotifications(accountId))
                 .map(ResponseEntity::ok)
@@ -238,7 +239,7 @@ public class AccountNotificationController {
     @GetMapping(value = "/account/{accountId}/type/{notificationType}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Flux<AccountNotificationDTO>>> getAccountNotificationsByType(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId,
+            @PathVariable("accountId") UUID accountId,
 
             @Parameter(description = "Type of notification", required = true)
             @PathVariable("notificationType") NotificationTypeEnum notificationType
@@ -268,7 +269,7 @@ public class AccountNotificationController {
     @PostMapping(value = "/{accountNotificationId}/mark-read", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountNotificationDTO>> markNotificationAsRead(
             @Parameter(description = "Unique identifier of the account notification", required = true)
-            @PathVariable("accountNotificationId") Long accountNotificationId
+            @PathVariable("accountNotificationId") UUID accountNotificationId
     ) {
         return service.markNotificationAsRead(accountNotificationId)
                 .map(ResponseEntity::ok)
@@ -297,7 +298,7 @@ public class AccountNotificationController {
     @PostMapping(value = "/account/{accountId}/mark-all-read", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Long>> markAllNotificationsAsRead(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId
+            @PathVariable("accountId") UUID accountId
     ) {
         return service.markAllNotificationsAsRead(accountId)
                 .map(ResponseEntity::ok)
@@ -321,7 +322,7 @@ public class AccountNotificationController {
     @GetMapping(value = "/account/{accountId}/active", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Flux<AccountNotificationDTO>>> getActiveNotifications(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId
+            @PathVariable("accountId") UUID accountId
     ) {
         return Mono.just(service.getActiveNotifications(accountId))
                 .map(ResponseEntity::ok)

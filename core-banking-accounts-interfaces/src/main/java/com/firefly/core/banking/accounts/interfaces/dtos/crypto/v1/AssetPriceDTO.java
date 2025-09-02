@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Data Transfer Object for asset price information.
@@ -26,7 +27,7 @@ public class AssetPriceDTO extends BaseDTO {
      * Unique identifier for the asset price record
      */
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long assetPriceId;
+    private UUID assetPriceId;
     
     /**
      * Symbol or ticker of the crypto asset

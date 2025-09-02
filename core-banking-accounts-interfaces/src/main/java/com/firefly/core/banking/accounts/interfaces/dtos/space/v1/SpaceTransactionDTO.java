@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Data Transfer Object for account space transactions.
@@ -26,10 +27,10 @@ import java.time.LocalDateTime;
 public class SpaceTransactionDTO extends BaseDTO {
     
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long spaceTransactionId;
+    private UUID spaceTransactionId;
     
     @FilterableId
-    private Long accountSpaceId;
+    private UUID accountSpaceId;
     
     private BigDecimal amount;
     private BigDecimal balanceAfterTransaction;
@@ -43,5 +44,5 @@ public class SpaceTransactionDTO extends BaseDTO {
     private String spaceName; // Added for convenience in UI display
     
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long accountId; // Added for convenience in UI display
+    private UUID accountId; // Added for convenience in UI display
 }

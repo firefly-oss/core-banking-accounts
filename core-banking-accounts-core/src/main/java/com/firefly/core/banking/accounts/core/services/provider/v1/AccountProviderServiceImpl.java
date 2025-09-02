@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class AccountProviderServiceImpl implements AccountProviderService {
     private AccountProviderMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<AccountProviderDTO>> listProviders(Long accountId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<AccountProviderDTO>> listProviders(UUID accountId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDTO,
@@ -33,7 +34,7 @@ public class AccountProviderServiceImpl implements AccountProviderService {
     }
 
     @Override
-    public Mono<AccountProviderDTO> createProvider(Long accountId, AccountProviderDTO providerDTO) {
+    public Mono<AccountProviderDTO> createProvider(UUID accountId, AccountProviderDTO providerDTO) {
         AccountProvider accountProvider = mapper.toEntity(providerDTO);
         accountProvider.setAccountId(accountId);
         return repository.save(accountProvider)
@@ -41,14 +42,14 @@ public class AccountProviderServiceImpl implements AccountProviderService {
     }
 
     @Override
-    public Mono<AccountProviderDTO> getProvider(Long accountId, Long providerId) {
+    public Mono<AccountProviderDTO> getProvider(UUID accountId, UUID providerId) {
         return repository.findById(providerId)
                 .filter(provider -> provider.getAccountId().equals(accountId))
                 .map(mapper::toDTO);
     }
 
     @Override
-    public Mono<AccountProviderDTO> updateProvider(Long accountId, Long providerId, AccountProviderDTO providerDTO) {
+    public Mono<AccountProviderDTO> updateProvider(UUID accountId, UUID providerId, AccountProviderDTO providerDTO) {
         return repository.findById(providerId)
                 .filter(provider -> provider.getAccountId().equals(accountId))
                 .flatMap(existingProvider -> {
@@ -61,14 +62,14 @@ public class AccountProviderServiceImpl implements AccountProviderService {
     }
 
     @Override
-    public Mono<Void> deleteProvider(Long accountId, Long providerId) {
+    public Mono<Void> deleteProvider(UUID accountId, UUID providerId) {
         return repository.findById(providerId)
                 .filter(provider -> provider.getAccountId().equals(accountId))
                 .flatMap(repository::delete);
     }
 
     @Override
-    public Mono<PaginationResponse<AccountProviderDTO>> listProvidersForSpace(Long accountId, Long accountSpaceId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<AccountProviderDTO>> listProvidersForSpace(UUID accountId, UUID accountSpaceId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDTO,
@@ -78,7 +79,7 @@ public class AccountProviderServiceImpl implements AccountProviderService {
     }
 
     @Override
-    public Mono<AccountProviderDTO> createProviderForSpace(Long accountId, Long accountSpaceId, AccountProviderDTO providerDTO) {
+    public Mono<AccountProviderDTO> createProviderForSpace(UUID accountId, UUID accountSpaceId, AccountProviderDTO providerDTO) {
         AccountProvider accountProvider = mapper.toEntity(providerDTO);
         accountProvider.setAccountId(accountId);
         accountProvider.setAccountSpaceId(accountSpaceId);
@@ -87,7 +88,7 @@ public class AccountProviderServiceImpl implements AccountProviderService {
     }
 
     @Override
-    public Mono<AccountProviderDTO> getProviderForSpace(Long accountId, Long accountSpaceId, Long providerId) {
+    public Mono<AccountProviderDTO> getProviderForSpace(UUID accountId, UUID accountSpaceId, UUID providerId) {
         return repository.findById(providerId)
                 .filter(provider -> provider.getAccountId().equals(accountId) && 
                         (provider.getAccountSpaceId() != null && provider.getAccountSpaceId().equals(accountSpaceId)))
@@ -95,7 +96,7 @@ public class AccountProviderServiceImpl implements AccountProviderService {
     }
 
     @Override
-    public Mono<AccountProviderDTO> updateProviderForSpace(Long accountId, Long accountSpaceId, Long providerId, AccountProviderDTO providerDTO) {
+    public Mono<AccountProviderDTO> updateProviderForSpace(UUID accountId, UUID accountSpaceId, UUID providerId, AccountProviderDTO providerDTO) {
         return repository.findById(providerId)
                 .filter(provider -> provider.getAccountId().equals(accountId) && 
                         (provider.getAccountSpaceId() != null && provider.getAccountSpaceId().equals(accountSpaceId)))
@@ -110,7 +111,7 @@ public class AccountProviderServiceImpl implements AccountProviderService {
     }
 
     @Override
-    public Mono<Void> deleteProviderForSpace(Long accountId, Long accountSpaceId, Long providerId) {
+    public Mono<Void> deleteProviderForSpace(UUID accountId, UUID accountSpaceId, UUID providerId) {
         return repository.findById(providerId)
                 .filter(provider -> provider.getAccountId().equals(accountId) && 
                         (provider.getAccountSpaceId() != null && provider.getAccountSpaceId().equals(accountSpaceId)))

@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Account Balances", description = "APIs for managing balances associated with a specific bank account")
 @RestController
@@ -40,7 +41,7 @@ public class AccountBalanceController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<AccountBalanceDTO>>> getAllBalances(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -64,7 +65,7 @@ public class AccountBalanceController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountBalanceDTO>> createBalance(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId,
+            @PathVariable("accountId") UUID accountId,
 
             @Parameter(description = "Data for the new balance record", required = true,
                     schema = @Schema(implementation = AccountBalanceDTO.class))
@@ -89,10 +90,10 @@ public class AccountBalanceController {
     @GetMapping(value = "/{balanceId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountBalanceDTO>> getBalance(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the balance record", required = true)
-            @PathVariable Long balanceId
+            @PathVariable UUID balanceId
     ) {
         return service.getBalance(accountId, balanceId)
                 .map(ResponseEntity::ok)
@@ -113,10 +114,10 @@ public class AccountBalanceController {
     @PutMapping(value = "/{balanceId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountBalanceDTO>> updateBalance(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the balance record to update", required = true)
-            @PathVariable Long balanceId,
+            @PathVariable UUID balanceId,
 
             @Parameter(description = "Updated data for the balance record", required = true,
                     schema = @Schema(implementation = AccountBalanceDTO.class))
@@ -140,10 +141,10 @@ public class AccountBalanceController {
     @DeleteMapping(value = "/{balanceId}")
     public Mono<ResponseEntity<Void>> deleteBalance(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the balance record to delete", required = true)
-            @PathVariable Long balanceId
+            @PathVariable UUID balanceId
     ) {
         return service.deleteBalance(accountId, balanceId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

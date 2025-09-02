@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class AccountBalanceServiceImplTest {
@@ -41,8 +42,8 @@ class AccountBalanceServiceImplTest {
 
     private AccountBalance testAccountBalance;
     private AccountBalanceDTO testAccountBalanceDTO;
-    private final Long TEST_ACCOUNT_ID = 1L;
-    private final Long TEST_BALANCE_ID = 100L;
+    private final UUID TEST_ACCOUNT_ID = 1L;
+    private final UUID TEST_BALANCE_ID = 100L;
 
     @BeforeEach
     void setUp() {

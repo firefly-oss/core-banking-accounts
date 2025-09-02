@@ -14,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -23,10 +24,10 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountSpaceDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long accountSpaceId;
+    private UUID accountSpaceId;
 
     @FilterableId
-    private Long accountId;
+    private UUID accountId;
 
     private String spaceName;
     private AccountSpaceTypeEnum spaceType;
@@ -55,7 +56,7 @@ public class AccountSpaceDTO extends BaseDTO {
     private Boolean enableAutomaticTransfers;
     private TransferFrequencyEnum transferFrequency;
     private BigDecimal transferAmount;
-    private Long sourceSpaceId; // For automatic transfers from another space
+    private UUID sourceSpaceId; // For automatic transfers from another space
 
     // Analytics fields - calculated, not stored in database
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

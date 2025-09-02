@@ -11,6 +11,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Represents a notification or alert for an account.
@@ -34,13 +35,13 @@ public class AccountNotification extends BaseEntity {
      * Example: 1000001
      */
     @Id
-    private Long accountNotificationId;
+    private UUID accountNotificationId;
 
     /**
      * Reference to the associated account
      * Example: 100001 (links to Account.accountId)
      */
-    private Long accountId;
+    private UUID accountId;
 
     /**
      * Type of notification

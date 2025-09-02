@@ -7,6 +7,7 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Service for managing transaction history for account spaces.
@@ -22,7 +23,7 @@ public interface AccountSpaceTransactionService {
      * @param referenceId Optional reference ID (e.g., transaction ID from another system)
      * @return Mono of SpaceTransactionDTO
      */
-    Mono<SpaceTransactionDTO> recordTransaction(Long accountSpaceId, BigDecimal amount, String description, String referenceId);
+    Mono<SpaceTransactionDTO> recordTransaction(UUID accountSpaceId, BigDecimal amount, String description, String referenceId);
     
     /**
      * Get all transactions for an account space
@@ -30,7 +31,7 @@ public interface AccountSpaceTransactionService {
      * @param paginationRequest The pagination request
      * @return Mono of PaginationResponse containing SpaceTransactionDTO
      */
-    Mono<PaginationResponse<SpaceTransactionDTO>> getTransactions(Long accountSpaceId, PaginationRequest paginationRequest);
+    Mono<PaginationResponse<SpaceTransactionDTO>> getTransactions(UUID accountSpaceId, PaginationRequest paginationRequest);
     
     /**
      * Get transactions for an account space within a date range
@@ -41,7 +42,7 @@ public interface AccountSpaceTransactionService {
      * @return Mono of PaginationResponse containing SpaceTransactionDTO
      */
     Mono<PaginationResponse<SpaceTransactionDTO>> getTransactionsByDateRange(
-            Long accountSpaceId, 
+            UUID accountSpaceId, 
             LocalDateTime startDate, 
             LocalDateTime endDate, 
             PaginationRequest paginationRequest);
@@ -53,7 +54,7 @@ public interface AccountSpaceTransactionService {
      * @param endDate The end date
      * @return Mono of BigDecimal
      */
-    Mono<BigDecimal> calculateTotalDeposits(Long accountSpaceId, LocalDateTime startDate, LocalDateTime endDate);
+    Mono<BigDecimal> calculateTotalDeposits(UUID accountSpaceId, LocalDateTime startDate, LocalDateTime endDate);
     
     /**
      * Calculate total withdrawals for an account space within a date range
@@ -62,7 +63,7 @@ public interface AccountSpaceTransactionService {
      * @param endDate The end date
      * @return Mono of BigDecimal
      */
-    Mono<BigDecimal> calculateTotalWithdrawals(Long accountSpaceId, LocalDateTime startDate, LocalDateTime endDate);
+    Mono<BigDecimal> calculateTotalWithdrawals(UUID accountSpaceId, LocalDateTime startDate, LocalDateTime endDate);
     
     /**
      * Get the balance of an account space at a specific point in time
@@ -70,5 +71,5 @@ public interface AccountSpaceTransactionService {
      * @param dateTime The date and time
      * @return Mono of BigDecimal
      */
-    Mono<BigDecimal> getBalanceAtDateTime(Long accountSpaceId, LocalDateTime dateTime);
+    Mono<BigDecimal> getBalanceAtDateTime(UUID accountSpaceId, LocalDateTime dateTime);
 }

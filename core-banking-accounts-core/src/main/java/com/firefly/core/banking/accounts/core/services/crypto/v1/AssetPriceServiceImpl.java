@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Implementation of the AssetPriceService interface.
@@ -39,7 +40,7 @@ public class AssetPriceServiceImpl implements AssetPriceService {
     }
 
     @Override
-    public Mono<AssetPriceDTO> getAssetPrice(Long assetPriceId) {
+    public Mono<AssetPriceDTO> getAssetPrice(UUID assetPriceId) {
         return repository.findById(assetPriceId)
                 .map(mapper::toDTO);
     }
@@ -52,7 +53,7 @@ public class AssetPriceServiceImpl implements AssetPriceService {
     }
 
     @Override
-    public Mono<AssetPriceDTO> updateAssetPrice(Long assetPriceId, AssetPriceDTO assetPriceDTO) {
+    public Mono<AssetPriceDTO> updateAssetPrice(UUID assetPriceId, AssetPriceDTO assetPriceDTO) {
         return repository.findById(assetPriceId)
                 .flatMap(existingAssetPrice -> {
                     assetPriceDTO.setAssetPriceId(assetPriceId);
@@ -63,7 +64,7 @@ public class AssetPriceServiceImpl implements AssetPriceService {
     }
 
     @Override
-    public Mono<Void> deleteAssetPrice(Long assetPriceId) {
+    public Mono<Void> deleteAssetPrice(UUID assetPriceId) {
         return repository.findById(assetPriceId)
                 .flatMap(repository::delete);
     }

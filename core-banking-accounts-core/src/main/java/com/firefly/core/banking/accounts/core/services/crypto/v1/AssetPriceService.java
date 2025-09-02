@@ -6,6 +6,7 @@ import com.firefly.core.banking.accounts.interfaces.dtos.crypto.v1.AssetPriceDTO
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Service interface for managing asset prices.
@@ -27,7 +28,7 @@ public interface AssetPriceService {
      * @param assetPriceId the ID of the asset price
      * @return a Mono of AssetPriceDTO
      */
-    Mono<AssetPriceDTO> getAssetPrice(Long assetPriceId);
+    Mono<AssetPriceDTO> getAssetPrice(UUID assetPriceId);
 
     /**
      * Create a new asset price.
@@ -44,7 +45,7 @@ public interface AssetPriceService {
      * @param assetPriceDTO the updated asset price DTO
      * @return a Mono of the updated AssetPriceDTO
      */
-    Mono<AssetPriceDTO> updateAssetPrice(Long assetPriceId, AssetPriceDTO assetPriceDTO);
+    Mono<AssetPriceDTO> updateAssetPrice(UUID assetPriceId, AssetPriceDTO assetPriceDTO);
 
     /**
      * Delete an asset price by ID.
@@ -52,7 +53,7 @@ public interface AssetPriceService {
      * @param assetPriceId the ID of the asset price to delete
      * @return a Mono of Void
      */
-    Mono<Void> deleteAssetPrice(Long assetPriceId);
+    Mono<Void> deleteAssetPrice(UUID assetPriceId);
 
     /**
      * Get all asset prices for a specific asset symbol.

@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -21,13 +22,13 @@ import java.time.LocalDateTime;
 public class AccountBalanceDTO extends BaseDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long accountBalanceId;
+    private UUID accountBalanceId;
 
     @FilterableId
-    private Long accountId;
+    private UUID accountId;
 
     @FilterableId
-    private Long accountSpaceId;
+    private UUID accountSpaceId;
 
     private BalanceTypeEnum balanceType;
     private BigDecimal balanceAmount;

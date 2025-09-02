@@ -7,15 +7,16 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-public interface AccountNotificationRepository extends BaseRepository<AccountNotification, Long> {
+public interface AccountNotificationRepository extends BaseRepository<AccountNotification, UUID> {
     
     /**
      * Find all notifications for a specific account
      * @param accountId The account ID
      * @return Flux of AccountNotification
      */
-    Flux<AccountNotification> findByAccountId(Long accountId);
+    Flux<AccountNotification> findByAccountId(UUID accountId);
     
     /**
      * Find unread notifications for a specific account
@@ -23,7 +24,7 @@ public interface AccountNotificationRepository extends BaseRepository<AccountNot
      * @param isRead Whether the notification has been read
      * @return Flux of AccountNotification
      */
-    Flux<AccountNotification> findByAccountIdAndIsRead(Long accountId, Boolean isRead);
+    Flux<AccountNotification> findByAccountIdAndIsRead(UUID accountId, Boolean isRead);
     
     /**
      * Find notifications by type for a specific account
@@ -31,7 +32,7 @@ public interface AccountNotificationRepository extends BaseRepository<AccountNot
      * @param notificationType The notification type
      * @return Flux of AccountNotification
      */
-    Flux<AccountNotification> findByAccountIdAndNotificationType(Long accountId, NotificationTypeEnum notificationType);
+    Flux<AccountNotification> findByAccountIdAndNotificationType(UUID accountId, NotificationTypeEnum notificationType);
     
     /**
      * Find notifications by priority for a specific account
@@ -39,7 +40,7 @@ public interface AccountNotificationRepository extends BaseRepository<AccountNot
      * @param priority The priority level
      * @return Flux of AccountNotification
      */
-    Flux<AccountNotification> findByAccountIdAndPriority(Long accountId, Integer priority);
+    Flux<AccountNotification> findByAccountIdAndPriority(UUID accountId, Integer priority);
     
     /**
      * Count unread notifications for a specific account
@@ -47,7 +48,7 @@ public interface AccountNotificationRepository extends BaseRepository<AccountNot
      * @param isRead Whether the notification has been read
      * @return Mono of Long representing the count
      */
-    Mono<Long> countByAccountIdAndIsRead(Long accountId, Boolean isRead);
+    Mono<Long> countByAccountIdAndIsRead(UUID accountId, Boolean isRead);
     
     /**
      * Find notifications that have not expired
@@ -56,5 +57,5 @@ public interface AccountNotificationRepository extends BaseRepository<AccountNot
      * @return Flux of AccountNotification
      */
     Flux<AccountNotification> findByAccountIdAndExpiryDateTimeIsNullOrExpiryDateTimeGreaterThan(
-            Long accountId, LocalDateTime currentDateTime);
+            UUID accountId, LocalDateTime currentDateTime);
 }

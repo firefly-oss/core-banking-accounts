@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -61,13 +62,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Mono<AccountDTO> getAccount(Long accountId) {
+    public Mono<AccountDTO> getAccount(UUID accountId) {
         return repository.findById(accountId)
                 .map(mapper::toDTO);
     }
 
     @Override
-    public Mono<AccountDTO> updateAccount(Long accountId, AccountDTO accountDTO) {
+    public Mono<AccountDTO> updateAccount(UUID accountId, AccountDTO accountDTO) {
         return repository.findById(accountId)
                 .flatMap(existingAccount -> {
                     mapper.updateEntityFromDto(accountDTO, existingAccount);
@@ -78,7 +79,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Mono<Void> deleteAccount(Long accountId) {
+    public Mono<Void> deleteAccount(UUID accountId) {
         return repository.findById(accountId)
                 .flatMap(repository::delete);
     }

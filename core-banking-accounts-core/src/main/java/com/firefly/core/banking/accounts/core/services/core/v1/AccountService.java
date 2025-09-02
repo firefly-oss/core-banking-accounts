@@ -4,6 +4,7 @@ import com.firefly.common.core.filters.FilterRequest;
 import com.firefly.common.core.queries.PaginationResponse;
 import com.firefly.core.banking.accounts.interfaces.dtos.core.v1.AccountDTO;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 public interface AccountService {
     /**
@@ -26,7 +27,7 @@ public interface AccountService {
      * @param accountId the unique identifier of the account to retrieve
      * @return a Mono emitting the AccountDTO containing account details, or an empty Mono if the account is not found
      */
-    Mono<AccountDTO> getAccount(Long accountId);
+    Mono<AccountDTO> getAccount(UUID accountId);
     /**
      * Updates an existing account by its unique ID with the provided details.
      *
@@ -34,12 +35,12 @@ public interface AccountService {
      * @param accountDTO the updated account details
      * @return a Mono emitting the updated account details, or an error if the account does not exist
      */
-    Mono<AccountDTO> updateAccount(Long accountId, AccountDTO accountDTO);
+    Mono<AccountDTO> updateAccount(UUID accountId, AccountDTO accountDTO);
     /**
      * Deletes an account based on the provided account ID.
      *
      * @param accountId The unique identifier of the account to be deleted.
      * @return A Mono that completes when the account deletion process is finished.
      */
-    Mono<Void> deleteAccount(Long accountId);
+    Mono<Void> deleteAccount(UUID accountId);
 }

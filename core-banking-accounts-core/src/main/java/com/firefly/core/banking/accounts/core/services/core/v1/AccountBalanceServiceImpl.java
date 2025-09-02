@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class AccountBalanceServiceImpl implements AccountBalanceService {
     private AccountBalanceMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<AccountBalanceDTO>> getAllBalances(Long accountId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<AccountBalanceDTO>> getAllBalances(UUID accountId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDTO,
@@ -33,7 +34,7 @@ public class AccountBalanceServiceImpl implements AccountBalanceService {
     }
 
     @Override
-    public Mono<PaginationResponse<AccountBalanceDTO>> getGlobalBalances(Long accountId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<AccountBalanceDTO>> getGlobalBalances(UUID accountId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDTO,
@@ -43,7 +44,7 @@ public class AccountBalanceServiceImpl implements AccountBalanceService {
     }
 
     @Override
-    public Mono<PaginationResponse<AccountBalanceDTO>> getSpaceBalances(Long accountId, Long accountSpaceId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<AccountBalanceDTO>> getSpaceBalances(UUID accountId, UUID accountSpaceId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDTO,
@@ -53,7 +54,7 @@ public class AccountBalanceServiceImpl implements AccountBalanceService {
     }
 
     @Override
-    public Mono<AccountBalanceDTO> createBalance(Long accountId, AccountBalanceDTO balanceDTO) {
+    public Mono<AccountBalanceDTO> createBalance(UUID accountId, AccountBalanceDTO balanceDTO) {
         balanceDTO.setAccountId(accountId);
         AccountBalance accountBalance = mapper.toEntity(balanceDTO);
         return repository.save(accountBalance)
@@ -61,14 +62,14 @@ public class AccountBalanceServiceImpl implements AccountBalanceService {
     }
 
     @Override
-    public Mono<AccountBalanceDTO> getBalance(Long accountId, Long balanceId) {
+    public Mono<AccountBalanceDTO> getBalance(UUID accountId, UUID balanceId) {
         return repository.findById(balanceId)
                 .filter(balance -> balance.getAccountId().equals(accountId))
                 .map(mapper::toDTO);
     }
 
     @Override
-    public Mono<AccountBalanceDTO> updateBalance(Long accountId, Long balanceId, AccountBalanceDTO balanceDTO) {
+    public Mono<AccountBalanceDTO> updateBalance(UUID accountId, UUID balanceId, AccountBalanceDTO balanceDTO) {
         return repository.findById(balanceId)
                 .filter(balance -> balance.getAccountId().equals(accountId))
                 .flatMap(existingBalance -> {
@@ -81,7 +82,7 @@ public class AccountBalanceServiceImpl implements AccountBalanceService {
     }
 
     @Override
-    public Mono<Void> deleteBalance(Long accountId, Long balanceId) {
+    public Mono<Void> deleteBalance(UUID accountId, UUID balanceId) {
         return repository.findById(balanceId)
                 .filter(balance -> balance.getAccountId().equals(accountId))
                 .flatMap(repository::delete);

@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Accounts", description = "APIs for managing bank accounts within the system")
 @RestController
@@ -58,7 +59,7 @@ public class AccountController {
     @GetMapping(value = "/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountDTO>> getAccount(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId
+            @PathVariable("accountId") UUID accountId
     ) {
         return service.getAccount(accountId)
                 .map(ResponseEntity::ok)
@@ -72,7 +73,7 @@ public class AccountController {
     @PutMapping(value = "/{accountId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountDTO>> updateAccount(
             @Parameter(description = "Unique identifier of the account to update", required = true)
-            @PathVariable("accountId") Long accountId,
+            @PathVariable("accountId") UUID accountId,
 
             @Parameter(description = "Updated account data", required = true,
                     schema = @Schema(implementation = AccountDTO.class))
@@ -90,7 +91,7 @@ public class AccountController {
     @DeleteMapping(value = "/{accountId}")
     public Mono<ResponseEntity<Void>> deleteAccount(
             @Parameter(description = "Unique identifier of the account to delete", required = true)
-            @PathVariable("accountId") Long accountId
+            @PathVariable("accountId") UUID accountId
     ) {
         return service.deleteAccount(accountId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

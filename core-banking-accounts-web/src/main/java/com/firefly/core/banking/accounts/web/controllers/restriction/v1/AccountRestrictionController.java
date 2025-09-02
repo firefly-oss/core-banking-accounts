@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Account Restrictions", description = "APIs for managing restrictions placed on accounts")
 @RestController
@@ -104,7 +105,7 @@ public class AccountRestrictionController {
     @GetMapping(value = "/{accountRestrictionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountRestrictionDTO>> getAccountRestriction(
             @Parameter(description = "Unique identifier of the account restriction", required = true)
-            @PathVariable("accountRestrictionId") Long accountRestrictionId
+            @PathVariable("accountRestrictionId") UUID accountRestrictionId
     ) {
         return service.getAccountRestriction(accountRestrictionId)
                 .map(ResponseEntity::ok)
@@ -133,7 +134,7 @@ public class AccountRestrictionController {
     @PutMapping(value = "/{accountRestrictionId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountRestrictionDTO>> updateAccountRestriction(
             @Parameter(description = "Unique identifier of the account restriction to update", required = true)
-            @PathVariable("accountRestrictionId") Long accountRestrictionId,
+            @PathVariable("accountRestrictionId") UUID accountRestrictionId,
 
             @Parameter(description = "Updated data for the account restriction", required = true,
                     schema = @Schema(implementation = AccountRestrictionDTO.class))
@@ -162,7 +163,7 @@ public class AccountRestrictionController {
     @DeleteMapping(value = "/{accountRestrictionId}")
     public Mono<ResponseEntity<Void>> deleteAccountRestriction(
             @Parameter(description = "Unique identifier of the account restriction to delete", required = true)
-            @PathVariable("accountRestrictionId") Long accountRestrictionId
+            @PathVariable("accountRestrictionId") UUID accountRestrictionId
     ) {
         return service.deleteAccountRestriction(accountRestrictionId)
                 .then(Mono.just(ResponseEntity.noContent().<Void>build()))
@@ -189,7 +190,7 @@ public class AccountRestrictionController {
     @GetMapping(value = "/account/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Flux<AccountRestrictionDTO>>> getAccountRestrictionsByAccountId(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId
+            @PathVariable("accountId") UUID accountId
     ) {
         return Mono.just(service.getAccountRestrictionsByAccountId(accountId))
                 .map(ResponseEntity::ok)
@@ -213,7 +214,7 @@ public class AccountRestrictionController {
     @GetMapping(value = "/account/{accountId}/active", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Flux<AccountRestrictionDTO>>> getActiveAccountRestrictionsByAccountId(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable("accountId") Long accountId
+            @PathVariable("accountId") UUID accountId
     ) {
         return Mono.just(service.getActiveAccountRestrictionsByAccountId(accountId))
                 .map(ResponseEntity::ok)
@@ -239,7 +240,7 @@ public class AccountRestrictionController {
     @PostMapping(value = "/{accountRestrictionId}/remove", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountRestrictionDTO>> removeRestriction(
             @Parameter(description = "Unique identifier of the account restriction", required = true)
-            @PathVariable("accountRestrictionId") Long accountRestrictionId,
+            @PathVariable("accountRestrictionId") UUID accountRestrictionId,
 
             @Parameter(description = "User or system that removed the restriction", required = true)
             @RequestParam("removedBy") String removedBy

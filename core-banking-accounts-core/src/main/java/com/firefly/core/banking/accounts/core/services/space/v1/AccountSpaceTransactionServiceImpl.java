@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Implementation of the AccountSpaceTransactionService interface.
@@ -36,7 +37,7 @@ public class AccountSpaceTransactionServiceImpl implements AccountSpaceTransacti
     private AccountSpaceService accountSpaceService;
     
     @Override
-    public Mono<SpaceTransactionDTO> recordTransaction(Long accountSpaceId, BigDecimal amount, String description, String referenceId) {
+    public Mono<SpaceTransactionDTO> recordTransaction(UUID accountSpaceId, BigDecimal amount, String description, String referenceId) {
         if (accountSpaceId == null) {
             return Mono.error(new IllegalArgumentException("Account space ID is required"));
         }
@@ -83,7 +84,7 @@ public class AccountSpaceTransactionServiceImpl implements AccountSpaceTransacti
     }
     
     @Override
-    public Mono<PaginationResponse<SpaceTransactionDTO>> getTransactions(Long accountSpaceId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<SpaceTransactionDTO>> getTransactions(UUID accountSpaceId, PaginationRequest paginationRequest) {
         if (accountSpaceId == null) {
             return Mono.error(new IllegalArgumentException("Account space ID is required"));
         }
@@ -98,7 +99,7 @@ public class AccountSpaceTransactionServiceImpl implements AccountSpaceTransacti
     
     @Override
     public Mono<PaginationResponse<SpaceTransactionDTO>> getTransactionsByDateRange(
-            Long accountSpaceId, 
+            UUID accountSpaceId, 
             LocalDateTime startDate, 
             LocalDateTime endDate, 
             PaginationRequest paginationRequest) {
@@ -126,7 +127,7 @@ public class AccountSpaceTransactionServiceImpl implements AccountSpaceTransacti
     }
     
     @Override
-    public Mono<BigDecimal> calculateTotalDeposits(Long accountSpaceId, LocalDateTime startDate, LocalDateTime endDate) {
+    public Mono<BigDecimal> calculateTotalDeposits(UUID accountSpaceId, LocalDateTime startDate, LocalDateTime endDate) {
         if (accountSpaceId == null) {
             return Mono.error(new IllegalArgumentException("Account space ID is required"));
         }
@@ -144,7 +145,7 @@ public class AccountSpaceTransactionServiceImpl implements AccountSpaceTransacti
     }
     
     @Override
-    public Mono<BigDecimal> calculateTotalWithdrawals(Long accountSpaceId, LocalDateTime startDate, LocalDateTime endDate) {
+    public Mono<BigDecimal> calculateTotalWithdrawals(UUID accountSpaceId, LocalDateTime startDate, LocalDateTime endDate) {
         if (accountSpaceId == null) {
             return Mono.error(new IllegalArgumentException("Account space ID is required"));
         }
@@ -162,7 +163,7 @@ public class AccountSpaceTransactionServiceImpl implements AccountSpaceTransacti
     }
     
     @Override
-    public Mono<BigDecimal> getBalanceAtDateTime(Long accountSpaceId, LocalDateTime dateTime) {
+    public Mono<BigDecimal> getBalanceAtDateTime(UUID accountSpaceId, LocalDateTime dateTime) {
         if (accountSpaceId == null) {
             return Mono.error(new IllegalArgumentException("Account space ID is required"));
         }

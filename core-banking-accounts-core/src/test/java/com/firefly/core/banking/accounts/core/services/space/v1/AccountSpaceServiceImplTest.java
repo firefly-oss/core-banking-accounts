@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class AccountSpaceServiceImplTest {
@@ -41,8 +42,8 @@ class AccountSpaceServiceImplTest {
     @InjectMocks
     private AccountSpaceServiceImpl service;
 
-    private static final Long ACCOUNT_ID = 1L;
-    private static final Long SPACE_ID = 100L;
+    private static final UUID ACCOUNT_ID = 1L;
+    private static final UUID SPACE_ID = 100L;
 
     private AccountSpace accountSpace;
     private AccountSpaceDTO accountSpaceDTO;

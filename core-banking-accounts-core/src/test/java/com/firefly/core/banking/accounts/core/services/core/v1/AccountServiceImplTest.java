@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class AccountServiceImplTest {
@@ -42,7 +43,7 @@ class AccountServiceImplTest {
 
     private Account testAccount;
     private AccountDTO testAccountDTO;
-    private final Long TEST_ACCOUNT_ID = 1L;
+    private final UUID TEST_ACCOUNT_ID = 1L;
 
     @BeforeEach
     void setUp() {

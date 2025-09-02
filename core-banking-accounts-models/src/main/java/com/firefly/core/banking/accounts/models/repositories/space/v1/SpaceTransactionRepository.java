@@ -9,11 +9,12 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Repository for managing space transactions.
  */
-public interface SpaceTransactionRepository extends BaseRepository<SpaceTransaction, Long> {
+public interface SpaceTransactionRepository extends BaseRepository<SpaceTransaction, UUID> {
     
     /**
      * Find all transactions for a specific account space
@@ -21,14 +22,14 @@ public interface SpaceTransactionRepository extends BaseRepository<SpaceTransact
      * @param pageable pagination information
      * @return a Flux of SpaceTransaction entities
      */
-    Flux<SpaceTransaction> findByAccountSpaceId(Long accountSpaceId, Pageable pageable);
+    Flux<SpaceTransaction> findByAccountSpaceId(UUID accountSpaceId, Pageable pageable);
     
     /**
      * Count the number of transactions for a specific account space
      * @param accountSpaceId the account space ID
      * @return a Mono with the count
      */
-    Mono<Long> countByAccountSpaceId(Long accountSpaceId);
+    Mono<Long> countByAccountSpaceId(UUID accountSpaceId);
     
     /**
      * Find transactions for a specific account space within a date range
@@ -39,7 +40,7 @@ public interface SpaceTransactionRepository extends BaseRepository<SpaceTransact
      * @return a Flux of SpaceTransaction entities
      */
     Flux<SpaceTransaction> findByAccountSpaceIdAndTransactionDateTimeBetween(
-            Long accountSpaceId, 
+            UUID accountSpaceId, 
             LocalDateTime startDate, 
             LocalDateTime endDate, 
             Pageable pageable);
@@ -52,7 +53,7 @@ public interface SpaceTransactionRepository extends BaseRepository<SpaceTransact
      * @return a Mono with the count
      */
     Mono<Long> countByAccountSpaceIdAndTransactionDateTimeBetween(
-            Long accountSpaceId, 
+            UUID accountSpaceId, 
             LocalDateTime startDate, 
             LocalDateTime endDate);
     
@@ -67,7 +68,7 @@ public interface SpaceTransactionRepository extends BaseRepository<SpaceTransact
             "WHERE account_space_id = :accountSpaceId " +
             "AND transaction_date_time BETWEEN :startDate AND :endDate " +
             "AND amount > 0")
-    Mono<BigDecimal> calculateTotalDeposits(Long accountSpaceId, LocalDateTime startDate, LocalDateTime endDate);
+    Mono<BigDecimal> calculateTotalDeposits(UUID accountSpaceId, LocalDateTime startDate, LocalDateTime endDate);
     
     /**
      * Calculate the sum of all withdrawals (negative amounts) for a specific account space within a date range
@@ -80,7 +81,7 @@ public interface SpaceTransactionRepository extends BaseRepository<SpaceTransact
             "WHERE account_space_id = :accountSpaceId " +
             "AND transaction_date_time BETWEEN :startDate AND :endDate " +
             "AND amount < 0")
-    Mono<BigDecimal> calculateTotalWithdrawals(Long accountSpaceId, LocalDateTime startDate, LocalDateTime endDate);
+    Mono<BigDecimal> calculateTotalWithdrawals(UUID accountSpaceId, LocalDateTime startDate, LocalDateTime endDate);
     
     /**
      * Find the most recent transaction before a specific date and time
@@ -89,6 +90,6 @@ public interface SpaceTransactionRepository extends BaseRepository<SpaceTransact
      * @return a Mono with the transaction
      */
     Mono<SpaceTransaction> findFirstByAccountSpaceIdAndTransactionDateTimeLessThanEqualOrderByTransactionDateTimeDesc(
-            Long accountSpaceId, 
+            UUID accountSpaceId, 
             LocalDateTime dateTime);
 }

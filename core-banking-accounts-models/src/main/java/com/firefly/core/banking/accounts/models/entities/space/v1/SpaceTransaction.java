@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Represents a transaction that affects the balance of an account space.
@@ -33,13 +34,13 @@ public class SpaceTransaction extends BaseEntity {
      * Example: 1000001
      */
     @Id
-    private Long spaceTransactionId;
+    private UUID spaceTransactionId;
 
     /**
      * Reference to the associated account space
      * Example: 100001 (links to AccountSpace.accountSpaceId)
      */
-    private Long accountSpaceId;
+    private UUID accountSpaceId;
 
     /**
      * Transaction amount

@@ -16,6 +16,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -73,7 +74,7 @@ public class AccountRestrictionServiceImpl implements AccountRestrictionService 
     }
 
     @Override
-    public Mono<AccountRestrictionDTO> getAccountRestriction(Long accountRestrictionId) {
+    public Mono<AccountRestrictionDTO> getAccountRestriction(UUID accountRestrictionId) {
         if (accountRestrictionId == null) {
             return Mono.error(new IllegalArgumentException(ERROR_RESTRICTION_ID_REQUIRED));
         }
@@ -85,7 +86,7 @@ public class AccountRestrictionServiceImpl implements AccountRestrictionService 
     }
 
     @Override
-    public Mono<AccountRestrictionDTO> updateAccountRestriction(Long accountRestrictionId, AccountRestrictionDTO accountRestrictionDTO) {
+    public Mono<AccountRestrictionDTO> updateAccountRestriction(UUID accountRestrictionId, AccountRestrictionDTO accountRestrictionDTO) {
         if (accountRestrictionId == null) {
             return Mono.error(new IllegalArgumentException(ERROR_RESTRICTION_ID_REQUIRED));
         }
@@ -129,7 +130,7 @@ public class AccountRestrictionServiceImpl implements AccountRestrictionService 
     }
 
     @Override
-    public Mono<Void> deleteAccountRestriction(Long accountRestrictionId) {
+    public Mono<Void> deleteAccountRestriction(UUID accountRestrictionId) {
         if (accountRestrictionId == null) {
             return Mono.error(new IllegalArgumentException(ERROR_RESTRICTION_ID_REQUIRED));
         }
@@ -141,7 +142,7 @@ public class AccountRestrictionServiceImpl implements AccountRestrictionService 
     }
 
     @Override
-    public Flux<AccountRestrictionDTO> getAccountRestrictionsByAccountId(Long accountId) {
+    public Flux<AccountRestrictionDTO> getAccountRestrictionsByAccountId(UUID accountId) {
         if (accountId == null) {
             return Flux.error(new IllegalArgumentException(ERROR_ACCOUNT_ID_REQUIRED));
         }
@@ -151,7 +152,7 @@ public class AccountRestrictionServiceImpl implements AccountRestrictionService 
     }
 
     @Override
-    public Flux<AccountRestrictionDTO> getActiveAccountRestrictionsByAccountId(Long accountId) {
+    public Flux<AccountRestrictionDTO> getActiveAccountRestrictionsByAccountId(UUID accountId) {
         if (accountId == null) {
             return Flux.error(new IllegalArgumentException(ERROR_ACCOUNT_ID_REQUIRED));
         }
@@ -161,7 +162,7 @@ public class AccountRestrictionServiceImpl implements AccountRestrictionService 
     }
 
     @Override
-    public Mono<AccountRestrictionDTO> removeRestriction(Long accountRestrictionId, String removedBy) {
+    public Mono<AccountRestrictionDTO> removeRestriction(UUID accountRestrictionId, String removedBy) {
         if (accountRestrictionId == null) {
             return Mono.error(new IllegalArgumentException(ERROR_RESTRICTION_ID_REQUIRED));
         }

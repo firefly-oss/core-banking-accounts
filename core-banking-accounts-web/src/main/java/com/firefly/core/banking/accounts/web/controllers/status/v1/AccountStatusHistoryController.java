@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Account Status History", description = "APIs for managing the status history of a specific bank account")
 @RestController
@@ -40,7 +41,7 @@ public class AccountStatusHistoryController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<AccountStatusHistoryDTO>>> getAllStatusHistory(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -64,7 +65,7 @@ public class AccountStatusHistoryController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountStatusHistoryDTO>> createStatusHistory(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Data for the new account status history record", required = true,
                     schema = @Schema(implementation = AccountStatusHistoryDTO.class))
@@ -89,10 +90,10 @@ public class AccountStatusHistoryController {
     @GetMapping(value = "/{historyId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountStatusHistoryDTO>> getStatusHistory(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the status history record", required = true)
-            @PathVariable Long historyId
+            @PathVariable UUID historyId
     ) {
         return service.getStatusHistory(accountId, historyId)
                 .map(ResponseEntity::ok)
@@ -113,10 +114,10 @@ public class AccountStatusHistoryController {
     @PutMapping(value = "/{historyId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<AccountStatusHistoryDTO>> updateStatusHistory(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the status history record to update", required = true)
-            @PathVariable Long historyId,
+            @PathVariable UUID historyId,
 
             @Parameter(description = "Updated data for the status history record", required = true,
                     schema = @Schema(implementation = AccountStatusHistoryDTO.class))
@@ -140,10 +141,10 @@ public class AccountStatusHistoryController {
     @DeleteMapping(value = "/{historyId}")
     public Mono<ResponseEntity<Void>> deleteStatusHistory(
             @Parameter(description = "Unique identifier of the account", required = true)
-            @PathVariable Long accountId,
+            @PathVariable UUID accountId,
 
             @Parameter(description = "Unique identifier of the status history record to delete", required = true)
-            @PathVariable Long historyId
+            @PathVariable UUID historyId
     ) {
         return service.deleteStatusHistory(accountId, historyId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

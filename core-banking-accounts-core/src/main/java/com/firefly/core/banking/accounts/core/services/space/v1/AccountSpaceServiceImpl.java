@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -126,7 +127,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     private static final String ERROR_SPACE_NOT_FOUND_GET = "Account space not found with ID: %d";
 
     @Override
-    public Mono<AccountSpaceDTO> getAccountSpace(Long accountSpaceId) {
+    public Mono<AccountSpaceDTO> getAccountSpace(UUID accountSpaceId) {
         if (accountSpaceId == null) {
             return Mono.error(new IllegalArgumentException(ERROR_SPACE_ID_REQUIRED_GET));
         }
@@ -140,7 +141,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     private static final String ERROR_CANNOT_CHANGE_TYPE = "Cannot change the type of an existing space";
 
     @Override
-    public Mono<AccountSpaceDTO> updateAccountSpace(Long accountSpaceId, AccountSpaceDTO accountSpaceDTO) {
+    public Mono<AccountSpaceDTO> updateAccountSpace(UUID accountSpaceId, AccountSpaceDTO accountSpaceDTO) {
         if (accountSpaceId == null) {
             return Mono.error(new IllegalArgumentException("Account space ID is required for update"));
         }
@@ -195,7 +196,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     private static final String ERROR_NON_ZERO_BALANCE = "Cannot delete space with non-zero balance. Transfer funds first.";
 
     @Override
-    public Mono<Void> deleteAccountSpace(Long accountSpaceId) {
+    public Mono<Void> deleteAccountSpace(UUID accountSpaceId) {
         if (accountSpaceId == null) {
             return Mono.error(new IllegalArgumentException(ERROR_SPACE_ID_REQUIRED));
         }
@@ -219,13 +220,13 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     }
 
     @Override
-    public Flux<AccountSpaceDTO> getAccountSpacesByAccountId(Long accountId) {
+    public Flux<AccountSpaceDTO> getAccountSpacesByAccountId(UUID accountId) {
         return repository.findByAccountId(accountId)
                 .map(mapper::toDTO);
     }
 
     @Override
-    public Mono<PaginationResponse<AccountSpaceDTO>> getAccountSpacesByAccountId(Long accountId, int page, int size) {
+    public Mono<PaginationResponse<AccountSpaceDTO>> getAccountSpacesByAccountId(UUID accountId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
         return repository.countByAccountId(accountId)
@@ -246,7 +247,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     private static final String ERROR_SAME_SPACE = "Cannot transfer funds to the same space";
 
     @Override
-    public Mono<Boolean> transferBetweenSpaces(Long fromAccountSpaceId, Long toAccountSpaceId, BigDecimal amount) {
+    public Mono<Boolean> transferBetweenSpaces(UUID fromAccountSpaceId, UUID toAccountSpaceId, BigDecimal amount) {
         // Validate IDs
         if (fromAccountSpaceId == null || toAccountSpaceId == null) {
             return Mono.error(new IllegalArgumentException("Source and destination space IDs are required"));
@@ -296,7 +297,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
 
                 // Create balance history records
                 LocalDateTime now = LocalDateTime.now();
-                Long accountId = fromSpace.getAccountId(); // Both spaces have the same accountId
+                UUID accountId = fromSpace.getAccountId(); // Both spaces have the same accountId
 
                 // Create balance record for source space
                 AccountBalanceDTO fromSpaceBalanceDTO = AccountBalanceDTO.builder()
@@ -329,7 +330,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     // ===== Goal Tracking Methods =====
 
     @Override
-    public Mono<AccountSpaceDTO> calculateGoalProgress(Long accountSpaceId) {
+    public Mono<AccountSpaceDTO> calculateGoalProgress(UUID accountSpaceId) {
         return repository.findById(accountSpaceId)
                 .flatMap(space -> {
                     // If there's no target amount, we can't calculate progress
@@ -390,14 +391,14 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     }
 
     @Override
-    public Flux<AccountSpaceDTO> getSpacesWithGoals(Long accountId) {
+    public Flux<AccountSpaceDTO> getSpacesWithGoals(UUID accountId) {
         return repository.findByAccountIdAndTargetAmountIsNotNull(accountId)
                 .flatMap(space -> Mono.just(space)
                         .flatMap(s -> calculateGoalProgress(s.getAccountSpaceId())));
     }
 
     @Override
-    public Flux<AccountSpaceDTO> getSpacesWithUpcomingTargetDates(Long accountId, int daysThreshold) {
+    public Flux<AccountSpaceDTO> getSpacesWithUpcomingTargetDates(UUID accountId, int daysThreshold) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime thresholdDate = now.plusDays(daysThreshold);
 
@@ -411,11 +412,11 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
 
     @Override
     public Mono<AccountSpaceDTO> configureAutomaticTransfers(
-            Long accountSpaceId,
+            UUID accountSpaceId,
             Boolean enabled,
             TransferFrequencyEnum frequency,
             BigDecimal amount,
-            Long sourceSpaceId
+            UUID sourceSpaceId
     ) {
         return repository.findById(accountSpaceId)
                 .flatMap(space -> {
@@ -457,7 +458,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     }
 
     @Override
-    public Mono<Integer> executeAutomaticTransfers(Long accountId) {
+    public Mono<Integer> executeAutomaticTransfers(UUID accountId) {
         // Find all spaces with automatic transfers enabled for this account
         return repository.findByAccountId(accountId)
                 .filter(space -> Boolean.TRUE.equals(space.getEnableAutomaticTransfers()))
@@ -472,7 +473,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
                     }
 
                     // Determine source space ID
-                    Long sourceSpaceId = space.getSourceSpaceId();
+                    UUID sourceSpaceId = space.getSourceSpaceId();
                     if (sourceSpaceId == null) {
                         // Find MAIN space if source not specified
                         return repository.findByAccountIdAndSpaceType(accountId, AccountSpaceTypeEnum.MAIN)
@@ -503,7 +504,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     }
 
     @Override
-    public Mono<Map<Long, BigDecimal>> simulateFutureBalances(Long accountId, int months) {
+    public Mono<Map<UUID, BigDecimal>> simulateFutureBalances(UUID accountId, int months) {
         if (months <= 0) {
             return Mono.error(new IllegalArgumentException("Months must be positive"));
         }
@@ -512,7 +513,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
         return repository.findByAccountId(accountId)
                 .collectList()
                 .flatMap(spaces -> {
-                    Map<Long, BigDecimal> projectedBalances = new HashMap<>();
+                    Map<UUID, BigDecimal> projectedBalances = new HashMap<>();
 
                     // Initialize with current balances
                     spaces.forEach(space ->
@@ -520,8 +521,8 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
                     );
 
                     // Get spaces with automatic transfers
-                    Map<Long, AccountSpace> spacesWithTransfers = new HashMap<>();
-                    Map<Long, AccountSpace> allSpacesMap = new HashMap<>();
+                    Map<UUID, AccountSpace> spacesWithTransfers = new HashMap<>();
+                    Map<UUID, AccountSpace> allSpacesMap = new HashMap<>();
 
                     spaces.forEach(space -> {
                         allSpacesMap.put(space.getAccountSpaceId(), space);
@@ -581,7 +582,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
                             }
 
                             // Determine source space
-                            Long sourceSpaceId = space.getSourceSpaceId();
+                            UUID sourceSpaceId = space.getSourceSpaceId();
                             AccountSpace sourceSpace = sourceSpaceId != null ?
                                     allSpacesMap.get(sourceSpaceId) : mainSpace;
 
@@ -611,17 +612,17 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     // ===== Analytics Methods =====
 
     @Override
-    public Mono<Map<Long, BigDecimal>> calculateBalanceDistribution(Long accountId) {
+    public Mono<Map<UUID, BigDecimal>> calculateBalanceDistribution(UUID accountId) {
         return repository.calculateTotalBalance(accountId)
                 .flatMap(totalBalance -> {
                     if (totalBalance == null || totalBalance.compareTo(BigDecimal.ZERO) <= 0) {
-                        return Mono.just(new HashMap<Long, BigDecimal>());
+                        return Mono.just(new HashMap<UUID, BigDecimal>());
                     }
 
                     return repository.findByAccountId(accountId)
                             .collectList()
                             .map(spaces -> {
-                                Map<Long, BigDecimal> distribution = new HashMap<>();
+                                Map<UUID, BigDecimal> distribution = new HashMap<>();
 
                                 spaces.forEach(space -> {
                                     BigDecimal percentage = space.getBalance()
@@ -636,8 +637,8 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     }
 
     @Override
-    public Mono<Map<Long, BigDecimal>> calculateGrowthRates(
-            Long accountId,
+    public Mono<Map<UUID, BigDecimal>> calculateGrowthRates(
+            UUID accountId,
             LocalDateTime startDate,
             LocalDateTime endDate
     ) {
@@ -650,7 +651,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
         return repository.findByAccountId(accountId)
                 .collectList()
                 .map(spaces -> {
-                    Map<Long, BigDecimal> growthRates = new HashMap<>();
+                    Map<UUID, BigDecimal> growthRates = new HashMap<>();
 
                     spaces.forEach(space -> {
                         // Skip spaces created after the start date
@@ -679,13 +680,13 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     }
 
     @Override
-    public Flux<AccountSpaceDTO> getSpacesByType(Long accountId, AccountSpaceTypeEnum spaceType) {
+    public Flux<AccountSpaceDTO> getSpacesByType(UUID accountId, AccountSpaceTypeEnum spaceType) {
         return repository.findByAccountIdAndSpaceType(accountId, spaceType)
                 .map(mapper::toDTO);
     }
 
     @Override
-    public Mono<AccountSpaceDTO> freezeAccountSpace(Long accountSpaceId) {
+    public Mono<AccountSpaceDTO> freezeAccountSpace(UUID accountSpaceId) {
         return repository.findById(accountSpaceId)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException(
                         String.format(ERROR_SPACE_NOT_FOUND, accountSpaceId))))
@@ -705,7 +706,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     }
 
     @Override
-    public Mono<AccountSpaceDTO> unfreezeAccountSpace(Long accountSpaceId) {
+    public Mono<AccountSpaceDTO> unfreezeAccountSpace(UUID accountSpaceId) {
         return repository.findById(accountSpaceId)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException(
                         String.format(ERROR_SPACE_NOT_FOUND, accountSpaceId))))
@@ -725,7 +726,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     }
 
     @Override
-    public Mono<AccountSpaceDTO> updateAccountSpaceBalance(Long accountSpaceId, BigDecimal newBalance, String reason) {
+    public Mono<AccountSpaceDTO> updateAccountSpaceBalance(UUID accountSpaceId, BigDecimal newBalance, String reason) {
         // Validate inputs
         if (newBalance == null || newBalance.compareTo(BigDecimal.ZERO) < 0) {
             return Mono.error(new IllegalArgumentException(ERROR_NEGATIVE_BALANCE));
@@ -767,7 +768,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     }
 
     @Override
-    public Mono<SpaceAnalyticsDTO> getSpaceAnalytics(Long accountSpaceId, LocalDateTime startDate, LocalDateTime endDate) {
+    public Mono<SpaceAnalyticsDTO> getSpaceAnalytics(UUID accountSpaceId, LocalDateTime startDate, LocalDateTime endDate) {
         // Validate date range
         if (startDate != null && endDate != null && !startDate.isBefore(endDate)) {
             return Mono.error(new IllegalArgumentException(ERROR_INVALID_DATE_RANGE));

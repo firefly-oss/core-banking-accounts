@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class AccountNotificationServiceImplTest {
@@ -35,8 +36,8 @@ class AccountNotificationServiceImplTest {
 
     private AccountNotification accountNotification;
     private AccountNotificationDTO accountNotificationDTO;
-    private final Long NOTIFICATION_ID = 1L;
-    private final Long ACCOUNT_ID = 100L;
+    private final UUID NOTIFICATION_ID = 1L;
+    private final UUID ACCOUNT_ID = 100L;
 
     @BeforeEach
     void setUp() {

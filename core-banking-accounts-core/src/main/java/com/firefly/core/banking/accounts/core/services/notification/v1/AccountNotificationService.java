@@ -6,6 +6,7 @@ import com.firefly.core.banking.accounts.interfaces.dtos.notification.v1.Account
 import com.firefly.core.banking.accounts.interfaces.enums.notification.v1.NotificationTypeEnum;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 public interface AccountNotificationService {
     
@@ -21,7 +22,7 @@ public interface AccountNotificationService {
      * @param accountNotificationId The account notification ID
      * @return Mono of AccountNotificationDTO
      */
-    Mono<AccountNotificationDTO> getAccountNotification(Long accountNotificationId);
+    Mono<AccountNotificationDTO> getAccountNotification(UUID accountNotificationId);
     
     /**
      * Update an account notification
@@ -29,28 +30,28 @@ public interface AccountNotificationService {
      * @param accountNotificationDTO The account notification DTO
      * @return Mono of AccountNotificationDTO
      */
-    Mono<AccountNotificationDTO> updateAccountNotification(Long accountNotificationId, AccountNotificationDTO accountNotificationDTO);
+    Mono<AccountNotificationDTO> updateAccountNotification(UUID accountNotificationId, AccountNotificationDTO accountNotificationDTO);
     
     /**
      * Delete an account notification
      * @param accountNotificationId The account notification ID
      * @return Mono of Void
      */
-    Mono<Void> deleteAccountNotification(Long accountNotificationId);
+    Mono<Void> deleteAccountNotification(UUID accountNotificationId);
     
     /**
      * Get all account notifications for an account
      * @param accountId The account ID
      * @return Flux of AccountNotificationDTO
      */
-    Flux<AccountNotificationDTO> getAccountNotificationsByAccountId(Long accountId);
+    Flux<AccountNotificationDTO> getAccountNotificationsByAccountId(UUID accountId);
     
     /**
      * Get unread account notifications for an account
      * @param accountId The account ID
      * @return Flux of AccountNotificationDTO
      */
-    Flux<AccountNotificationDTO> getUnreadAccountNotifications(Long accountId);
+    Flux<AccountNotificationDTO> getUnreadAccountNotifications(UUID accountId);
     
     /**
      * Get account notifications by type for an account
@@ -58,28 +59,28 @@ public interface AccountNotificationService {
      * @param notificationType The notification type
      * @return Flux of AccountNotificationDTO
      */
-    Flux<AccountNotificationDTO> getAccountNotificationsByType(Long accountId, NotificationTypeEnum notificationType);
+    Flux<AccountNotificationDTO> getAccountNotificationsByType(UUID accountId, NotificationTypeEnum notificationType);
     
     /**
      * Mark an account notification as read
      * @param accountNotificationId The account notification ID
      * @return Mono of AccountNotificationDTO
      */
-    Mono<AccountNotificationDTO> markNotificationAsRead(Long accountNotificationId);
+    Mono<AccountNotificationDTO> markNotificationAsRead(UUID accountNotificationId);
     
     /**
      * Mark all notifications as read for an account
      * @param accountId The account ID
      * @return Mono of Long representing the number of notifications marked as read
      */
-    Mono<Long> markAllNotificationsAsRead(Long accountId);
+    Mono<Long> markAllNotificationsAsRead(UUID accountId);
     
     /**
      * Get active (non-expired) notifications for an account
      * @param accountId The account ID
      * @return Flux of AccountNotificationDTO
      */
-    Flux<AccountNotificationDTO> getActiveNotifications(Long accountId);
+    Flux<AccountNotificationDTO> getActiveNotifications(UUID accountId);
     
     /**
      * List account notifications with pagination and filtering

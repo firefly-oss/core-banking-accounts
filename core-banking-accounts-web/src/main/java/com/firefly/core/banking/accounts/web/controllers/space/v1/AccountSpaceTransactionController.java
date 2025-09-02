@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Controller for managing account space transactions.
@@ -94,7 +95,7 @@ public class AccountSpaceTransactionController {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<SpaceTransactionDTO>> recordTransaction(
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable("accountSpaceId") Long accountSpaceId,
+            @PathVariable("accountSpaceId") UUID accountSpaceId,
 
             @Parameter(description = "Transaction amount (positive for deposits, negative for withdrawals)", required = true)
             @RequestParam("amount") BigDecimal amount,
@@ -135,7 +136,7 @@ public class AccountSpaceTransactionController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<SpaceTransactionDTO>>> getTransactions(
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable("accountSpaceId") Long accountSpaceId,
+            @PathVariable("accountSpaceId") UUID accountSpaceId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -170,7 +171,7 @@ public class AccountSpaceTransactionController {
     @GetMapping(value = "/filter/date", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<SpaceTransactionDTO>>> getTransactionsByDateRange(
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable("accountSpaceId") Long accountSpaceId,
+            @PathVariable("accountSpaceId") UUID accountSpaceId,
 
             @Parameter(description = "Start date of the range (inclusive)", required = true)
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
@@ -208,7 +209,7 @@ public class AccountSpaceTransactionController {
     @GetMapping(value = "/analytics/deposits", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<BigDecimal>> calculateTotalDeposits(
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable("accountSpaceId") Long accountSpaceId,
+            @PathVariable("accountSpaceId") UUID accountSpaceId,
 
             @Parameter(description = "Start date of the range (inclusive)", required = true)
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
@@ -243,7 +244,7 @@ public class AccountSpaceTransactionController {
     @GetMapping(value = "/analytics/withdrawals", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<BigDecimal>> calculateTotalWithdrawals(
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable("accountSpaceId") Long accountSpaceId,
+            @PathVariable("accountSpaceId") UUID accountSpaceId,
 
             @Parameter(description = "Start date of the range (inclusive)", required = true)
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
@@ -278,7 +279,7 @@ public class AccountSpaceTransactionController {
     @GetMapping(value = "/history/balance", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<BigDecimal>> getBalanceAtDateTime(
             @Parameter(description = "Unique identifier of the account space", required = true)
-            @PathVariable("accountSpaceId") Long accountSpaceId,
+            @PathVariable("accountSpaceId") UUID accountSpaceId,
 
             @Parameter(description = "Date and time to get the balance at", required = true)
             @RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime

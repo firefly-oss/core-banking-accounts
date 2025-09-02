@@ -10,6 +10,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Tracks the history of status changes for an account.
@@ -33,13 +34,13 @@ public class AccountStatusHistory extends BaseEntity {
      * Example: 1000001
      */
     @Id
-    private Long accountStatusHistoryId;
+    private UUID accountStatusHistoryId;
 
     /**
      * Reference to the associated account
      * Example: 100001 (links to Account.accountId)
      */
-    private Long accountId;
+    private UUID accountId;
 
     /**
      * The status code for this period

@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 public interface AccountSpaceService {
     /**
@@ -36,7 +37,7 @@ public interface AccountSpaceService {
      * @param accountSpaceId the unique identifier of the account space to retrieve
      * @return a Mono emitting the AccountSpaceDTO containing details, or an empty Mono if not found
      */
-    Mono<AccountSpaceDTO> getAccountSpace(Long accountSpaceId);
+    Mono<AccountSpaceDTO> getAccountSpace(UUID accountSpaceId);
 
     /**
      * Updates an existing account space by its unique ID with the provided details.
@@ -45,7 +46,7 @@ public interface AccountSpaceService {
      * @param accountSpaceDTO the updated account space details
      * @return a Mono emitting the updated account space details, or an error if it does not exist
      */
-    Mono<AccountSpaceDTO> updateAccountSpace(Long accountSpaceId, AccountSpaceDTO accountSpaceDTO);
+    Mono<AccountSpaceDTO> updateAccountSpace(UUID accountSpaceId, AccountSpaceDTO accountSpaceDTO);
 
     /**
      * Deletes an account space based on the provided account space ID.
@@ -53,7 +54,7 @@ public interface AccountSpaceService {
      * @param accountSpaceId The unique identifier of the account space to be deleted.
      * @return A Mono that completes when the account space deletion process is finished.
      */
-    Mono<Void> deleteAccountSpace(Long accountSpaceId);
+    Mono<Void> deleteAccountSpace(UUID accountSpaceId);
 
     /**
      * Retrieves all account spaces for a specific account.
@@ -61,7 +62,7 @@ public interface AccountSpaceService {
      * @param accountId the unique identifier of the account
      * @return a Flux emitting AccountSpaceDTO objects for the specified account
      */
-    Flux<AccountSpaceDTO> getAccountSpacesByAccountId(Long accountId);
+    Flux<AccountSpaceDTO> getAccountSpacesByAccountId(UUID accountId);
 
     /**
      * Retrieves a paginated list of account spaces for a specific account.
@@ -71,7 +72,7 @@ public interface AccountSpaceService {
      * @param size the page size
      * @return a Mono emitting a PaginationResponse containing a list of AccountSpaceDTO objects
      */
-    Mono<PaginationResponse<AccountSpaceDTO>> getAccountSpacesByAccountId(Long accountId, int page, int size);
+    Mono<PaginationResponse<AccountSpaceDTO>> getAccountSpacesByAccountId(UUID accountId, int page, int size);
 
     /**
      * Transfers funds between account spaces within the same account.
@@ -81,7 +82,7 @@ public interface AccountSpaceService {
      * @param amount the amount to transfer
      * @return a Mono emitting a Boolean indicating success or failure
      */
-    Mono<Boolean> transferBetweenSpaces(Long fromAccountSpaceId, Long toAccountSpaceId, BigDecimal amount);
+    Mono<Boolean> transferBetweenSpaces(UUID fromAccountSpaceId, UUID toAccountSpaceId, BigDecimal amount);
 
     // ===== Goal Tracking Methods =====
 
@@ -92,7 +93,7 @@ public interface AccountSpaceService {
      * @param accountSpaceId the space ID
      * @return a Mono emitting the space with goal progress information
      */
-    Mono<AccountSpaceDTO> calculateGoalProgress(Long accountSpaceId);
+    Mono<AccountSpaceDTO> calculateGoalProgress(UUID accountSpaceId);
 
     /**
      * Retrieves all spaces with goals for an account.
@@ -100,7 +101,7 @@ public interface AccountSpaceService {
      * @param accountId the account ID
      * @return a Flux of spaces with goals
      */
-    Flux<AccountSpaceDTO> getSpacesWithGoals(Long accountId);
+    Flux<AccountSpaceDTO> getSpacesWithGoals(UUID accountId);
 
     /**
      * Retrieves all spaces with upcoming goal target dates.
@@ -109,7 +110,7 @@ public interface AccountSpaceService {
      * @param daysThreshold number of days in the future to consider "upcoming"
      * @return a Flux of spaces with upcoming target dates
      */
-    Flux<AccountSpaceDTO> getSpacesWithUpcomingTargetDates(Long accountId, int daysThreshold);
+    Flux<AccountSpaceDTO> getSpacesWithUpcomingTargetDates(UUID accountId, int daysThreshold);
 
     // ===== Automatic Transfer Methods =====
 
@@ -124,11 +125,11 @@ public interface AccountSpaceService {
      * @return a Mono emitting the updated space
      */
     Mono<AccountSpaceDTO> configureAutomaticTransfers(
-            Long accountSpaceId,
+            UUID accountSpaceId,
             Boolean enabled,
             TransferFrequencyEnum frequency,
             BigDecimal amount,
-            Long sourceSpaceId
+            UUID sourceSpaceId
     );
 
     /**
@@ -138,7 +139,7 @@ public interface AccountSpaceService {
      * @param accountId the account ID
      * @return a Mono emitting the number of transfers executed
      */
-    Mono<Integer> executeAutomaticTransfers(Long accountId);
+    Mono<Integer> executeAutomaticTransfers(UUID accountId);
 
     /**
      * Simulates future balances based on automatic transfers.
@@ -147,7 +148,7 @@ public interface AccountSpaceService {
      * @param months number of months to simulate
      * @return a Mono emitting a map of space IDs to projected balances
      */
-    Mono<Map<Long, BigDecimal>> simulateFutureBalances(Long accountId, int months);
+    Mono<Map<UUID, BigDecimal>> simulateFutureBalances(UUID accountId, int months);
 
     // ===== Status Management Methods =====
 
@@ -158,7 +159,7 @@ public interface AccountSpaceService {
      * @param accountSpaceId the unique identifier of the account space to freeze
      * @return a Mono emitting the updated account space with frozen status
      */
-    Mono<AccountSpaceDTO> freezeAccountSpace(Long accountSpaceId);
+    Mono<AccountSpaceDTO> freezeAccountSpace(UUID accountSpaceId);
 
     /**
      * Unfreezes a previously frozen account space, allowing normal operations again.
@@ -166,7 +167,7 @@ public interface AccountSpaceService {
      * @param accountSpaceId the unique identifier of the account space to unfreeze
      * @return a Mono emitting the updated account space with unfrozen status
      */
-    Mono<AccountSpaceDTO> unfreezeAccountSpace(Long accountSpaceId);
+    Mono<AccountSpaceDTO> unfreezeAccountSpace(UUID accountSpaceId);
 
     /**
      * Updates the balance of an account space directly.
@@ -177,7 +178,7 @@ public interface AccountSpaceService {
      * @param reason the reason for the balance adjustment
      * @return a Mono emitting the updated account space with the new balance
      */
-    Mono<AccountSpaceDTO> updateAccountSpaceBalance(Long accountSpaceId, BigDecimal newBalance, String reason);
+    Mono<AccountSpaceDTO> updateAccountSpaceBalance(UUID accountSpaceId, BigDecimal newBalance, String reason);
 
     // ===== Analytics Methods =====
 
@@ -187,7 +188,7 @@ public interface AccountSpaceService {
      * @param accountId the account ID
      * @return a Mono emitting a map of space IDs to percentage of total balance
      */
-    Mono<Map<Long, BigDecimal>> calculateBalanceDistribution(Long accountId);
+    Mono<Map<UUID, BigDecimal>> calculateBalanceDistribution(UUID accountId);
 
     /**
      * Calculates the growth rate for each space over a period.
@@ -197,8 +198,8 @@ public interface AccountSpaceService {
      * @param endDate the end date for the calculation
      * @return a Mono emitting a map of space IDs to growth rates
      */
-    Mono<Map<Long, BigDecimal>> calculateGrowthRates(
-            Long accountId,
+    Mono<Map<UUID, BigDecimal>> calculateGrowthRates(
+            UUID accountId,
             LocalDateTime startDate,
             LocalDateTime endDate
     );
@@ -212,7 +213,7 @@ public interface AccountSpaceService {
      * @param endDate the end date for the analysis period
      * @return a Mono emitting a SpaceAnalyticsDTO with detailed analytics
      */
-    Mono<SpaceAnalyticsDTO> getSpaceAnalytics(Long accountSpaceId, LocalDateTime startDate, LocalDateTime endDate);
+    Mono<SpaceAnalyticsDTO> getSpaceAnalytics(UUID accountSpaceId, LocalDateTime startDate, LocalDateTime endDate);
 
     /**
      * Retrieves spaces by type for an account.
@@ -221,5 +222,5 @@ public interface AccountSpaceService {
      * @param spaceType the space type
      * @return a Flux of spaces of the specified type
      */
-    Flux<AccountSpaceDTO> getSpacesByType(Long accountId, AccountSpaceTypeEnum spaceType);
+    Flux<AccountSpaceDTO> getSpacesByType(UUID accountId, AccountSpaceTypeEnum spaceType);
 }
