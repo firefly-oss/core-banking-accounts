@@ -42,8 +42,8 @@ class AccountParameterServiceImplTest {
 
     private AccountParameter testAccountParameter;
     private AccountParameterDTO testAccountParameterDTO;
-    private final UUID TEST_ACCOUNT_ID = 1L;
-    private final UUID TEST_PARAMETER_ID = 100L;
+    private final UUID TEST_ACCOUNT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440011");
+    private final UUID TEST_PARAMETER_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440012");
 
     @BeforeEach
     void setUp() {
@@ -154,7 +154,7 @@ class AccountParameterServiceImplTest {
         // Arrange
         AccountParameter parameterForDifferentAccount = new AccountParameter();
         parameterForDifferentAccount.setAccountParameterId(TEST_PARAMETER_ID);
-        parameterForDifferentAccount.setAccountId(999L); // Different account ID
+        parameterForDifferentAccount.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440055")); // Different account ID
         
         when(repository.findById(TEST_PARAMETER_ID)).thenReturn(Mono.just(parameterForDifferentAccount));
 
@@ -203,7 +203,7 @@ class AccountParameterServiceImplTest {
         // Arrange
         AccountParameter parameterForDifferentAccount = new AccountParameter();
         parameterForDifferentAccount.setAccountParameterId(TEST_PARAMETER_ID);
-        parameterForDifferentAccount.setAccountId(999L); // Different account ID
+        parameterForDifferentAccount.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440056")); // Different account ID
         
         when(repository.findById(TEST_PARAMETER_ID)).thenReturn(Mono.just(parameterForDifferentAccount));
 
@@ -247,7 +247,7 @@ class AccountParameterServiceImplTest {
         // Arrange
         AccountParameter parameterForDifferentAccount = new AccountParameter();
         parameterForDifferentAccount.setAccountParameterId(TEST_PARAMETER_ID);
-        parameterForDifferentAccount.setAccountId(999L); // Different account ID
+        parameterForDifferentAccount.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440057")); // Different account ID
         
         when(repository.findById(TEST_PARAMETER_ID)).thenReturn(Mono.just(parameterForDifferentAccount));
 

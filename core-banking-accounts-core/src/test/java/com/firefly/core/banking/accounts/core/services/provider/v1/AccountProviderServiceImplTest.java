@@ -41,8 +41,8 @@ class AccountProviderServiceImplTest {
 
     private AccountProvider testAccountProvider;
     private AccountProviderDTO testAccountProviderDTO;
-    private final UUID TEST_ACCOUNT_ID = 1L;
-    private final UUID TEST_PROVIDER_ID = 100L;
+    private final UUID TEST_ACCOUNT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440058");
+    private final UUID TEST_PROVIDER_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440059");
 
     @BeforeEach
     void setUp() {
@@ -148,7 +148,7 @@ class AccountProviderServiceImplTest {
         // Arrange
         AccountProvider providerForDifferentAccount = new AccountProvider();
         providerForDifferentAccount.setAccountProviderId(TEST_PROVIDER_ID);
-        providerForDifferentAccount.setAccountId(999L); // Different account ID
+        providerForDifferentAccount.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440060")); // Different account ID
         
         when(repository.findById(TEST_PROVIDER_ID)).thenReturn(Mono.just(providerForDifferentAccount));
 
@@ -197,7 +197,7 @@ class AccountProviderServiceImplTest {
         // Arrange
         AccountProvider providerForDifferentAccount = new AccountProvider();
         providerForDifferentAccount.setAccountProviderId(TEST_PROVIDER_ID);
-        providerForDifferentAccount.setAccountId(999L); // Different account ID
+        providerForDifferentAccount.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440061")); // Different account ID
         
         when(repository.findById(TEST_PROVIDER_ID)).thenReturn(Mono.just(providerForDifferentAccount));
 
@@ -241,7 +241,7 @@ class AccountProviderServiceImplTest {
         // Arrange
         AccountProvider providerForDifferentAccount = new AccountProvider();
         providerForDifferentAccount.setAccountProviderId(TEST_PROVIDER_ID);
-        providerForDifferentAccount.setAccountId(999L); // Different account ID
+        providerForDifferentAccount.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440062")); // Different account ID
         
         when(repository.findById(TEST_PROVIDER_ID)).thenReturn(Mono.just(providerForDifferentAccount));
 

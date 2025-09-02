@@ -42,8 +42,8 @@ class AccountBalanceServiceImplTest {
 
     private AccountBalance testAccountBalance;
     private AccountBalanceDTO testAccountBalanceDTO;
-    private final UUID TEST_ACCOUNT_ID = 1L;
-    private final UUID TEST_BALANCE_ID = 100L;
+    private final UUID TEST_ACCOUNT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440013");
+    private final UUID TEST_BALANCE_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440014");
 
     @BeforeEach
     void setUp() {
@@ -119,7 +119,7 @@ class AccountBalanceServiceImplTest {
     void createBalance_ShouldCreateStakedCryptoBalance() {
         // Arrange
         AccountBalance stakedBalance = new AccountBalance();
-        stakedBalance.setAccountBalanceId(200L);
+        stakedBalance.setAccountBalanceId(UUID.fromString("550e8400-e29b-41d4-a716-446655440021"));
         stakedBalance.setAccountId(TEST_ACCOUNT_ID);
         stakedBalance.setBalanceType(BalanceTypeEnum.STAKED);
         stakedBalance.setBalanceAmount(new BigDecimal("0.5"));
@@ -130,7 +130,7 @@ class AccountBalanceServiceImplTest {
         stakedBalance.setConfirmations(12);
         
         AccountBalanceDTO stakedBalanceDTO = AccountBalanceDTO.builder()
-                .accountBalanceId(200L)
+                .accountBalanceId(UUID.fromString("550e8400-e29b-41d4-a716-446655440021"))
                 .accountId(TEST_ACCOUNT_ID)
                 .balanceType(BalanceTypeEnum.STAKED)
                 .balanceAmount(new BigDecimal("0.5"))
@@ -159,7 +159,7 @@ class AccountBalanceServiceImplTest {
     void createBalance_ShouldCreateLockedCryptoBalance() {
         // Arrange
         AccountBalance lockedBalance = new AccountBalance();
-        lockedBalance.setAccountBalanceId(300L);
+        lockedBalance.setAccountBalanceId(UUID.fromString("550e8400-e29b-41d4-a716-446655440022"));
         lockedBalance.setAccountId(TEST_ACCOUNT_ID);
         lockedBalance.setBalanceType(BalanceTypeEnum.LOCKED);
         lockedBalance.setBalanceAmount(new BigDecimal("100"));
@@ -168,9 +168,9 @@ class AccountBalanceServiceImplTest {
         lockedBalance.setAssetDecimals("6");
         lockedBalance.setTransactionHash("0x842d35Cc6634C0532925a3b844Bc454e4438f44e123456789abcdef0123456789");
         lockedBalance.setConfirmations(15);
-        
+
         AccountBalanceDTO lockedBalanceDTO = AccountBalanceDTO.builder()
-                .accountBalanceId(300L)
+                .accountBalanceId(UUID.fromString("550e8400-e29b-41d4-a716-446655440022"))
                 .accountId(TEST_ACCOUNT_ID)
                 .balanceType(BalanceTypeEnum.LOCKED)
                 .balanceAmount(new BigDecimal("100"))
@@ -199,7 +199,7 @@ class AccountBalanceServiceImplTest {
     void createBalance_ShouldCreatePendingConfirmationCryptoBalance() {
         // Arrange
         AccountBalance pendingBalance = new AccountBalance();
-        pendingBalance.setAccountBalanceId(400L);
+        pendingBalance.setAccountBalanceId(UUID.fromString("550e8400-e29b-41d4-a716-446655440023"));
         pendingBalance.setAccountId(TEST_ACCOUNT_ID);
         pendingBalance.setBalanceType(BalanceTypeEnum.PENDING_CONFIRMATION);
         pendingBalance.setBalanceAmount(new BigDecimal("0.01"));
@@ -210,7 +210,7 @@ class AccountBalanceServiceImplTest {
         pendingBalance.setConfirmations(2);
         
         AccountBalanceDTO pendingBalanceDTO = AccountBalanceDTO.builder()
-                .accountBalanceId(400L)
+                .accountBalanceId(UUID.fromString("550e8400-e29b-41d4-a716-446655440023"))
                 .accountId(TEST_ACCOUNT_ID)
                 .balanceType(BalanceTypeEnum.PENDING_CONFIRMATION)
                 .balanceAmount(new BigDecimal("0.01"))
@@ -268,7 +268,7 @@ class AccountBalanceServiceImplTest {
         // Arrange
         AccountBalance balanceForDifferentAccount = new AccountBalance();
         balanceForDifferentAccount.setAccountBalanceId(TEST_BALANCE_ID);
-        balanceForDifferentAccount.setAccountId(999L); // Different account ID
+        balanceForDifferentAccount.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440052")); // Different account ID
 
         when(repository.findById(TEST_BALANCE_ID)).thenReturn(Mono.just(balanceForDifferentAccount));
 
@@ -317,7 +317,7 @@ class AccountBalanceServiceImplTest {
         // Arrange
         AccountBalance balanceForDifferentAccount = new AccountBalance();
         balanceForDifferentAccount.setAccountBalanceId(TEST_BALANCE_ID);
-        balanceForDifferentAccount.setAccountId(999L); // Different account ID
+        balanceForDifferentAccount.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440053")); // Different account ID
 
         when(repository.findById(TEST_BALANCE_ID)).thenReturn(Mono.just(balanceForDifferentAccount));
 
@@ -361,7 +361,7 @@ class AccountBalanceServiceImplTest {
         // Arrange
         AccountBalance balanceForDifferentAccount = new AccountBalance();
         balanceForDifferentAccount.setAccountBalanceId(TEST_BALANCE_ID);
-        balanceForDifferentAccount.setAccountId(999L); // Different account ID
+        balanceForDifferentAccount.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440054")); // Different account ID
 
         when(repository.findById(TEST_BALANCE_ID)).thenReturn(Mono.just(balanceForDifferentAccount));
 

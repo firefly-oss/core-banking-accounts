@@ -41,7 +41,7 @@ class AssetPriceServiceImplTest {
 
     private AssetPrice testAssetPrice;
     private AssetPriceDTO testAssetPriceDTO;
-    private final UUID TEST_ASSET_PRICE_ID = 1L;
+    private final UUID TEST_ASSET_PRICE_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
     private final String TEST_ASSET_SYMBOL = "BTC";
     private final String TEST_QUOTE_CURRENCY = "USD";
 

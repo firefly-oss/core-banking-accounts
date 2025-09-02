@@ -43,32 +43,32 @@ class AccountServiceImplTest {
 
     private Account testAccount;
     private AccountDTO testAccountDTO;
-    private final UUID TEST_ACCOUNT_ID = 1L;
+    private final UUID TEST_ACCOUNT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440015");
 
     @BeforeEach
     void setUp() {
         // Setup test account entity
         testAccount = new Account();
         testAccount.setAccountId(TEST_ACCOUNT_ID);
-        testAccount.setContractId(100L);
+        testAccount.setContractId(UUID.fromString("550e8400-e29b-41d4-a716-446655440016"));
         testAccount.setAccountNumber("TEST-ACCOUNT-001");
         testAccount.setAccountType(AccountTypeEnum.CHECKING);
         testAccount.setCurrency("USD");
         testAccount.setOpenDate(LocalDate.now());
         testAccount.setAccountStatus(AccountStatusEnum.OPEN);
-        testAccount.setBranchId(200L);
+        testAccount.setBranchId(UUID.fromString("550e8400-e29b-41d4-a716-446655440017"));
         testAccount.setDescription("Test Account");
 
         // Setup test account DTO
         testAccountDTO = AccountDTO.builder()
                 .accountId(TEST_ACCOUNT_ID)
-                .contractId(100L)
+                .contractId(UUID.fromString("550e8400-e29b-41d4-a716-446655440016"))
                 .accountNumber("TEST-ACCOUNT-001")
                 .accountType(AccountTypeEnum.CHECKING)
                 .currency("USD")
                 .openDate(LocalDate.now())
                 .accountStatus(AccountStatusEnum.OPEN)
-                .branchId(200L)
+                .branchId(UUID.fromString("550e8400-e29b-41d4-a716-446655440017"))
                 .description("Test Account")
                 .dateCreated(LocalDateTime.now())
                 .dateUpdated(LocalDateTime.now())
@@ -83,7 +83,7 @@ class AccountServiceImplTest {
         when(accountMapper.toDTO(any(Account.class))).thenReturn(testAccountDTO);
         when(accountSpaceService.createAccountSpace(any(AccountSpaceDTO.class))).thenReturn(Mono.just(
                 AccountSpaceDTO.builder()
-                        .accountSpaceId(1L)
+                        .accountSpaceId(UUID.fromString("550e8400-e29b-41d4-a716-446655440020"))
                         .accountId(TEST_ACCOUNT_ID)
                         .spaceName("Main Account")
                         .spaceType(AccountSpaceTypeEnum.MAIN)
@@ -199,13 +199,13 @@ class AccountServiceImplTest {
     void createAccount_ShouldCreateCryptoWalletAccount() {
         // Arrange
         AccountDTO cryptoAccountDTO = AccountDTO.builder()
-                .contractId(100L)
+                .contractId(UUID.fromString("550e8400-e29b-41d4-a716-446655440016"))
                 .accountNumber("CRYPTO-001")
                 .accountType(AccountTypeEnum.CRYPTO_WALLET)
                 .currency("USD")
                 .openDate(LocalDate.now())
                 .accountStatus(AccountStatusEnum.OPEN)
-                .branchId(200L)
+                .branchId(UUID.fromString("550e8400-e29b-41d4-a716-446655440017"))
                 .description("Bitcoin Wallet")
                 .walletAddress("0x742d35Cc6634C0532925a3b844Bc454e4438f44e")
                 .blockchainNetwork("Ethereum")
@@ -213,14 +213,14 @@ class AccountServiceImplTest {
                 .build();
                 
         Account cryptoAccount = new Account();
-        cryptoAccount.setAccountId(2L);
-        cryptoAccount.setContractId(100L);
+        cryptoAccount.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440018"));
+        cryptoAccount.setContractId(UUID.fromString("550e8400-e29b-41d4-a716-446655440016"));
         cryptoAccount.setAccountNumber("CRYPTO-001");
         cryptoAccount.setAccountType(AccountTypeEnum.CRYPTO_WALLET);
         cryptoAccount.setCurrency("USD");
         cryptoAccount.setOpenDate(LocalDate.now());
         cryptoAccount.setAccountStatus(AccountStatusEnum.OPEN);
-        cryptoAccount.setBranchId(200L);
+        cryptoAccount.setBranchId(UUID.fromString("550e8400-e29b-41d4-a716-446655440017"));
         cryptoAccount.setDescription("Bitcoin Wallet");
         cryptoAccount.setWalletAddress("0x742d35Cc6634C0532925a3b844Bc454e4438f44e");
         cryptoAccount.setBlockchainNetwork("Ethereum");
@@ -231,8 +231,8 @@ class AccountServiceImplTest {
         when(accountMapper.toDTO(any(Account.class))).thenReturn(cryptoAccountDTO);
         when(accountSpaceService.createAccountSpace(any(AccountSpaceDTO.class))).thenReturn(Mono.just(
                 AccountSpaceDTO.builder()
-                        .accountSpaceId(2L)
-                        .accountId(2L)
+                        .accountSpaceId(UUID.fromString("550e8400-e29b-41d4-a716-446655440024"))
+                        .accountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440018"))
                         .spaceName("Main Account")
                         .spaceType(AccountSpaceTypeEnum.MAIN)
                         .build()
@@ -248,7 +248,7 @@ class AccountServiceImplTest {
         
         // Verify that createAccountSpace was called with a DTO containing the correct values
         verify(accountSpaceService).createAccountSpace(argThat(spaceDTO ->
-                spaceDTO.getAccountId().equals(2L) &&
+                spaceDTO.getAccountId().equals(UUID.fromString("550e8400-e29b-41d4-a716-446655440018")) &&
                 spaceDTO.getSpaceType() == AccountSpaceTypeEnum.MAIN &&
                 "Main Account".equals(spaceDTO.getSpaceName())
         ));
@@ -260,13 +260,13 @@ class AccountServiceImplTest {
     void createAccount_ShouldCreateTokenizedAssetAccount() {
         // Arrange
         AccountDTO tokenizedAssetDTO = AccountDTO.builder()
-                .contractId(100L)
+                .contractId(UUID.fromString("550e8400-e29b-41d4-a716-446655440016"))
                 .accountNumber("TOKEN-001")
                 .accountType(AccountTypeEnum.TOKENIZED_ASSET)
                 .currency("USD")
                 .openDate(LocalDate.now())
                 .accountStatus(AccountStatusEnum.OPEN)
-                .branchId(200L)
+                .branchId(UUID.fromString("550e8400-e29b-41d4-a716-446655440017"))
                 .description("USDT Token")
                 .walletAddress("0x742d35Cc6634C0532925a3b844Bc454e4438f44e")
                 .blockchainNetwork("Ethereum")
@@ -276,14 +276,14 @@ class AccountServiceImplTest {
                 .build();
                 
         Account tokenizedAsset = new Account();
-        tokenizedAsset.setAccountId(3L);
-        tokenizedAsset.setContractId(100L);
+        tokenizedAsset.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440019"));
+        tokenizedAsset.setContractId(UUID.fromString("550e8400-e29b-41d4-a716-446655440016"));
         tokenizedAsset.setAccountNumber("TOKEN-001");
         tokenizedAsset.setAccountType(AccountTypeEnum.TOKENIZED_ASSET);
         tokenizedAsset.setCurrency("USD");
         tokenizedAsset.setOpenDate(LocalDate.now());
         tokenizedAsset.setAccountStatus(AccountStatusEnum.OPEN);
-        tokenizedAsset.setBranchId(200L);
+        tokenizedAsset.setBranchId(UUID.fromString("550e8400-e29b-41d4-a716-446655440017"));
         tokenizedAsset.setDescription("USDT Token");
         tokenizedAsset.setWalletAddress("0x742d35Cc6634C0532925a3b844Bc454e4438f44e");
         tokenizedAsset.setBlockchainNetwork("Ethereum");
@@ -296,8 +296,8 @@ class AccountServiceImplTest {
         when(accountMapper.toDTO(any(Account.class))).thenReturn(tokenizedAssetDTO);
         when(accountSpaceService.createAccountSpace(any(AccountSpaceDTO.class))).thenReturn(Mono.just(
                 AccountSpaceDTO.builder()
-                        .accountSpaceId(3L)
-                        .accountId(3L)
+                        .accountSpaceId(UUID.fromString("550e8400-e29b-41d4-a716-446655440025"))
+                        .accountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440019"))
                         .spaceName("Main Account")
                         .spaceType(AccountSpaceTypeEnum.MAIN)
                         .build()
@@ -313,7 +313,7 @@ class AccountServiceImplTest {
         
         // Verify that createAccountSpace was called with a DTO containing the correct values
         verify(accountSpaceService).createAccountSpace(argThat(spaceDTO ->
-                spaceDTO.getAccountId().equals(3L) &&
+                spaceDTO.getAccountId().equals(UUID.fromString("550e8400-e29b-41d4-a716-446655440019")) &&
                 spaceDTO.getSpaceType() == AccountSpaceTypeEnum.MAIN &&
                 "Main Account".equals(spaceDTO.getSpaceName())
         ));

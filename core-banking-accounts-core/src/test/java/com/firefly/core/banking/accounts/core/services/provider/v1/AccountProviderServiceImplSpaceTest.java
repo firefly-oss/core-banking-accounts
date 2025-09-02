@@ -42,9 +42,9 @@ class AccountProviderServiceImplSpaceTest {
     private AccountProvider testAccountProvider;
     private AccountProviderDTO testAccountProviderDTO;
 
-    private final UUID TEST_ACCOUNT_ID = 1000L;
-    private final UUID TEST_ACCOUNT_SPACE_ID = 2000L;
-    private final UUID TEST_PROVIDER_ID = 100L;
+    private final UUID TEST_ACCOUNT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440004");
+    private final UUID TEST_ACCOUNT_SPACE_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440005");
+    private final UUID TEST_PROVIDER_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440006");
 
     @BeforeEach
     void setUp() {

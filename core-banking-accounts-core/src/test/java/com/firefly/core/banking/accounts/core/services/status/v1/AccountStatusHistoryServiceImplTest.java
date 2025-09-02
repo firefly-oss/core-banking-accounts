@@ -41,8 +41,8 @@ class AccountStatusHistoryServiceImplTest {
 
     private AccountStatusHistory testAccountStatusHistory;
     private AccountStatusHistoryDTO testAccountStatusHistoryDTO;
-    private final UUID TEST_ACCOUNT_ID = 1L;
-    private final UUID TEST_HISTORY_ID = 100L;
+    private final UUID TEST_ACCOUNT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440063");
+    private final UUID TEST_HISTORY_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440064");
 
     @BeforeEach
     void setUp() {
@@ -151,7 +151,7 @@ class AccountStatusHistoryServiceImplTest {
         // Arrange
         AccountStatusHistory historyForDifferentAccount = new AccountStatusHistory();
         historyForDifferentAccount.setAccountStatusHistoryId(TEST_HISTORY_ID);
-        historyForDifferentAccount.setAccountId(999L); // Different account ID
+        historyForDifferentAccount.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440065")); // Different account ID
         
         when(repository.findById(TEST_HISTORY_ID)).thenReturn(Mono.just(historyForDifferentAccount));
 
@@ -200,7 +200,7 @@ class AccountStatusHistoryServiceImplTest {
         // Arrange
         AccountStatusHistory historyForDifferentAccount = new AccountStatusHistory();
         historyForDifferentAccount.setAccountStatusHistoryId(TEST_HISTORY_ID);
-        historyForDifferentAccount.setAccountId(999L); // Different account ID
+        historyForDifferentAccount.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440066")); // Different account ID
         
         when(repository.findById(TEST_HISTORY_ID)).thenReturn(Mono.just(historyForDifferentAccount));
 
@@ -244,7 +244,7 @@ class AccountStatusHistoryServiceImplTest {
         // Arrange
         AccountStatusHistory historyForDifferentAccount = new AccountStatusHistory();
         historyForDifferentAccount.setAccountStatusHistoryId(TEST_HISTORY_ID);
-        historyForDifferentAccount.setAccountId(999L); // Different account ID
+        historyForDifferentAccount.setAccountId(UUID.fromString("550e8400-e29b-41d4-a716-446655440067")); // Different account ID
         
         when(repository.findById(TEST_HISTORY_ID)).thenReturn(Mono.just(historyForDifferentAccount));
 
