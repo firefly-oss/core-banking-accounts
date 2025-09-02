@@ -16,6 +16,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -30,33 +33,68 @@ public class AccountDTO extends BaseDTO {
     private UUID accountId;
 
     @FilterableId
+    @NotNull(message = "Contract ID is required")
     private UUID contractId;
 
+    @NotBlank(message = "Account number is required")
+    @Size(max = 50, message = "Account number must not exceed 50 characters")
     private String accountNumber;
+
+    @NotNull(message = "Account type is required")
     private AccountTypeEnum accountType;
+
+    @NotBlank(message = "Currency is required")
+    @Size(min = 3, max = 3, message = "Currency must be exactly 3 characters")
+    @Pattern(regexp = "^[A-Z]{3}$", message = "Currency must be a valid 3-letter ISO code")
     private String currency;
+
+    @NotNull(message = "Open date is required")
+    @PastOrPresent(message = "Open date cannot be in the future")
     private LocalDate openDate;
+
+    @Future(message = "Close date must be in the future")
     private LocalDate closeDate;
+
+    @NotNull(message = "Account status is required")
     private AccountStatusEnum accountStatus;
 
     @FilterableId
+    @NotNull(message = "Branch ID is required")
     private UUID branchId;
 
+    @Size(max = 500, message = "Description must not exceed 500 characters")
     private String description;
 
     private AccountSubTypeEnum accountSubType;
     private TaxReportingStatusEnum taxReportingStatus;
     private RegulatoryStatusEnum regulatoryStatus;
+
+    @Future(message = "Maturity date must be in the future")
     private LocalDate maturityDate;
+
     private InterestAccrualMethodEnum interestAccrualMethod;
     private InterestPaymentFrequencyEnum interestPaymentFrequency;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Minimum balance cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Minimum balance must have at most 15 integer digits and 2 decimal places")
     private BigDecimal minimumBalance;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Overdraft limit cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Overdraft limit must have at most 15 integer digits and 2 decimal places")
     private BigDecimal overdraftLimit;
-    
+
     // Crypto-specific fields
+    @Size(max = 100, message = "Wallet address must not exceed 100 characters")
     private String walletAddress;
+
+    @Size(max = 50, message = "Blockchain network must not exceed 50 characters")
     private String blockchainNetwork;
+
+    @Size(max = 100, message = "Token contract address must not exceed 100 characters")
     private String tokenContractAddress;
+
+    @Size(max = 20, message = "Token standard must not exceed 20 characters")
     private String tokenStandard;
+
     private Boolean isCustodial;
 }
