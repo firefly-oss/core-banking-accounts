@@ -3267,6 +3267,12 @@ paths:
 components:
   schemas:
     AssetPriceDTO:
+      required:
+        - asOfDatetime
+        - assetSymbol
+        - price
+        - priceSource
+        - quoteCurrency
       type: object
       properties:
         dateCreated:
@@ -3282,17 +3288,31 @@ components:
           format: uuid
           readOnly: true
         assetSymbol:
+          maxLength: 10
+          minLength: 0
+          pattern: ^[A-Z0-9]+$
           type: string
         quoteCurrency:
+          maxLength: 3
+          minLength: 3
+          pattern: ^[A-Z]{3}$
           type: string
         price:
+          minimum: 0
+          exclusiveMinimum: true
           type: number
         asOfDatetime:
           type: string
           format: date-time
         priceSource:
+          maxLength: 50
+          minLength: 0
           type: string
     AccountStatusHistoryDTO:
+      required:
+        - accountId
+        - statusCode
+        - statusStartDatetime
       type: object
       properties:
         dateCreated:
@@ -3324,8 +3344,14 @@ components:
           type: string
           format: date-time
         reason:
+          maxLength: 500
+          minLength: 0
           type: string
     AccountProviderDTO:
+      required:
+        - accountId
+        - providerName
+        - status
       type: object
       properties:
         dateCreated:
@@ -3344,8 +3370,12 @@ components:
           type: string
           format: uuid
         providerName:
+          maxLength: 100
+          minLength: 0
           type: string
         externalReference:
+          maxLength: 100
+          minLength: 0
           type: string
         status:
           type: string
@@ -3358,6 +3388,11 @@ components:
           type: string
           format: uuid
     AccountParameterDTO:
+      required:
+        - accountId
+        - effectiveDate
+        - paramType
+        - paramValue
       type: object
       properties:
         dateCreated:
@@ -3382,8 +3417,12 @@ components:
             - OVERDRAFT_LIMIT
             - INTEREST_RATE
         paramValue:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         paramUnit:
+          maxLength: 20
+          minLength: 0
           type: string
         effectiveDate:
           type: string
@@ -3392,8 +3431,15 @@ components:
           type: string
           format: date-time
         description:
+          maxLength: 500
+          minLength: 0
           type: string
     AccountBalanceDTO:
+      required:
+        - accountId
+        - asOfDatetime
+        - balanceAmount
+        - balanceType
       type: object
       properties:
         dateCreated:
@@ -3429,15 +3475,33 @@ components:
           type: string
           format: date-time
         assetSymbol:
+          maxLength: 10
+          minLength: 0
+          pattern: ^[A-Z0-9]*$
           type: string
         assetDecimals:
+          maxLength: 2
+          minLength: 0
+          pattern: ^[0-9]*$
           type: string
         transactionHash:
+          maxLength: 100
+          minLength: 0
           type: string
         confirmations:
+          maximum: 999999
+          minimum: 0
           type: integer
           format: int32
     AccountDTO:
+      required:
+        - accountNumber
+        - accountStatus
+        - accountType
+        - branchId
+        - contractId
+        - currency
+        - openDate
       type: object
       properties:
         dateCreated:
@@ -3456,6 +3520,8 @@ components:
           type: string
           format: uuid
         accountNumber:
+          maxLength: 50
+          minLength: 0
           type: string
         accountType:
           type: string
@@ -3481,6 +3547,9 @@ components:
             - STABLECOIN
             - NFT_COLLECTION
         currency:
+          maxLength: 3
+          minLength: 3
+          pattern: ^[A-Z]{3}$
           type: string
         openDate:
           type: string
@@ -3499,6 +3568,8 @@ components:
           type: string
           format: uuid
         description:
+          maxLength: 500
+          minLength: 0
           type: string
         accountSubType:
           type: string
@@ -3605,21 +3676,38 @@ components:
             - SPECIFIC_DATE
             - NONE
         minimumBalance:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         overdraftLimit:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         walletAddress:
+          maxLength: 100
+          minLength: 0
           type: string
         blockchainNetwork:
+          maxLength: 50
+          minLength: 0
           type: string
         tokenContractAddress:
+          maxLength: 100
+          minLength: 0
           type: string
         tokenStandard:
+          maxLength: 20
+          minLength: 0
           type: string
         isCustodial:
           type: boolean
       description: Data for the new account
     AccountSpaceDTO:
+      required:
+        - accountId
+        - balance
+        - spaceName
+        - spaceType
       type: object
       properties:
         dateCreated:
@@ -3638,6 +3726,8 @@ components:
           type: string
           format: uuid
         spaceName:
+          maxLength: 100
+          minLength: 0
           type: string
         spaceType:
           type: string
@@ -3649,17 +3739,28 @@ components:
             - GOALS
             - CUSTOM
         balance:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         targetAmount:
+          minimum: 0
+          exclusiveMinimum: true
           type: number
         targetDate:
           type: string
           format: date-time
         iconId:
+          maxLength: 50
+          minLength: 0
           type: string
         colorCode:
+          maxLength: 7
+          minLength: 0
+          pattern: ^#[0-9A-Fa-f]{6}$
           type: string
         description:
+          maxLength: 500
+          minLength: 0
           type: string
         isVisible:
           type: boolean
@@ -3716,6 +3817,12 @@ components:
           readOnly: true
       description: Data for the new account space
     AccountRestrictionDTO:
+      required:
+        - accountId
+        - appliedBy
+        - reason
+        - restrictionType
+        - startDateTime
       type: object
       properties:
         dateCreated:
@@ -3767,20 +3874,38 @@ components:
           type: string
           format: date-time
         restrictedAmount:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         referenceNumber:
+          maxLength: 100
+          minLength: 0
           type: string
         reason:
+          maxLength: 500
+          minLength: 0
           type: string
         appliedBy:
+          maxLength: 100
+          minLength: 0
           type: string
         removedBy:
+          maxLength: 100
+          minLength: 0
           type: string
         notes:
+          maxLength: 1000
+          minLength: 0
           type: string
         isActive:
           type: boolean
     AccountNotificationDTO:
+      required:
+        - accountId
+        - creationDateTime
+        - message
+        - notificationType
+        - title
       type: object
       properties:
         dateCreated:
@@ -3826,8 +3951,12 @@ components:
             - PARAMETER_CHANGE
             - ACCOUNT_CLOSURE
         title:
+          maxLength: 200
+          minLength: 0
           type: string
         message:
+          maxLength: 1000
+          minLength: 0
           type: string
         creationDateTime:
           type: string
@@ -3841,17 +3970,30 @@ components:
           type: string
           format: date-time
         priority:
+          maximum: 10
+          minimum: 1
           type: integer
           format: int32
         deliveryChannels:
+          maxLength: 100
+          minLength: 0
           type: string
         eventReference:
+          maxLength: 100
+          minLength: 0
           type: string
         relatedAmount:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         actionUrl:
+          maxLength: 500
+          minLength: 0
+          pattern: ^(https?://.*)?$
           type: string
         actionText:
+          maxLength: 100
+          minLength: 0
           type: string
     FilterOptions:
       type: object
@@ -3941,6 +4083,13 @@ components:
           format: int32
       description: Represents a paginated response containing a list of items and pagination metadata.
     SpaceTransactionDTO:
+      required:
+        - accountSpaceId
+        - amount
+        - balanceAfterTransaction
+        - description
+        - transactionDateTime
+        - transactionType
       type: object
       properties:
         dateCreated:
@@ -3961,15 +4110,22 @@ components:
         amount:
           type: number
         balanceAfterTransaction:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         transactionDateTime:
           type: string
           format: date-time
         description:
+          maxLength: 500
+          minLength: 0
           type: string
         referenceId:
+          maxLength: 100
+          minLength: 0
           type: string
         transactionType:
+          pattern: ^(DEPOSIT|WITHDRAWAL|TRANSFER_IN|TRANSFER_OUT|INTEREST|FEE)$
           type: string
         spaceName:
           type: string
@@ -4001,6 +4157,13 @@ components:
           format: int32
       description: Represents a paginated response containing a list of items and pagination metadata.
     SpaceAnalyticsDTO:
+      required:
+        - accountId
+        - accountSpaceId
+        - endDate
+        - spaceName
+        - spaceType
+        - startDate
       type: object
       properties:
         accountSpaceId:
@@ -4010,6 +4173,8 @@ components:
           type: string
           format: uuid
         spaceName:
+          maxLength: 100
+          minLength: 0
           type: string
         spaceType:
           type: string
@@ -4027,33 +4192,52 @@ components:
           type: string
           format: date-time
         openingBalance:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         closingBalance:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         lowestBalance:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         highestBalance:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         averageBalance:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         netChange:
           type: number
         netChangePercentage:
+          minimum: -100
+          exclusiveMinimum: false
           type: number
         annualizedGrowthRate:
           type: number
         totalTransactions:
+          minimum: 0
           type: integer
           format: int32
         incomingTransactions:
+          minimum: 0
           type: integer
           format: int32
         outgoingTransactions:
+          minimum: 0
           type: integer
           format: int32
         totalInflow:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         totalOutflow:
+          minimum: 0
+          exclusiveMinimum: false
           type: number
         averageTransactionAmount:
           type: number
