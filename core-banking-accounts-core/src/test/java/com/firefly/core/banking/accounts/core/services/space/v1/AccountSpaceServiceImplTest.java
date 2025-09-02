@@ -42,8 +42,8 @@ class AccountSpaceServiceImplTest {
     @InjectMocks
     private AccountSpaceServiceImpl service;
 
-    private static final UUID ACCOUNT_ID = 1L;
-    private static final UUID SPACE_ID = 100L;
+    private static final UUID ACCOUNT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
+    private static final UUID SPACE_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
 
     private AccountSpace accountSpace;
     private AccountSpaceDTO accountSpaceDTO;

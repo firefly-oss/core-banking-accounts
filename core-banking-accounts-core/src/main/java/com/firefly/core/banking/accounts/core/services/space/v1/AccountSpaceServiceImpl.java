@@ -40,7 +40,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     private static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
 
     // Error messages
-    private static final String ERROR_SPACE_NOT_FOUND = "Account space not found with ID: %d";
+    private static final String ERROR_SPACE_NOT_FOUND = "Account space not found with ID: %s";
     private static final String ERROR_INSUFFICIENT_FUNDS = "Insufficient funds in source space. Available: %s, Requested: %s";
     private static final String ERROR_NEGATIVE_AMOUNT = "Transfer amount must be positive, got: %s";
     private static final String ERROR_DIFFERENT_ACCOUNTS = "Cannot transfer between spaces of different accounts";
@@ -48,7 +48,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     private static final String ERROR_INVALID_TRANSFER_CONFIG = "Frequency and amount are required and amount must be positive when enabling automatic transfers";
     private static final String ERROR_SOURCE_SPACE_INVALID = "Source space must belong to the same account";
     private static final String ERROR_INVALID_DATE_RANGE = "Invalid date range: start date must be before end date";
-    private static final String ERROR_MONTHS_POSITIVE = "Months must be positive, got: %d";
+    private static final String ERROR_MONTHS_POSITIVE = "Months must be positive, got: %s";
     private static final String ERROR_SPACE_ALREADY_FROZEN = "Account space is already frozen";
     private static final String ERROR_SPACE_NOT_FROZEN = "Account space is not frozen";
     private static final String ERROR_NEGATIVE_BALANCE = "New balance cannot be negative";
@@ -124,7 +124,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     }
 
     private static final String ERROR_SPACE_ID_REQUIRED_GET = "Account space ID is required";
-    private static final String ERROR_SPACE_NOT_FOUND_GET = "Account space not found with ID: %d";
+    private static final String ERROR_SPACE_NOT_FOUND_GET = "Account space not found with ID: %s";
 
     @Override
     public Mono<AccountSpaceDTO> getAccountSpace(UUID accountSpaceId) {
@@ -137,7 +137,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
                 .switchIfEmpty(Mono.empty());
     }
 
-    private static final String ERROR_SPACE_NOT_FOUND_UPDATE = "Account space not found for update with ID: %d";
+    private static final String ERROR_SPACE_NOT_FOUND_UPDATE = "Account space not found for update with ID: %s";
     private static final String ERROR_CANNOT_CHANGE_TYPE = "Cannot change the type of an existing space";
 
     @Override
@@ -192,7 +192,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
     }
 
     private static final String ERROR_SPACE_ID_REQUIRED = "Account space ID is required for deletion";
-    private static final String ERROR_SPACE_NOT_FOUND_DELETE = "Account space not found for deletion with ID: %d";
+    private static final String ERROR_SPACE_NOT_FOUND_DELETE = "Account space not found for deletion with ID: %s";
     private static final String ERROR_NON_ZERO_BALANCE = "Cannot delete space with non-zero balance. Transfer funds first.";
 
     @Override
@@ -243,7 +243,7 @@ public class AccountSpaceServiceImpl implements AccountSpaceService {
                 );
     }
 
-    private static final String ERROR_SPACE_NOT_FOUND_TRANSFER = "Account space not found for transfer with ID: %d";
+    private static final String ERROR_SPACE_NOT_FOUND_TRANSFER = "Account space not found for transfer with ID: %s";
     private static final String ERROR_SAME_SPACE = "Cannot transfer funds to the same space";
 
     @Override
