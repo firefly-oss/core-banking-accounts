@@ -12,6 +12,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -27,16 +30,38 @@ public class AccountSpaceDTO extends BaseDTO {
     private UUID accountSpaceId;
 
     @FilterableId
+    @NotNull(message = "Account ID is required")
     private UUID accountId;
 
+    @NotBlank(message = "Space name is required")
+    @Size(max = 100, message = "Space name must not exceed 100 characters")
     private String spaceName;
+
+    @NotNull(message = "Space type is required")
     private AccountSpaceTypeEnum spaceType;
+
+    @NotNull(message = "Balance is required")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Balance cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Balance must have at most 15 integer digits and 2 decimal places")
     private BigDecimal balance;
+
+    @DecimalMin(value = "0.0", inclusive = false, message = "Target amount must be positive")
+    @Digits(integer = 15, fraction = 2, message = "Target amount must have at most 15 integer digits and 2 decimal places")
     private BigDecimal targetAmount;
+
+    @Future(message = "Target date must be in the future")
     private LocalDateTime targetDate;
+
+    @Size(max = 50, message = "Icon ID must not exceed 50 characters")
     private String iconId;
+
+    @Size(max = 7, message = "Color code must not exceed 7 characters")
+    @Pattern(regexp = "^#[0-9A-Fa-f]{6}$", message = "Color code must be a valid hex color (e.g., #FF0000)")
     private String colorCode;
+
+    @Size(max = 500, message = "Description must not exceed 500 characters")
     private String description;
+
     private Boolean isVisible;
 
     // Goal tracking fields - calculated, not stored in database

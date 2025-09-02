@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,33 +27,77 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SpaceAnalyticsDTO {
     // Space identification
+    @NotNull(message = "Account space ID is required")
     private UUID accountSpaceId;
+
+    @NotNull(message = "Account ID is required")
     private UUID accountId;
+
+    @NotBlank(message = "Space name is required")
+    @Size(max = 100, message = "Space name must not exceed 100 characters")
     private String spaceName;
+
+    @NotNull(message = "Space type is required")
     private AccountSpaceTypeEnum spaceType;
-    
+
     // Analysis period
+    @NotNull(message = "Start date is required")
     private LocalDateTime startDate;
+
+    @NotNull(message = "End date is required")
     private LocalDateTime endDate;
     
     // Balance metrics
+    @DecimalMin(value = "0.0", inclusive = true, message = "Opening balance cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Opening balance must have at most 15 integer digits and 2 decimal places")
     private BigDecimal openingBalance;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Closing balance cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Closing balance must have at most 15 integer digits and 2 decimal places")
     private BigDecimal closingBalance;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Lowest balance cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Lowest balance must have at most 15 integer digits and 2 decimal places")
     private BigDecimal lowestBalance;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Highest balance cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Highest balance must have at most 15 integer digits and 2 decimal places")
     private BigDecimal highestBalance;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Average balance cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Average balance must have at most 15 integer digits and 2 decimal places")
     private BigDecimal averageBalance;
-    
+
     // Growth metrics
+    @Digits(integer = 15, fraction = 2, message = "Net change must have at most 15 integer digits and 2 decimal places")
     private BigDecimal netChange;
+
+    @DecimalMin(value = "-100.0", message = "Net change percentage cannot be less than -100%")
+    @Digits(integer = 5, fraction = 2, message = "Net change percentage must have at most 5 integer digits and 2 decimal places")
     private BigDecimal netChangePercentage;
+
+    @Digits(integer = 5, fraction = 2, message = "Annualized growth rate must have at most 5 integer digits and 2 decimal places")
     private BigDecimal annualizedGrowthRate;
-    
+
     // Transaction metrics
+    @Min(value = 0, message = "Total transactions cannot be negative")
     private Integer totalTransactions;
+
+    @Min(value = 0, message = "Incoming transactions cannot be negative")
     private Integer incomingTransactions;
+
+    @Min(value = 0, message = "Outgoing transactions cannot be negative")
     private Integer outgoingTransactions;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Total inflow cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Total inflow must have at most 15 integer digits and 2 decimal places")
     private BigDecimal totalInflow;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Total outflow cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Total outflow must have at most 15 integer digits and 2 decimal places")
     private BigDecimal totalOutflow;
+
+    @Digits(integer = 15, fraction = 2, message = "Average transaction amount must have at most 15 integer digits and 2 decimal places")
     private BigDecimal averageTransactionAmount;
     
     // Time-series data
