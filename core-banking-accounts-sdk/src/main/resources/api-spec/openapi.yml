@@ -7,7 +7,7 @@ info:
     email: dev@getfirefly.io
   version: 1.0.0
 servers:
-  - url: 'http://core.catalis.vc/accounts'
+  - url: http://core.catalis.vc/accounts
     description: Development Environment
   - url: /
     description: Local Development Environment
@@ -16,6 +16,8 @@ tags:
     description: APIs for managing account notifications and alerts
   - name: Account Restrictions
     description: APIs for managing restrictions placed on accounts
+  - name: Asset Prices
+    description: APIs for managing crypto asset prices
   - name: Accounts
     description: APIs for managing bank accounts within the system
   - name: Account Spaces
@@ -27,22 +29,96 @@ tags:
   - name: Account Space Transactions
     description: APIs for managing financial transactions within account spaces
   - name: Account Space Providers
-    description: >-
-      APIs for managing provider records associated with a specific account
-      space
+    description: APIs for managing provider records associated with a specific account space
   - name: Account Parameters
     description: APIs for managing parameter records associated with a specific account
   - name: Account Status History
     description: APIs for managing the status history of a specific bank account
 paths:
-  '/api/v1/accounts/{accountId}/status-history/{historyId}':
+  /api/v1/asset-prices/{assetPriceId}:
+    get:
+      tags:
+        - Asset Prices
+      summary: Get Asset Price by ID
+      description: Retrieve a specific asset price by its unique identifier.
+      operationId: getAssetPrice
+      parameters:
+        - name: assetPriceId
+          in: path
+          description: Unique identifier of the asset price
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully retrieved the asset price
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetPriceDTO'
+        '404':
+          description: Asset price not found
+    put:
+      tags:
+        - Asset Prices
+      summary: Update Asset Price
+      description: Update an existing asset price record.
+      operationId: updateAssetPrice
+      parameters:
+        - name: assetPriceId
+          in: path
+          description: Unique identifier of the asset price to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetPriceDTO'
+        required: true
+      responses:
+        '200':
+          description: Asset price updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetPriceDTO'
+        '404':
+          description: Asset price not found
+    delete:
+      tags:
+        - Asset Prices
+      summary: Delete Asset Price
+      description: Remove an existing asset price record by its unique identifier.
+      operationId: deleteAssetPrice
+      parameters:
+        - name: assetPriceId
+          in: path
+          description: Unique identifier of the asset price to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Asset price deleted successfully
+        '404':
+          description: Asset price not found
+  /api/v1/accounts/{accountId}/status-history/{historyId}:
     get:
       tags:
         - Account Status History
       summary: Get Account Status History by ID
-      description: >-
-        Retrieve a specific status history record by its unique identifier,
-        ensuring it belongs to the specified account.
+      description: Retrieve a specific status history record by its unique identifier, ensuring it belongs to the specified account.
       operationId: getStatusHistory
       parameters:
         - name: accountId
@@ -50,15 +126,15 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: historyId
           in: path
           description: Unique identifier of the status history record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the account status history
@@ -72,9 +148,7 @@ paths:
       tags:
         - Account Status History
       summary: Update Account Status History
-      description: >-
-        Update an existing status history record associated with the specified
-        account.
+      description: Update an existing status history record associated with the specified account.
       operationId: updateStatusHistory
       parameters:
         - name: accountId
@@ -82,20 +156,18 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: historyId
           in: path
           description: Unique identifier of the status history record to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -126,28 +198,26 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: historyId
           in: path
           description: Unique identifier of the status history record to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Status history record deleted successfully
         '404':
           description: Status history record not found
-  '/api/v1/accounts/{accountId}/spaces/{accountSpaceId}/providers/{providerId}':
+  /api/v1/accounts/{accountId}/spaces/{accountSpaceId}/providers/{providerId}:
     get:
       tags:
         - Account Space Providers
       summary: Get Account Space Provider by ID
-      description: >-
-        Retrieve a specific provider record by its unique identifier, ensuring
-        it belongs to the specified account space.
+      description: Retrieve a specific provider record by its unique identifier, ensuring it belongs to the specified account space.
       operationId: getProviderForSpace
       parameters:
         - name: accountId
@@ -155,22 +225,22 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: accountSpaceId
           in: path
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: providerId
           in: path
           description: Unique identifier of the provider record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the account provider
@@ -184,9 +254,7 @@ paths:
       tags:
         - Account Space Providers
       summary: Update Account Space Provider
-      description: >-
-        Update an existing provider record associated with the specified account
-        space.
+      description: Update an existing provider record associated with the specified account space.
       operationId: updateProviderForSpace
       parameters:
         - name: accountId
@@ -194,27 +262,25 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: accountSpaceId
           in: path
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: providerId
           in: path
           description: Unique identifier of the provider record to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -237,9 +303,7 @@ paths:
       tags:
         - Account Space Providers
       summary: Delete Account Space Provider
-      description: >-
-        Remove an existing provider record from the specified account space by
-        its unique identifier.
+      description: Remove an existing provider record from the specified account space by its unique identifier.
       operationId: deleteProviderForSpace
       parameters:
         - name: accountId
@@ -247,35 +311,33 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: accountSpaceId
           in: path
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: providerId
           in: path
           description: Unique identifier of the provider record to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Provider deleted successfully
         '404':
           description: Provider record not found
-  '/api/v1/accounts/{accountId}/providers/{providerId}':
+  /api/v1/accounts/{accountId}/providers/{providerId}:
     get:
       tags:
         - Account Providers
       summary: Get Account Provider by ID
-      description: >-
-        Retrieve a specific provider record by its unique identifier, ensuring
-        it belongs to the specified account.
+      description: Retrieve a specific provider record by its unique identifier, ensuring it belongs to the specified account.
       operationId: getProvider
       parameters:
         - name: accountId
@@ -283,15 +345,15 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: providerId
           in: path
           description: Unique identifier of the provider record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the account provider
@@ -305,9 +367,7 @@ paths:
       tags:
         - Account Providers
       summary: Update Account Provider
-      description: >-
-        Update an existing provider record associated with the specified
-        account.
+      description: Update an existing provider record associated with the specified account.
       operationId: updateProvider
       parameters:
         - name: accountId
@@ -315,20 +375,18 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: providerId
           in: path
           description: Unique identifier of the provider record to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -351,9 +409,7 @@ paths:
       tags:
         - Account Providers
       summary: Delete Account Provider
-      description: >-
-        Remove an existing provider record from the specified account by its
-        unique identifier.
+      description: Remove an existing provider record from the specified account by its unique identifier.
       operationId: deleteProvider
       parameters:
         - name: accountId
@@ -361,28 +417,26 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: providerId
           in: path
           description: Unique identifier of the provider record to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Provider deleted successfully
         '404':
           description: Provider record not found
-  '/api/v1/accounts/{accountId}/parameters/{paramId}':
+  /api/v1/accounts/{accountId}/parameters/{paramId}:
     get:
       tags:
         - Account Parameters
       summary: Get Account Parameter by ID
-      description: >-
-        Retrieve a specific parameter record by its unique identifier, ensuring
-        it belongs to the specified account.
+      description: Retrieve a specific parameter record by its unique identifier, ensuring it belongs to the specified account.
       operationId: getParameter
       parameters:
         - name: accountId
@@ -390,15 +444,15 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: paramId
           in: path
           description: Unique identifier of the parameter record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the account parameter
@@ -412,9 +466,7 @@ paths:
       tags:
         - Account Parameters
       summary: Update Account Parameter
-      description: >-
-        Update an existing parameter record associated with the specified
-        account.
+      description: Update an existing parameter record associated with the specified account.
       operationId: updateParameter
       parameters:
         - name: accountId
@@ -422,20 +474,18 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: paramId
           in: path
           description: Unique identifier of the parameter record to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -466,28 +516,26 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: paramId
           in: path
           description: Unique identifier of the parameter record to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Account parameter deleted successfully
         '404':
           description: Account parameter not found
-  '/api/v1/accounts/{accountId}/balances/{balanceId}':
+  /api/v1/accounts/{accountId}/balances/{balanceId}:
     get:
       tags:
         - Account Balances
       summary: Get Account Balance by ID
-      description: >-
-        Retrieve a specific balance record by its unique identifier, ensuring it
-        belongs to the specified account.
+      description: Retrieve a specific balance record by its unique identifier, ensuring it belongs to the specified account.
       operationId: getBalance
       parameters:
         - name: accountId
@@ -495,15 +543,15 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: balanceId
           in: path
           description: Unique identifier of the balance record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the account balance
@@ -525,20 +573,18 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: balanceId
           in: path
           description: Unique identifier of the balance record to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -569,21 +615,21 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: balanceId
           in: path
           description: Unique identifier of the balance record to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Account balance deleted successfully
         '404':
           description: Account balance not found
-  '/api/v1/accounts/{accountId}':
+  /api/v1/accounts/{accountId}:
     get:
       tags:
         - Accounts
@@ -596,8 +642,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: OK
@@ -617,13 +663,11 @@ paths:
           description: Unique identifier of the account to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -652,19 +696,17 @@ paths:
           description: Unique identifier of the account to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: OK
-  '/api/v1/account-spaces/{accountSpaceId}/balance':
+  /api/v1/account-spaces/{accountSpaceId}/balance:
     put:
       tags:
         - Account Spaces
       summary: Update Account Space Balance
-      description: >-
-        Updates the balance of an account space directly. For administrative
-        adjustments only.
+      description: Updates the balance of an account space directly. For administrative adjustments only.
       operationId: updateAccountSpaceBalance
       parameters:
         - name: accountSpaceId
@@ -672,8 +714,8 @@ paths:
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: newBalance
           in: query
           description: New balance to set
@@ -688,9 +730,7 @@ paths:
             type: string
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -701,7 +741,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountSpaceDTO'
-  '/api/v1/account-spaces/{accountSpaceId}':
+  /api/v1/account-spaces/{accountSpaceId}:
     get:
       tags:
         - Account Spaces
@@ -714,8 +754,8 @@ paths:
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: OK
@@ -727,9 +767,7 @@ paths:
       tags:
         - Account Spaces
       summary: Update Account Space
-      description: >-
-        Update the details of an existing account space by its unique
-        identifier.
+      description: Update the details of an existing account space by its unique identifier.
       operationId: updateAccountSpace
       parameters:
         - name: accountSpaceId
@@ -737,13 +775,11 @@ paths:
           description: Unique identifier of the account space to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -764,9 +800,7 @@ paths:
       tags:
         - Account Spaces
       summary: Delete Account Space
-      description: >-
-        Delete an existing account space by its unique identifier. Main spaces
-        cannot be deleted.
+      description: Delete an existing account space by its unique identifier. Main spaces cannot be deleted.
       operationId: deleteAccountSpace
       parameters:
         - name: accountSpaceId
@@ -774,12 +808,12 @@ paths:
           description: Unique identifier of the account space to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: OK
-  '/api/v1/account-restrictions/{accountRestrictionId}':
+  /api/v1/account-restrictions/{accountRestrictionId}:
     get:
       tags:
         - Account Restrictions
@@ -792,8 +826,8 @@ paths:
           description: Unique identifier of the account restriction
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the restriction
@@ -815,13 +849,11 @@ paths:
           description: Unique identifier of the account restriction to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -854,14 +886,14 @@ paths:
           description: Unique identifier of the account restriction to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Successfully deleted the restriction
         '404':
           description: Restriction not found
-  '/api/v1/account-notifications/{accountNotificationId}':
+  /api/v1/account-notifications/{accountNotificationId}:
     get:
       tags:
         - Account Notifications
@@ -874,8 +906,8 @@ paths:
           description: Unique identifier of the account notification
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the notification
@@ -897,13 +929,11 @@ paths:
           description: Unique identifier of the account notification to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -936,30 +966,21 @@ paths:
           description: Unique identifier of the account notification to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Successfully deleted the notification
         '404':
           description: Notification not found
-  '/api/v1/accounts/{accountId}/status-history':
+  /api/v1/asset-prices:
     get:
       tags:
-        - Account Status History
-      summary: List Account Status History
-      description: >-
-        Retrieve a paginated list of status history records associated with the
-        specified account.
-      operationId: getAllStatusHistory
+        - Asset Prices
+      summary: List All Asset Prices
+      description: Retrieve a paginated list of all asset prices.
+      operationId: getAllAssetPrices
       parameters:
-        - name: accountId
-          in: path
-          description: Unique identifier of the account
-          required: true
-          schema:
-            type: integer
-            format: int64
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -991,11 +1012,102 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
+            example: DESC
+            default: DESC
+          example: DESC
+      responses:
+        '200':
+          description: Successfully retrieved the asset prices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginationResponse'
+        '404':
+          description: No asset prices found
+    post:
+      tags:
+        - Asset Prices
+      summary: Create Asset Price
+      description: Create a new asset price record.
+      operationId: createAssetPrice
+      parameters:
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetPriceDTO'
+        required: true
+      responses:
+        '201':
+          description: Asset price created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetPriceDTO'
+        '400':
+          description: Invalid asset price data provided
+  /api/v1/accounts/{accountId}/status-history:
+    get:
+      tags:
+        - Account Status History
+      summary: List Account Status History
+      description: Retrieve a paginated list of status history records associated with the specified account.
+      operationId: getAllStatusHistory
+      parameters:
+        - name: accountId
+          in: path
+          description: Unique identifier of the account
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
+          required: false
+          schema:
+            type: string
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: The direction of sorting, either ASC or DESC.
+          required: false
+          schema:
+            type: string
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -1020,13 +1132,11 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1045,14 +1155,12 @@ paths:
                 $ref: '#/components/schemas/AccountStatusHistoryDTO'
         '400':
           description: Invalid status history data provided
-  '/api/v1/accounts/{accountId}/spaces/{accountSpaceId}/providers':
+  /api/v1/accounts/{accountId}/spaces/{accountSpaceId}/providers:
     get:
       tags:
         - Account Space Providers
       summary: List Account Space Providers
-      description: >-
-        Retrieve a paginated list of provider records associated with the
-        specified account space.
+      description: Retrieve a paginated list of provider records associated with the specified account space.
       operationId: getAllProvidersForSpace
       parameters:
         - name: accountId
@@ -1060,15 +1168,15 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: accountSpaceId
           in: path
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -1100,11 +1208,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -1121,9 +1229,7 @@ paths:
       tags:
         - Account Space Providers
       summary: Create Account Space Provider
-      description: >-
-        Create a new provider record and associate it with the specified account
-        space.
+      description: Create a new provider record and associate it with the specified account space.
       operationId: createProviderForSpace
       parameters:
         - name: accountId
@@ -1131,20 +1237,18 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: accountSpaceId
           in: path
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1163,14 +1267,12 @@ paths:
                 $ref: '#/components/schemas/AccountProviderDTO'
         '400':
           description: Invalid provider data provided
-  '/api/v1/accounts/{accountId}/providers':
+  /api/v1/accounts/{accountId}/providers:
     get:
       tags:
         - Account Providers
       summary: List Account Providers
-      description: >-
-        Retrieve a paginated list of provider records associated with the
-        specified account.
+      description: Retrieve a paginated list of provider records associated with the specified account.
       operationId: getAllProviders
       parameters:
         - name: accountId
@@ -1178,8 +1280,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -1211,11 +1313,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -1232,9 +1334,7 @@ paths:
       tags:
         - Account Providers
       summary: Create Account Provider
-      description: >-
-        Create a new provider record and associate it with the specified
-        account.
+      description: Create a new provider record and associate it with the specified account.
       operationId: createProvider
       parameters:
         - name: accountId
@@ -1242,13 +1342,11 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1267,14 +1365,12 @@ paths:
                 $ref: '#/components/schemas/AccountProviderDTO'
         '400':
           description: Invalid provider data provided
-  '/api/v1/accounts/{accountId}/parameters':
+  /api/v1/accounts/{accountId}/parameters:
     get:
       tags:
         - Account Parameters
       summary: List Account Parameters
-      description: >-
-        Retrieve a paginated list of all parameter records associated with the
-        specified account.
+      description: Retrieve a paginated list of all parameter records associated with the specified account.
       operationId: getAllParameters
       parameters:
         - name: accountId
@@ -1282,8 +1378,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -1315,11 +1411,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -1336,9 +1432,7 @@ paths:
       tags:
         - Account Parameters
       summary: Create Account Parameter
-      description: >-
-        Create a new parameter record and associate it with the specified
-        account.
+      description: Create a new parameter record and associate it with the specified account.
       operationId: createParameter
       parameters:
         - name: accountId
@@ -1346,13 +1440,11 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1371,7 +1463,7 @@ paths:
                 $ref: '#/components/schemas/AccountParameterDTO'
         '400':
           description: Invalid parameter data provided
-  '/api/v1/accounts/{accountId}/balances':
+  /api/v1/accounts/{accountId}/balances:
     get:
       tags:
         - Account Balances
@@ -1384,8 +1476,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -1417,11 +1509,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -1446,13 +1538,11 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1481,9 +1571,7 @@ paths:
       parameters:
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1510,9 +1598,7 @@ paths:
       parameters:
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1529,14 +1615,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountDTO'
-  '/api/v1/account-spaces/{accountSpaceId}/unfreeze':
+  /api/v1/account-spaces/{accountSpaceId}/unfreeze:
     post:
       tags:
         - Account Spaces
       summary: Unfreeze Account Space
-      description: >-
-        Unfreezes a previously frozen account space, allowing normal operations
-        again.
+      description: Unfreezes a previously frozen account space, allowing normal operations again.
       operationId: unfreezeAccountSpace
       parameters:
         - name: accountSpaceId
@@ -1544,13 +1628,11 @@ paths:
           description: Unique identifier of the account space to unfreeze
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1561,31 +1643,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountSpaceDTO'
-  '/api/v1/account-spaces/{accountSpaceId}/transactions':
+  /api/v1/account-spaces/{accountSpaceId}/transactions:
     get:
       tags:
         - Account Space Transactions
       summary: Get Transactions
-      description: >-
+      description: |-
         Retrieves a paginated list of all transactions for an account space.
 
-
-        This endpoint returns the complete transaction history for a specific
-        account space, including deposits, withdrawals, and other financial
-        movements. Results are paginated to handle large transaction volumes
-        efficiently.
-
+        This endpoint returns the complete transaction history for a specific account space, including deposits, withdrawals, and other financial movements. Results are paginated to handle large transaction volumes efficiently.
 
         The response includes:
-
         * Transaction amounts and types
-
         * Transaction timestamps
-
         * Balance after each transaction
-
         * Transaction descriptions and reference IDs
-
         * Pagination metadata (total elements, total pages)
       operationId: getTransactions
       parameters:
@@ -1594,8 +1666,8 @@ paths:
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -1627,11 +1699,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -1650,25 +1722,15 @@ paths:
       tags:
         - Account Space Transactions
       summary: Record Transaction
-      description: >-
+      description: |-
         Records a new financial transaction for an account space.
 
-
-        This endpoint allows recording deposits (positive amounts) or
-        withdrawals (negative amounts) for a specific account space. Each
-        transaction affects the space's balance and is recorded with a
-        timestamp, description, and optional reference ID for cross-system
-        tracking.
-
+        This endpoint allows recording deposits (positive amounts) or withdrawals (negative amounts) for a specific account space. Each transaction affects the space's balance and is recorded with a timestamp, description, and optional reference ID for cross-system tracking.
 
         **Business Rules:**
-
         * Positive amounts represent deposits into the space
-
         * Negative amounts represent withdrawals from the space
-
         * The space must exist and be active
-
         * For withdrawals, the space must have sufficient balance
       operationId: recordTransaction
       parameters:
@@ -1677,11 +1739,11 @@ paths:
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: amount
           in: query
-          description: 'Transaction amount (positive for deposits, negative for withdrawals)'
+          description: Transaction amount (positive for deposits, negative for withdrawals)
           required: true
           schema:
             type: number
@@ -1699,9 +1761,7 @@ paths:
             type: string
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1716,12 +1776,12 @@ paths:
           description: Invalid input
         '404':
           description: Account space not found
-  '/api/v1/account-spaces/{accountSpaceId}/freeze':
+  /api/v1/account-spaces/{accountSpaceId}/freeze:
     post:
       tags:
         - Account Spaces
       summary: Freeze Account Space
-      description: 'Freezes an account space, preventing withdrawals and transfers from it.'
+      description: Freezes an account space, preventing withdrawals and transfers from it.
       operationId: freezeAccountSpace
       parameters:
         - name: accountSpaceId
@@ -1729,13 +1789,11 @@ paths:
           description: Unique identifier of the account space to freeze
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1746,7 +1804,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountSpaceDTO'
-  '/api/v1/account-spaces/{accountSpaceId}/configure-transfers':
+  /api/v1/account-spaces/{accountSpaceId}/configure-transfers:
     post:
       tags:
         - Account Spaces
@@ -1759,8 +1817,8 @@ paths:
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: enabled
           in: query
           description: Whether automatic transfers are enabled
@@ -1790,13 +1848,11 @@ paths:
           description: Source space ID (null for main account)
           required: false
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1820,15 +1876,15 @@ paths:
           description: Source account space ID
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: toSpaceId
           in: query
           description: Destination account space ID
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: amount
           in: query
           description: Amount to transfer
@@ -1837,9 +1893,7 @@ paths:
             type: number
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1850,7 +1904,7 @@ paths:
             application/json:
               schema:
                 type: boolean
-  '/api/v1/account-spaces/execute-transfers/{accountId}':
+  /api/v1/account-spaces/execute-transfers/{accountId}:
     post:
       tags:
         - Account Spaces
@@ -1863,13 +1917,11 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1886,9 +1938,7 @@ paths:
       tags:
         - Account Spaces
       summary: Filter Account Spaces
-      description: >-
-        Retrieve a paginated list of all account spaces based on filter
-        criteria.
+      description: Retrieve a paginated list of all account spaces based on filter criteria.
       operationId: filterAccountSpaces
       parameters:
         - name: filterRequest
@@ -1912,9 +1962,7 @@ paths:
       parameters:
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1931,7 +1979,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountSpaceDTO'
-  '/api/v1/account-restrictions/{accountRestrictionId}/remove':
+  /api/v1/account-restrictions/{accountRestrictionId}/remove:
     post:
       tags:
         - Account Restrictions
@@ -1944,8 +1992,8 @@ paths:
           description: Unique identifier of the account restriction
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: removedBy
           in: query
           description: User or system that removed the restriction
@@ -1954,9 +2002,7 @@ paths:
             type: string
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1976,9 +2022,7 @@ paths:
       tags:
         - Account Restrictions
       summary: Filter Account Restrictions
-      description: >-
-        Retrieve a paginated list of all account restrictions based on filter
-        criteria.
+      description: Retrieve a paginated list of all account restrictions based on filter criteria.
       operationId: filterAccountRestrictions
       parameters:
         - name: filterRequest
@@ -2004,9 +2048,7 @@ paths:
       parameters:
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2025,7 +2067,7 @@ paths:
                 $ref: '#/components/schemas/AccountRestrictionDTO'
         '400':
           description: Invalid input
-  '/api/v1/account-notifications/{accountNotificationId}/mark-read':
+  /api/v1/account-notifications/{accountNotificationId}/mark-read:
     post:
       tags:
         - Account Notifications
@@ -2038,13 +2080,11 @@ paths:
           description: Unique identifier of the account notification
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2059,7 +2099,7 @@ paths:
           description: Notification already read
         '404':
           description: Notification not found
-  '/api/v1/account-notifications/account/{accountId}/mark-all-read':
+  /api/v1/account-notifications/account/{accountId}/mark-all-read:
     post:
       tags:
         - Account Notifications
@@ -2072,13 +2112,11 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2097,9 +2135,7 @@ paths:
       tags:
         - Account Notifications
       summary: Filter Account Notifications
-      description: >-
-        Retrieve a paginated list of all account notifications based on filter
-        criteria.
+      description: Retrieve a paginated list of all account notifications based on filter criteria.
       operationId: filterAccountNotifications
       parameters:
         - name: filterRequest
@@ -2125,9 +2161,7 @@ paths:
       parameters:
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2146,33 +2180,381 @@ paths:
                 $ref: '#/components/schemas/AccountNotificationDTO'
         '400':
           description: Invalid input
-  '/api/v1/account-spaces/{accountSpaceId}/transactions/history/balance':
+  /api/v1/asset-prices/asset/{assetSymbol}/history:
+    get:
+      tags:
+        - Asset Prices
+      summary: Get Historical Asset Prices
+      description: Retrieve a paginated list of historical asset prices for a specific asset symbol within a date range.
+      operationId: getHistoricalAssetPrices
+      parameters:
+        - name: assetSymbol
+          in: path
+          description: Symbol of the asset (e.g., 'BTC', 'ETH')
+          required: true
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          description: Start date of the range (ISO format)
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: End date of the range (ISO format)
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
+          required: false
+          schema:
+            type: string
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: The direction of sorting, either ASC or DESC.
+          required: false
+          schema:
+            type: string
+            description: The direction of sorting, either ASC or DESC.
+            example: DESC
+            default: DESC
+          example: DESC
+      responses:
+        '200':
+          description: Successfully retrieved the historical asset prices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginationResponse'
+        '404':
+          description: No historical asset prices found for the specified criteria
+  /api/v1/asset-prices/asset/{assetSymbol}/currency/{quoteCurrency}/latest:
+    get:
+      tags:
+        - Asset Prices
+      summary: Get Latest Asset Price
+      description: Retrieve the latest price for a specific asset symbol and quote currency.
+      operationId: getLatestAssetPrice
+      parameters:
+        - name: assetSymbol
+          in: path
+          description: Symbol of the asset (e.g., 'BTC', 'ETH')
+          required: true
+          schema:
+            type: string
+        - name: quoteCurrency
+          in: path
+          description: Currency in which the asset is priced (e.g., 'USD', 'EUR')
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved the latest asset price
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetPriceDTO'
+        '404':
+          description: No asset price found for the specified symbol and currency
+  /api/v1/asset-prices/asset/{assetSymbol}/currency/{quoteCurrency}/history:
+    get:
+      tags:
+        - Asset Prices
+      summary: Get Historical Asset Prices by Currency
+      description: Retrieve a paginated list of historical asset prices for a specific asset symbol and quote currency within a date range.
+      operationId: getHistoricalAssetPricesByCurrency
+      parameters:
+        - name: assetSymbol
+          in: path
+          description: Symbol of the asset (e.g., 'BTC', 'ETH')
+          required: true
+          schema:
+            type: string
+        - name: quoteCurrency
+          in: path
+          description: Currency in which the asset is priced (e.g., 'USD', 'EUR')
+          required: true
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          description: Start date of the range (ISO format)
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: End date of the range (ISO format)
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
+          required: false
+          schema:
+            type: string
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: The direction of sorting, either ASC or DESC.
+          required: false
+          schema:
+            type: string
+            description: The direction of sorting, either ASC or DESC.
+            example: DESC
+            default: DESC
+          example: DESC
+      responses:
+        '200':
+          description: Successfully retrieved the historical asset prices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginationResponse'
+        '404':
+          description: No historical asset prices found for the specified criteria
+  /api/v1/asset-prices/asset/{assetSymbol}/currency/{quoteCurrency}:
+    get:
+      tags:
+        - Asset Prices
+      summary: Get Asset Prices by Symbol and Currency
+      description: Retrieve a paginated list of asset prices for a specific asset symbol and quote currency.
+      operationId: getAssetPricesBySymbolAndCurrency
+      parameters:
+        - name: assetSymbol
+          in: path
+          description: Symbol of the asset (e.g., 'BTC', 'ETH')
+          required: true
+          schema:
+            type: string
+        - name: quoteCurrency
+          in: path
+          description: Currency in which the asset is priced (e.g., 'USD', 'EUR')
+          required: true
+          schema:
+            type: string
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
+          required: false
+          schema:
+            type: string
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: The direction of sorting, either ASC or DESC.
+          required: false
+          schema:
+            type: string
+            description: The direction of sorting, either ASC or DESC.
+            example: DESC
+            default: DESC
+          example: DESC
+      responses:
+        '200':
+          description: Successfully retrieved the asset prices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginationResponse'
+        '404':
+          description: No asset prices found for the specified symbol and currency
+    delete:
+      tags:
+        - Asset Prices
+      summary: Delete Asset Prices by Symbol and Currency
+      description: Delete all asset prices for a specific asset symbol and quote currency.
+      operationId: deleteAssetPricesBySymbolAndCurrency
+      parameters:
+        - name: assetSymbol
+          in: path
+          description: Symbol of the asset (e.g., 'BTC', 'ETH')
+          required: true
+          schema:
+            type: string
+        - name: quoteCurrency
+          in: path
+          description: Currency in which the asset is priced (e.g., 'USD', 'EUR')
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Asset prices deleted successfully
+        '404':
+          description: No asset prices found for the specified symbol and currency
+  /api/v1/asset-prices/asset/{assetSymbol}:
+    get:
+      tags:
+        - Asset Prices
+      summary: Get Asset Prices by Symbol
+      description: Retrieve a paginated list of asset prices for a specific asset symbol.
+      operationId: getAssetPricesBySymbol
+      parameters:
+        - name: assetSymbol
+          in: path
+          description: Symbol of the asset (e.g., 'BTC', 'ETH')
+          required: true
+          schema:
+            type: string
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
+          required: false
+          schema:
+            type: string
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: The direction of sorting, either ASC or DESC.
+          required: false
+          schema:
+            type: string
+            description: The direction of sorting, either ASC or DESC.
+            example: DESC
+            default: DESC
+          example: DESC
+      responses:
+        '200':
+          description: Successfully retrieved the asset prices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginationResponse'
+        '404':
+          description: No asset prices found for the specified symbol
+    delete:
+      tags:
+        - Asset Prices
+      summary: Delete Asset Prices by Symbol
+      description: Delete all asset prices for a specific asset symbol.
+      operationId: deleteAssetPricesBySymbol
+      parameters:
+        - name: assetSymbol
+          in: path
+          description: Symbol of the asset (e.g., 'BTC', 'ETH')
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Asset prices deleted successfully
+        '404':
+          description: No asset prices found for the specified symbol
+  /api/v1/account-spaces/{accountSpaceId}/transactions/history/balance:
     get:
       tags:
         - Account Space Transactions
       summary: Get Balance at Date Time
-      description: >-
-        Retrieves the historical balance of an account space at a specific point
-        in time.
+      description: |-
+        Retrieves the historical balance of an account space at a specific point in time.
 
-
-        This endpoint provides the ability to view what the balance of a space
-        was at any historical moment. It uses the transaction history to
-        calculate the balance as it existed at the exact specified date and
-        time.
-
+        This endpoint provides the ability to view what the balance of a space was at any historical moment. It uses the transaction history to calculate the balance as it existed at the exact specified date and time.
 
         **Use cases:**
-
         * Historical financial reporting and reconciliation
-
         * Auditing and compliance verification
-
         * Analyzing balance trends over time
 
-
-        If the specified time predates the space's creation, the endpoint
-        returns zero.
+        If the specified time predates the space's creation, the endpoint returns zero.
       operationId: getBalanceAtDateTime
       parameters:
         - name: accountSpaceId
@@ -2180,8 +2562,8 @@ paths:
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: dateTime
           in: query
           description: Date and time to get the balance at
@@ -2198,30 +2580,20 @@ paths:
                 type: number
         '400':
           description: Invalid input
-  '/api/v1/account-spaces/{accountSpaceId}/transactions/filter/date':
+  /api/v1/account-spaces/{accountSpaceId}/transactions/filter/date:
     get:
       tags:
         - Account Space Transactions
       summary: Get Transactions by Date Range
-      description: >-
-        Retrieves a paginated list of transactions for an account space within a
-        specific date range.
+      description: |-
+        Retrieves a paginated list of transactions for an account space within a specific date range.
 
-
-        This endpoint allows filtering the transaction history by start and end
-        dates, making it easier to analyze financial activity during specific
-        time periods. Results are paginated to handle large transaction volumes
-        efficiently.
-
+        This endpoint allows filtering the transaction history by start and end dates, making it easier to analyze financial activity during specific time periods. Results are paginated to handle large transaction volumes efficiently.
 
         **Use cases:**
-
         * Generating monthly or quarterly transaction reports
-
         * Analyzing spending patterns over specific periods
-
         * Reconciling transactions for a particular timeframe
-
 
         The date range is inclusive of both the start and end dates specified.
       operationId: getTransactionsByDateRange
@@ -2231,8 +2603,8 @@ paths:
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: startDate
           in: query
           description: Start date of the range (inclusive)
@@ -2278,11 +2650,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -2297,32 +2669,20 @@ paths:
           description: Invalid input
         '404':
           description: No transactions found
-  '/api/v1/account-spaces/{accountSpaceId}/transactions/analytics/withdrawals':
+  /api/v1/account-spaces/{accountSpaceId}/transactions/analytics/withdrawals:
     get:
       tags:
         - Account Space Transactions
       summary: Calculate Total Withdrawals
-      description: >-
-        Calculates the sum of all withdrawals made from an account space within
-        a specified date range.
+      description: |-
+        Calculates the sum of all withdrawals made from an account space within a specified date range.
 
-
-        This endpoint aggregates all negative financial transactions
-        (withdrawals) within the given time period and returns the total amount
-        as a positive number. This is useful for expense tracking, budget
-        analysis, and monitoring space utilization.
-
+        This endpoint aggregates all negative financial transactions (withdrawals) within the given time period and returns the total amount as a positive number. This is useful for expense tracking, budget analysis, and monitoring space utilization.
 
         **Notes:**
-
-        * Only negative transactions (withdrawals) are included in the
-        calculation
-
+        * Only negative transactions (withdrawals) are included in the calculation
         * The result is returned as a positive number for easier consumption
-
-        * The calculation includes transactions on the start and end dates
-        (inclusive range)
-
+        * The calculation includes transactions on the start and end dates (inclusive range)
         * Returns zero if no withdrawals were made during the specified period
       operationId: calculateTotalWithdrawals
       parameters:
@@ -2331,8 +2691,8 @@ paths:
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: startDate
           in: query
           description: Start date of the range (inclusive)
@@ -2356,29 +2716,19 @@ paths:
                 type: number
         '400':
           description: Invalid input
-  '/api/v1/account-spaces/{accountSpaceId}/transactions/analytics/deposits':
+  /api/v1/account-spaces/{accountSpaceId}/transactions/analytics/deposits:
     get:
       tags:
         - Account Space Transactions
       summary: Calculate Total Deposits
-      description: >-
-        Calculates the sum of all deposits made to an account space within a
-        specified date range.
+      description: |-
+        Calculates the sum of all deposits made to an account space within a specified date range.
 
-
-        This endpoint aggregates all positive financial transactions (deposits)
-        within the given time period and returns the total amount. This is
-        useful for financial reporting, analyzing saving patterns, and
-        monitoring space funding.
-
+        This endpoint aggregates all positive financial transactions (deposits) within the given time period and returns the total amount. This is useful for financial reporting, analyzing saving patterns, and monitoring space funding.
 
         **Notes:**
-
         * Only positive transactions (deposits) are included in the calculation
-
-        * The calculation includes transactions on the start and end dates
-        (inclusive range)
-
+        * The calculation includes transactions on the start and end dates (inclusive range)
         * Returns zero if no deposits were made during the specified period
       operationId: calculateTotalDeposits
       parameters:
@@ -2387,8 +2737,8 @@ paths:
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: startDate
           in: query
           description: Start date of the range (inclusive)
@@ -2412,7 +2762,7 @@ paths:
                 type: number
         '400':
           description: Invalid input
-  '/api/v1/account-spaces/{accountSpaceId}/goal-progress':
+  /api/v1/account-spaces/{accountSpaceId}/goal-progress:
     get:
       tags:
         - Account Spaces
@@ -2425,8 +2775,8 @@ paths:
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: OK
@@ -2434,7 +2784,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountSpaceDTO'
-  '/api/v1/account-spaces/{accountSpaceId}/analytics':
+  /api/v1/account-spaces/{accountSpaceId}/analytics:
     get:
       tags:
         - Account Spaces
@@ -2447,8 +2797,8 @@ paths:
           description: Unique identifier of the account space
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: startDate
           in: query
           description: Start date for the analysis period (optional)
@@ -2470,7 +2820,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SpaceAnalyticsDTO'
-  '/api/v1/account-spaces/with-upcoming-targets/{accountId}':
+  /api/v1/account-spaces/with-upcoming-targets/{accountId}:
     get:
       tags:
         - Account Spaces
@@ -2483,8 +2833,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: daysThreshold
           in: query
           description: Number of days in the future to consider 'upcoming'
@@ -2502,7 +2852,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/AccountSpaceDTO'
-  '/api/v1/account-spaces/with-goals/{accountId}':
+  /api/v1/account-spaces/with-goals/{accountId}:
     get:
       tags:
         - Account Spaces
@@ -2515,8 +2865,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: OK
@@ -2526,7 +2876,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/AccountSpaceDTO'
-  '/api/v1/account-spaces/simulate-balances/{accountId}':
+  /api/v1/account-spaces/simulate-balances/{accountId}:
     get:
       tags:
         - Account Spaces
@@ -2539,8 +2889,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: months
           in: query
           description: Number of months to simulate
@@ -2558,7 +2908,7 @@ paths:
                 type: object
                 additionalProperties:
                   type: number
-  '/api/v1/account-spaces/growth-rates/{accountId}':
+  /api/v1/account-spaces/growth-rates/{accountId}:
     get:
       tags:
         - Account Spaces
@@ -2571,8 +2921,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: startDate
           in: query
           description: Start date for the calculation
@@ -2596,7 +2946,7 @@ paths:
                 type: object
                 additionalProperties:
                   type: number
-  '/api/v1/account-spaces/by-type/{accountId}':
+  /api/v1/account-spaces/by-type/{accountId}:
     get:
       tags:
         - Account Spaces
@@ -2609,8 +2959,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: spaceType
           in: query
           description: Space type
@@ -2633,7 +2983,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/AccountSpaceDTO'
-  '/api/v1/account-spaces/by-account/{accountId}/paginated':
+  /api/v1/account-spaces/by-account/{accountId}/paginated:
     get:
       tags:
         - Account Spaces
@@ -2646,8 +2996,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: page
           in: query
           description: Page number (0-based)
@@ -2671,7 +3021,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginationResponseAccountSpaceDTO'
-  '/api/v1/account-spaces/by-account/{accountId}':
+  /api/v1/account-spaces/by-account/{accountId}:
     get:
       tags:
         - Account Spaces
@@ -2684,8 +3034,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: OK
@@ -2695,14 +3045,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/AccountSpaceDTO'
-  '/api/v1/account-spaces/balance-distribution/{accountId}':
+  /api/v1/account-spaces/balance-distribution/{accountId}:
     get:
       tags:
         - Account Spaces
       summary: Calculate Balance Distribution
-      description: >-
-        Calculate the distribution of funds across spaces for a specific
-        account.
+      description: Calculate the distribution of funds across spaces for a specific account.
       operationId: calculateBalanceDistribution
       parameters:
         - name: accountId
@@ -2710,8 +3058,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: OK
@@ -2721,7 +3069,7 @@ paths:
                 type: object
                 additionalProperties:
                   type: number
-  '/api/v1/account-restrictions/account/{accountId}/active':
+  /api/v1/account-restrictions/account/{accountId}/active:
     get:
       tags:
         - Account Restrictions
@@ -2734,8 +3082,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the active restrictions
@@ -2745,7 +3093,7 @@ paths:
                 $ref: '#/components/schemas/AccountRestrictionDTO'
         '400':
           description: Invalid account ID
-  '/api/v1/account-restrictions/account/{accountId}':
+  /api/v1/account-restrictions/account/{accountId}:
     get:
       tags:
         - Account Restrictions
@@ -2758,8 +3106,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the restrictions
@@ -2769,7 +3117,7 @@ paths:
                 $ref: '#/components/schemas/AccountRestrictionDTO'
         '400':
           description: Invalid account ID
-  '/api/v1/account-notifications/account/{accountId}/unread':
+  /api/v1/account-notifications/account/{accountId}/unread:
     get:
       tags:
         - Account Notifications
@@ -2782,8 +3130,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the unread notifications
@@ -2793,7 +3141,7 @@ paths:
                 $ref: '#/components/schemas/AccountNotificationDTO'
         '400':
           description: Invalid account ID
-  '/api/v1/account-notifications/account/{accountId}/type/{notificationType}':
+  /api/v1/account-notifications/account/{accountId}/type/{notificationType}:
     get:
       tags:
         - Account Notifications
@@ -2806,8 +3154,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: notificationType
           in: path
           description: Type of notification
@@ -2848,7 +3196,7 @@ paths:
                 $ref: '#/components/schemas/AccountNotificationDTO'
         '400':
           description: Invalid input
-  '/api/v1/account-notifications/account/{accountId}/active':
+  /api/v1/account-notifications/account/{accountId}/active:
     get:
       tags:
         - Account Notifications
@@ -2861,8 +3209,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the active notifications
@@ -2872,7 +3220,7 @@ paths:
                 $ref: '#/components/schemas/AccountNotificationDTO'
         '400':
           description: Invalid account ID
-  '/api/v1/account-notifications/account/{accountId}':
+  /api/v1/account-notifications/account/{accountId}:
     get:
       tags:
         - Account Notifications
@@ -2885,8 +3233,8 @@ paths:
           description: Unique identifier of the account
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the notifications
@@ -2896,8 +3244,54 @@ paths:
                 $ref: '#/components/schemas/AccountNotificationDTO'
         '400':
           description: Invalid account ID
+  /api/v1/asset-prices/older-than:
+    delete:
+      tags:
+        - Asset Prices
+      summary: Delete Asset Prices Older Than
+      description: Delete all asset prices older than a specific date.
+      operationId: deleteAssetPricesOlderThan
+      parameters:
+        - name: date
+          in: query
+          description: Cutoff date (ISO format)
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '204':
+          description: Asset prices deleted successfully
+        '404':
+          description: No asset prices found older than the specified date
 components:
   schemas:
+    AssetPriceDTO:
+      type: object
+      properties:
+        dateCreated:
+          type: string
+          format: date-time
+          readOnly: true
+        dateUpdated:
+          type: string
+          format: date-time
+          readOnly: true
+        assetPriceId:
+          type: string
+          format: uuid
+          readOnly: true
+        assetSymbol:
+          type: string
+        quoteCurrency:
+          type: string
+        price:
+          type: number
+        asOfDatetime:
+          type: string
+          format: date-time
+        priceSource:
+          type: string
     AccountStatusHistoryDTO:
       type: object
       properties:
@@ -2910,12 +3304,12 @@ components:
           format: date-time
           readOnly: true
         accountStatusHistoryId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         accountId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         statusCode:
           type: string
           enum:
@@ -2943,12 +3337,12 @@ components:
           format: date-time
           readOnly: true
         accountProviderId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         accountId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         providerName:
           type: string
         externalReference:
@@ -2961,8 +3355,8 @@ components:
             - PENDING
             - SUSPENDED
         accountSpaceId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
     AccountParameterDTO:
       type: object
       properties:
@@ -2975,12 +3369,12 @@ components:
           format: date-time
           readOnly: true
         accountParameterId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         accountId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         paramType:
           type: string
           enum:
@@ -3011,26 +3405,38 @@ components:
           format: date-time
           readOnly: true
         accountBalanceId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         accountId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         accountSpaceId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         balanceType:
           type: string
           enum:
             - CURRENT
             - AVAILABLE
             - BLOCKED
+            - STAKED
+            - LOCKED
+            - PENDING_CONFIRMATION
         balanceAmount:
           type: number
         asOfDatetime:
           type: string
           format: date-time
+        assetSymbol:
+          type: string
+        assetDecimals:
+          type: string
+        transactionHash:
+          type: string
+        confirmations:
+          type: integer
+          format: int32
     AccountDTO:
       type: object
       properties:
@@ -3043,12 +3449,12 @@ components:
           format: date-time
           readOnly: true
         accountId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         contractId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         accountNumber:
           type: string
         accountType:
@@ -3069,6 +3475,11 @@ components:
             - SENIOR
             - PENSION
             - GOVERNMENT_BENEFITS
+            - CRYPTO_WALLET
+            - TOKENIZED_ASSET
+            - DIGITAL_ASSET
+            - STABLECOIN
+            - NFT_COLLECTION
         currency:
           type: string
         openDate:
@@ -3085,8 +3496,8 @@ components:
             - SUSPENDED
             - DORMANT
         branchId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         description:
           type: string
         accountSubType:
@@ -3197,6 +3608,16 @@ components:
           type: number
         overdraftLimit:
           type: number
+        walletAddress:
+          type: string
+        blockchainNetwork:
+          type: string
+        tokenContractAddress:
+          type: string
+        tokenStandard:
+          type: string
+        isCustodial:
+          type: boolean
       description: Data for the new account
     AccountSpaceDTO:
       type: object
@@ -3210,12 +3631,12 @@ components:
           format: date-time
           readOnly: true
         accountSpaceId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         accountId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         spaceName:
           type: string
         spaceType:
@@ -3268,8 +3689,8 @@ components:
         transferAmount:
           type: number
         sourceSpaceId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         averageGrowthRate:
           type: number
           readOnly: true
@@ -3306,12 +3727,12 @@ components:
           format: date-time
           readOnly: true
         accountRestrictionId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         accountId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         restrictionType:
           type: string
           enum:
@@ -3371,12 +3792,12 @@ components:
           format: date-time
           readOnly: true
         accountNotificationId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         accountId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         notificationType:
           type: string
           enum:
@@ -3475,12 +3896,10 @@ components:
           example: name
         sortDirection:
           type: string
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           example: DESC
           default: DESC
-      description: >-
-        Represents a pagination request for retrieving paginated results,
-        including page number, size, sort field, and direction.
+      description: Represents a pagination request for retrieving paginated results, including page number, size, sort field, and direction.
     RangeFilter:
       type: object
       properties:
@@ -3518,11 +3937,9 @@ components:
           format: int32
         currentPage:
           type: integer
-          description: 'The current page number, typically zero-based.'
+          description: The current page number, typically zero-based.
           format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
+      description: Represents a paginated response containing a list of items and pagination metadata.
     SpaceTransactionDTO:
       type: object
       properties:
@@ -3535,12 +3952,12 @@ components:
           format: date-time
           readOnly: true
         spaceTransactionId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         accountSpaceId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         amount:
           type: number
         balanceAfterTransaction:
@@ -3558,8 +3975,8 @@ components:
           type: string
           readOnly: true
         accountId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
     PaginationResponse:
       type: object
@@ -3580,20 +3997,18 @@ components:
           format: int32
         currentPage:
           type: integer
-          description: 'The current page number, typically zero-based.'
+          description: The current page number, typically zero-based.
           format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
+      description: Represents a paginated response containing a list of items and pagination metadata.
     SpaceAnalyticsDTO:
       type: object
       properties:
         accountSpaceId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         accountId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         spaceName:
           type: string
         spaceType:
@@ -3691,11 +4106,9 @@ components:
           format: int32
         currentPage:
           type: integer
-          description: 'The current page number, typically zero-based.'
+          description: The current page number, typically zero-based.
           format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
+      description: Represents a paginated response containing a list of items and pagination metadata.
     FilterRequestAccountSpaceDTO:
       required:
         - pagination
