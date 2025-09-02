@@ -26,7 +26,7 @@ public class AccountNotificationServiceImpl implements AccountNotificationServic
     private static final Logger logger = LoggerFactory.getLogger(AccountNotificationServiceImpl.class);
 
     private static final String ERROR_NOTIFICATION_ID_REQUIRED = "Account notification ID is required";
-    private static final String ERROR_NOTIFICATION_NOT_FOUND = "Account notification not found with ID: %d";
+    private static final String ERROR_NOTIFICATION_NOT_FOUND = "Account notification not found with ID: %s";
     private static final String ERROR_ACCOUNT_ID_REQUIRED = "Account ID is required";
     private static final String ERROR_NOTIFICATION_TYPE_REQUIRED = "Notification type is required";
     private static final String ERROR_TITLE_REQUIRED = "Title is required";

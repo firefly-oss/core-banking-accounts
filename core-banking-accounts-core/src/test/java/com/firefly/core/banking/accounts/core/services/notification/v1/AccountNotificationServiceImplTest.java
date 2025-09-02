@@ -36,8 +36,8 @@ class AccountNotificationServiceImplTest {
 
     private AccountNotification accountNotification;
     private AccountNotificationDTO accountNotificationDTO;
-    private final UUID NOTIFICATION_ID = 1L;
-    private final UUID ACCOUNT_ID = 100L;
+    private final UUID NOTIFICATION_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440009");
+    private final UUID ACCOUNT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440010");
 
     @BeforeEach
     void setUp() {
@@ -251,21 +251,21 @@ class AccountNotificationServiceImplTest {
     void markAllNotificationsAsRead_Success() {
         // Arrange
         AccountNotification notification1 = new AccountNotification();
-        notification1.setAccountNotificationId(1L);
+        notification1.setAccountNotificationId(UUID.fromString("550e8400-e29b-41d4-a716-446655440050"));
         notification1.setAccountId(ACCOUNT_ID);
         notification1.setIsRead(false);
 
         AccountNotification notification2 = new AccountNotification();
-        notification2.setAccountNotificationId(2L);
+        notification2.setAccountNotificationId(UUID.fromString("550e8400-e29b-41d4-a716-446655440051"));
         notification2.setAccountId(ACCOUNT_ID);
         notification2.setIsRead(false);
 
         AccountNotification readNotification1 = new AccountNotification();
-        readNotification1.setAccountNotificationId(1L);
+        readNotification1.setAccountNotificationId(UUID.fromString("550e8400-e29b-41d4-a716-446655440050"));
         readNotification1.setIsRead(true);
 
         AccountNotification readNotification2 = new AccountNotification();
-        readNotification2.setAccountNotificationId(2L);
+        readNotification2.setAccountNotificationId(UUID.fromString("550e8400-e29b-41d4-a716-446655440051"));
         readNotification2.setIsRead(true);
 
         when(repository.findByAccountIdAndIsRead(ACCOUNT_ID, false))
