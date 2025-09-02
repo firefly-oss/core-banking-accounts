@@ -35,8 +35,8 @@ class AccountRestrictionServiceImplTest {
 
     private AccountRestriction accountRestriction;
     private AccountRestrictionDTO accountRestrictionDTO;
-    private final UUID RESTRICTION_ID = 1L;
-    private final UUID ACCOUNT_ID = 100L;
+    private final UUID RESTRICTION_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440007");
+    private final UUID ACCOUNT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440008");
 
     @BeforeEach
     void setUp() {

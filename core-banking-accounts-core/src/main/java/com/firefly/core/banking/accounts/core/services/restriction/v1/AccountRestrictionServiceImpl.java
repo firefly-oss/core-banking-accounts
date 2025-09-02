@@ -25,7 +25,7 @@ public class AccountRestrictionServiceImpl implements AccountRestrictionService 
     private static final Logger logger = LoggerFactory.getLogger(AccountRestrictionServiceImpl.class);
 
     private static final String ERROR_RESTRICTION_ID_REQUIRED = "Account restriction ID is required";
-    private static final String ERROR_RESTRICTION_NOT_FOUND = "Account restriction not found with ID: %d";
+    private static final String ERROR_RESTRICTION_NOT_FOUND = "Account restriction not found with ID: %s";
     private static final String ERROR_ACCOUNT_ID_REQUIRED = "Account ID is required";
     private static final String ERROR_RESTRICTION_TYPE_REQUIRED = "Restriction type is required";
     private static final String ERROR_START_DATE_REQUIRED = "Start date is required";
