@@ -10,6 +10,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -24,19 +27,49 @@ public class AccountNotificationDTO extends BaseDTO {
     private UUID accountNotificationId;
 
     @FilterableId
+    @NotNull(message = "Account ID is required")
     private UUID accountId;
 
+    @NotNull(message = "Notification type is required")
     private NotificationTypeEnum notificationType;
+
+    @NotBlank(message = "Title is required")
+    @Size(max = 200, message = "Title must not exceed 200 characters")
     private String title;
+
+    @NotBlank(message = "Message is required")
+    @Size(max = 1000, message = "Message must not exceed 1000 characters")
     private String message;
+
+    @NotNull(message = "Creation datetime is required")
+    @PastOrPresent(message = "Creation datetime cannot be in the future")
     private LocalDateTime creationDateTime;
+
+    @Future(message = "Expiry datetime must be in the future")
     private LocalDateTime expiryDateTime;
+
     private Boolean isRead;
+
     private LocalDateTime readDateTime;
+
+    @Min(value = 1, message = "Priority must be at least 1")
+    @Max(value = 10, message = "Priority must not exceed 10")
     private Integer priority;
+
+    @Size(max = 100, message = "Delivery channels must not exceed 100 characters")
     private String deliveryChannels;
+
+    @Size(max = 100, message = "Event reference must not exceed 100 characters")
     private String eventReference;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Related amount cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Related amount must have at most 15 integer digits and 2 decimal places")
     private BigDecimal relatedAmount;
+
+    @Size(max = 500, message = "Action URL must not exceed 500 characters")
+    @Pattern(regexp = "^(https?://.*)?$", message = "Action URL must be a valid HTTP/HTTPS URL")
     private String actionUrl;
+
+    @Size(max = 100, message = "Action text must not exceed 100 characters")
     private String actionText;
 }

@@ -10,6 +10,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -24,12 +27,26 @@ public class AccountParameterDTO extends BaseDTO {
     private UUID accountParameterId;
 
     @FilterableId
+    @NotNull(message = "Account ID is required")
     private UUID accountId;
 
+    @NotNull(message = "Parameter type is required")
     private ParamTypeEnum paramType;
+
+    @NotNull(message = "Parameter value is required")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Parameter value cannot be negative")
+    @Digits(integer = 15, fraction = 8, message = "Parameter value must have at most 15 integer digits and 8 decimal places")
     private BigDecimal paramValue;
+
+    @Size(max = 20, message = "Parameter unit must not exceed 20 characters")
     private String paramUnit;
+
+    @NotNull(message = "Effective date is required")
     private LocalDateTime effectiveDate;
+
+    @Future(message = "Expiry date must be in the future")
     private LocalDateTime expiryDate;
+
+    @Size(max = 500, message = "Description must not exceed 500 characters")
     private String description;
 }

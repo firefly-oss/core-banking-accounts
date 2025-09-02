@@ -14,6 +14,9 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,10 +28,17 @@ public class AccountStatusHistoryDTO extends BaseDTO {
     private UUID accountStatusHistoryId;
 
     @FilterableId
+    @NotNull(message = "Account ID is required")
     private UUID accountId;
 
+    @NotNull(message = "Status code is required")
     private StatusCodeEnum statusCode;
+
+    @NotNull(message = "Status start datetime is required")
     private LocalDateTime statusStartDatetime;
+
     private LocalDateTime statusEndDatetime;
+
+    @Size(max = 500, message = "Reason must not exceed 500 characters")
     private String reason;
 }
