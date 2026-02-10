@@ -19,7 +19,7 @@ package com.firefly.core.banking.accounts.interfaces.dtos.notification.v1;
 
 import com.firefly.core.banking.accounts.interfaces.dtos.BaseDTO;
 import com.firefly.core.banking.accounts.interfaces.enums.notification.v1.NotificationTypeEnum;
-import com.firefly.core.utils.annotations.FilterableId;
+import org.fireflyframework.utils.annotations.FilterableId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;

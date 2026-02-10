@@ -17,8 +17,8 @@
 
 package com.firefly.core.banking.accounts.web.controllers.core.v1;
 
-import com.firefly.common.core.queries.PaginationRequest;
-import com.firefly.common.core.queries.PaginationResponse;
+import org.fireflyframework.core.queries.PaginationRequest;
+import org.fireflyframework.core.queries.PaginationResponse;
 import com.firefly.core.banking.accounts.core.services.core.v1.AccountBalanceServiceImpl;
 import com.firefly.core.banking.accounts.interfaces.dtos.core.v1.AccountBalanceDTO;
 import io.swagger.v3.oas.annotations.Operation;

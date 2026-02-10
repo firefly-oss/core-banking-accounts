@@ -25,7 +25,7 @@ import com.firefly.core.banking.accounts.interfaces.enums.interest.v1.InterestAc
 import com.firefly.core.banking.accounts.interfaces.enums.interest.v1.InterestPaymentFrequencyEnum;
 import com.firefly.core.banking.accounts.interfaces.enums.regulatory.v1.RegulatoryStatusEnum;
 import com.firefly.core.banking.accounts.interfaces.enums.regulatory.v1.TaxReportingStatusEnum;
-import com.firefly.core.utils.annotations.FilterableId;
+import org.fireflyframework.utils.annotations.FilterableId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;

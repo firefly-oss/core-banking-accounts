@@ -32,7 +32,7 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 @SpringBootApplication(
         scanBasePackages = {
                 "com.firefly.core.banking.accounts",
-                "com.firefly.common.web"  // Scan common web library configurations
+                "org.fireflyframework.web"  // Scan common web library configurations
         }
 )
 @EnableWebFlux

@@ -17,8 +17,8 @@
 
 package com.firefly.core.banking.accounts.web.controllers.crypto.v1;
 
-import com.firefly.common.core.queries.PaginationRequest;
-import com.firefly.common.core.queries.PaginationResponse;
+import org.fireflyframework.core.queries.PaginationRequest;
+import org.fireflyframework.core.queries.PaginationResponse;
 import com.firefly.core.banking.accounts.core.services.crypto.v1.AssetPriceService;
 import com.firefly.core.banking.accounts.interfaces.dtos.crypto.v1.AssetPriceDTO;
 import io.swagger.v3.oas.annotations.Operation;

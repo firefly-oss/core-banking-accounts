@@ -17,9 +17,9 @@
 
 package com.firefly.core.banking.accounts.core.services.provider.v1;
 
-import com.firefly.common.core.queries.PaginationRequest;
-import com.firefly.common.core.queries.PaginationResponse;
-import com.firefly.common.core.queries.PaginationUtils;
+import org.fireflyframework.core.queries.PaginationRequest;
+import org.fireflyframework.core.queries.PaginationResponse;
+import org.fireflyframework.core.queries.PaginationUtils;
 import com.firefly.core.banking.accounts.core.mappers.provider.v1.AccountProviderMapper;
 import com.firefly.core.banking.accounts.interfaces.dtos.provider.v1.AccountProviderDTO;
 import com.firefly.core.banking.accounts.interfaces.enums.provider.v1.ProviderStatusEnum;

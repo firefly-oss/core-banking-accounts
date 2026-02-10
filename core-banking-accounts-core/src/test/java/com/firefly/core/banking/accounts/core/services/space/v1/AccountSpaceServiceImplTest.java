@@ -17,7 +17,7 @@
 
 package com.firefly.core.banking.accounts.core.services.space.v1;
 
-import com.firefly.common.core.queries.PaginationResponse;
+import org.fireflyframework.core.queries.PaginationResponse;
 import com.firefly.core.banking.accounts.core.mappers.space.v1.AccountSpaceMapper;
 import com.firefly.core.banking.accounts.core.services.core.v1.AccountBalanceService;
 import com.firefly.core.banking.accounts.interfaces.dtos.core.v1.AccountBalanceDTO;

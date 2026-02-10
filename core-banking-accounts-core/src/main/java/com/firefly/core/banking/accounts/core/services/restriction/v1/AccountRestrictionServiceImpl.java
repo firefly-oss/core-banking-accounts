@@ -17,9 +17,9 @@
 
 package com.firefly.core.banking.accounts.core.services.restriction.v1;
 
-import com.firefly.common.core.filters.FilterRequest;
-import com.firefly.common.core.filters.FilterUtils;
-import com.firefly.common.core.queries.PaginationResponse;
+import org.fireflyframework.core.filters.FilterRequest;
+import org.fireflyframework.core.filters.FilterUtils;
+import org.fireflyframework.core.queries.PaginationResponse;
 import com.firefly.core.banking.accounts.core.mappers.restriction.v1.AccountRestrictionMapper;
 import com.firefly.core.banking.accounts.interfaces.dtos.restriction.v1.AccountRestrictionDTO;
 import com.firefly.core.banking.accounts.models.entities.restriction.v1.AccountRestriction;

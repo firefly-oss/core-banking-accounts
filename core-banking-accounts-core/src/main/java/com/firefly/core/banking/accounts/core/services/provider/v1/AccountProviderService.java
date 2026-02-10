@@ -17,8 +17,8 @@
 
 package com.firefly.core.banking.accounts.core.services.provider.v1;
 
-import com.firefly.common.core.queries.PaginationRequest;
-import com.firefly.common.core.queries.PaginationResponse;
+import org.fireflyframework.core.queries.PaginationRequest;
+import org.fireflyframework.core.queries.PaginationResponse;
 import com.firefly.core.banking.accounts.interfaces.dtos.provider.v1.AccountProviderDTO;
 import reactor.core.publisher.Mono;
 import java.util.UUID;

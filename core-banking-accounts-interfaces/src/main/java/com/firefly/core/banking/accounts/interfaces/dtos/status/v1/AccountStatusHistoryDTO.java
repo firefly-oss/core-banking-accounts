@@ -20,7 +20,7 @@ package com.firefly.core.banking.accounts.interfaces.dtos.status.v1;
 
 import com.firefly.core.banking.accounts.interfaces.dtos.BaseDTO;
 import com.firefly.core.banking.accounts.interfaces.enums.status.v1.StatusCodeEnum;
-import com.firefly.core.utils.annotations.FilterableId;
+import org.fireflyframework.utils.annotations.FilterableId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;

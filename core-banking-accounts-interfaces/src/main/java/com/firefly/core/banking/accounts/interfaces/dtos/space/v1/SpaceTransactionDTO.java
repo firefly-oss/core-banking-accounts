@@ -18,7 +18,7 @@
 package com.firefly.core.banking.accounts.interfaces.dtos.space.v1;
 
 import com.firefly.core.banking.accounts.interfaces.dtos.BaseDTO;
-import com.firefly.core.utils.annotations.FilterableId;
+import org.fireflyframework.utils.annotations.FilterableId;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

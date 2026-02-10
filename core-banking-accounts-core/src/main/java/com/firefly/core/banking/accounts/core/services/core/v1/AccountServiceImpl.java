@@ -17,9 +17,9 @@
 
 package com.firefly.core.banking.accounts.core.services.core.v1;
 
-import com.firefly.common.core.filters.FilterRequest;
-import com.firefly.common.core.filters.FilterUtils;
-import com.firefly.common.core.queries.PaginationResponse;
+import org.fireflyframework.core.filters.FilterRequest;
+import org.fireflyframework.core.filters.FilterUtils;
+import org.fireflyframework.core.queries.PaginationResponse;
 import com.firefly.core.banking.accounts.core.mappers.core.v1.AccountMapper;
 import com.firefly.core.banking.accounts.core.services.space.v1.AccountSpaceService;
 import com.firefly.core.banking.accounts.interfaces.dtos.core.v1.AccountDTO;
