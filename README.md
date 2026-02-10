@@ -24,7 +24,7 @@ The system tracks crypto-specific balance types (STAKED, LOCKED, PENDING_CONFIRM
 
 ### Prerequisites
 
-- Java 21 or higher
+- Java 25 or higher
 - Maven 3.8 or higher
 - PostgreSQL 14 or higher
 - Docker (optional, for containerized deployment)
@@ -91,7 +91,7 @@ The service follows a modular architecture with clear separation of concerns:
 
 ### Technology Stack
 
-- **Java 21**: Utilizing the latest Java features including virtual threads
+- **Java 25**: Utilizing the latest Java features including virtual threads
 - **Spring Boot**: Application framework
 - **Spring WebFlux**: Reactive web framework
 - **R2DBC**: Reactive database connectivity
@@ -345,9 +345,9 @@ The service provides a comprehensive API for managing all aspects of banking acc
 
 - `/api/v1/accounts`: Account management endpoints
 - `/api/v1/accounts/{accountId}/balances`: Account balance endpoints
-- `/api/v1/account-parameters`: Account parameter endpoints
-- `/api/v1/account-providers`: Account provider endpoints
-- `/api/v1/account-status-history`: Account status history endpoints
+- `/api/v1/accounts/{accountId}/parameters`: Account parameter endpoints
+- `/api/v1/accounts/{accountId}/providers`: Account provider endpoints
+- `/api/v1/accounts/{accountId}/status-history`: Account status history endpoints
 
 ### Crypto Asset Endpoints
 
@@ -370,10 +370,10 @@ The service provides a comprehensive API for managing all aspects of banking acc
   - `GET /{accountSpaceId}`: Get an account space by ID
   - `PUT /{accountSpaceId}`: Update an account space
   - `DELETE /{accountSpaceId}`: Delete an account space
-  - `GET /account/{accountId}`: Get all spaces for an account
-  - `POST /{sourceSpaceId}/transfer/{targetSpaceId}`: Transfer between spaces
+  - `GET /by-account/{accountId}`: Get all spaces for an account
+  - `POST /transfer?fromSpaceId={fromSpaceId}&toSpaceId={toSpaceId}&amount={amount}`: Transfer between spaces
   - `GET /{accountSpaceId}/goal-progress`: Calculate goal progress
-  - `POST /{accountSpaceId}/configure-automatic-transfers`: Configure automatic transfers
+  - `POST /{accountSpaceId}/configure-transfers`: Configure automatic transfers
 
 - `/api/v1/account-spaces/{accountSpaceId}/transactions`: Account space transaction endpoints
   - `POST /`: Record a new transaction for an account space
@@ -788,7 +788,7 @@ curl -X POST http://localhost:8080/api/v1/account-spaces \
 
 ```bash
 # Request
-curl -X POST "http://localhost:8080/api/v1/account-spaces/transfer?fromAccountSpaceId=550e8400-e29b-41d4-a716-446655440039&toAccountSpaceId=550e8400-e29b-41d4-a716-446655440040&amount=200.00"
+curl -X POST "http://localhost:8080/api/v1/account-spaces/transfer?fromSpaceId=550e8400-e29b-41d4-a716-446655440039&toSpaceId=550e8400-e29b-41d4-a716-446655440040&amount=200.00"
 
 # Response (200 OK)
 true
@@ -798,7 +798,7 @@ true
 
 ```bash
 # Request
-curl -X POST "http://localhost:8080/api/v1/account-spaces/550e8400-e29b-41d4-a716-446655440040/automatic-transfers?enabled=true&frequency=MONTHLY&amount=100.00&sourceSpaceId=550e8400-e29b-41d4-a716-446655440039"
+curl -X POST "http://localhost:8080/api/v1/account-spaces/550e8400-e29b-41d4-a716-446655440040/configure-transfers?enabled=true&frequency=MONTHLY&amount=100.00&sourceSpaceId=550e8400-e29b-41d4-a716-446655440039"
 
 # Response (200 OK)
 {
@@ -1061,7 +1061,7 @@ This flow demonstrates how to connect accounts to external providers.
 
 ```bash
 # Request
-curl -X POST http://localhost:8080/api/v1/account-providers \
+curl -X POST http://localhost:8080/api/v1/accounts/550e8400-e29b-41d4-a716-446655440038/providers \
   -H "Content-Type: application/json" \
   -d '{
     "accountId": "550e8400-e29b-41d4-a716-446655440038",
@@ -1087,7 +1087,7 @@ curl -X POST http://localhost:8080/api/v1/account-providers \
 
 ```bash
 # Request
-curl -X POST http://localhost:8080/api/v1/account-providers \
+curl -X POST http://localhost:8080/api/v1/accounts/550e8400-e29b-41d4-a716-446655440038/providers \
   -H "Content-Type: application/json" \
   -d '{
     "accountId": "550e8400-e29b-41d4-a716-446655440038",
@@ -1114,7 +1114,7 @@ curl -X POST http://localhost:8080/api/v1/account-providers \
 
 ```bash
 # Request
-curl -X PUT http://localhost:8080/api/v1/account-providers/550e8400-e29b-41d4-a716-446655440045 \
+curl -X PUT http://localhost:8080/api/v1/accounts/550e8400-e29b-41d4-a716-446655440038/providers/550e8400-e29b-41d4-a716-446655440045 \
   -H "Content-Type: application/json" \
   -d '{
     "accountId": "550e8400-e29b-41d4-a716-446655440038",
