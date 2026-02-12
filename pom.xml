@@ -11,7 +11,6 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.firefly</groupId>
     <artifactId>core-banking-accounts</artifactId>
     <packaging>pom</packaging>
     <modules>
