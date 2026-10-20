@@ -13,7 +13,7 @@ Add the following dependency to your `pom.xml` file:
 
 ```xml
 <dependency>
-    <groupId>com.firefly</groupId>
+    <groupId>io.fireflysoftware</groupId>
     <artifactId>core-banking-accounts-sdk</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 </dependency>
@@ -24,7 +24,7 @@ Add the following dependency to your `pom.xml` file:
 Add the following dependency to your `build.gradle` file:
 
 ```groovy
-implementation 'com.firefly:core-banking-accounts-sdk:1.0.0-SNAPSHOT'
+implementation 'io.fireflysoftware:core-banking-accounts-sdk:1.0.0-SNAPSHOT'
 ```
 
 ## Getting Started
