@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>core-banking-accounts-models</artifactId>
+    <name>core-banking-accounts-models</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

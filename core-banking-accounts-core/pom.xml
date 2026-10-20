@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>core-banking-accounts-core</artifactId>
+    <name>core-banking-accounts-core</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
