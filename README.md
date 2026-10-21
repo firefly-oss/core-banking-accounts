@@ -1,9 +1,9 @@
 <a href="https://fireflysoftware.io/openplatform/">
 <picture>
-  <source media="(max-width: 640px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/firefly-oss/.github/main/profile/assets/banner-narrow-dark.svg">
-  <source media="(max-width: 640px)" srcset="https://raw.githubusercontent.com/firefly-oss/.github/main/profile/assets/banner-narrow-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/firefly-oss/.github/main/profile/assets/banner-dark.svg">
-  <img src="https://raw.githubusercontent.com/firefly-oss/.github/main/profile/assets/banner-light.svg" alt="Firefly OpenPlatform - Core Banking - Accounts" width="100%">
+  <source media="(max-width: 640px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/fireflysoftwaresolutions/.github/main/profile/assets/banner-narrow-dark.svg">
+  <source media="(max-width: 640px)" srcset="https://raw.githubusercontent.com/fireflysoftwaresolutions/.github/main/profile/assets/banner-narrow-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/fireflysoftwaresolutions/.github/main/profile/assets/banner-dark.svg">
+  <img src="https://raw.githubusercontent.com/fireflysoftwaresolutions/.github/main/profile/assets/banner-light.svg" alt="Firefly OpenPlatform - Core Banking - Accounts" width="100%">
 </picture>
 </a>
 
@@ -338,6 +338,10 @@ erDiagram
 - Space transactions affect the space balance and are recorded with a timestamp
 - Account ownership is managed by the external contract management system via contractId
 - Account types are defined using enums for type safety and consistency
+- Account status is `DRAFT`, `OPEN`, `SUSPENDED`, `DORMANT`, or `CLOSED`
+- A `DRAFT` account may become `OPEN`. An `OPEN` account may become `SUSPENDED`, `DORMANT`, or `CLOSED`. A `SUSPENDED` or `DORMANT` account may return to `OPEN` or become `CLOSED`. A `CLOSED` account stays on file
+- Only a `DRAFT` account can be removed. Close an open account so the account history stays on file
+- Rows owned by an account, including balances, spaces, parameters, providers, restrictions, and notifications, are removed with that account
 
 #### Crypto-Specific Business Rules
 
@@ -429,7 +433,7 @@ http://localhost:8080/swagger-ui.html
 
 The Swagger UI provides comprehensive documentation for all endpoints, including:
 
-- **Account Management**: Create, read, update, and delete accounts
+- **Account Management**: Create, read, and update accounts. Only a draft account can be deleted
 - **Account Space Management**: Create and manage spaces within accounts
 - **Account Space Transactions**: Record and retrieve transaction history for spaces
 
