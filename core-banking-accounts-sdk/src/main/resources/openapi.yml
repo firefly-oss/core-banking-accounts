@@ -6,6 +6,10 @@ servers:
 - url: http://localhost:18080
   description: Generated server url
 tags:
+- name: ServicingMandate
+  description: Who may service an account
+- name: CustomerPosition
+  description: Stored customer position
 - name: Account Notifications
   description: APIs for managing account notifications and alerts
 - name: Account Restrictions
@@ -3756,8 +3760,343 @@ paths:
           description: Asset prices deleted successfully
         "404":
           description: No asset prices found older than the specified date
+  /api/v1/accounts/{accountId}/servicing-mandates:
+    post:
+      tags: [ServicingMandate]
+      summary: Store a servicing mandate
+      operationId: createServicingMandate
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema: {type: string, format: uuid}
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema: {type: string}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/ServicingMandateDTO"}
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/ServicingMandateDTO"}
+  /api/v1/accounts/{accountId}/servicing-mandates/{mandateId}:
+    get:
+      tags: [ServicingMandate]
+      summary: Read a servicing mandate
+      operationId: getServicingMandate
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema: {type: string, format: uuid}
+      - name: mandateId
+        in: path
+        required: true
+        schema: {type: string, format: uuid}
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema: {type: string}
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/ServicingMandateDTO"}
+  /api/v1/customer-positions:
+    post:
+      tags: [CustomerPosition]
+      summary: Store a customer position
+      operationId: recordCustomerPosition
+      parameters:
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema: {type: string}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/CustomerPositionDTO"}
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/CustomerPositionDTO"}
+  /api/v1/customer-positions/{positionId}:
+    get:
+      tags: [CustomerPosition]
+      summary: Read a stored customer position
+      operationId: getCustomerPosition
+      parameters:
+      - name: positionId
+        in: path
+        required: true
+        schema: {type: string, format: uuid}
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema: {type: string}
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/CustomerPositionDTO"}
+  /api/v1/accounts/{accountId}/statements:
+    post:
+      tags: [DepositProduct]
+      summary: Store an account statement
+      operationId: recordAccountStatement
+      parameters:
+      - {name: accountId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: X-Idempotency-Key, in: header, required: false, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/AccountStatementDTO"}
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/AccountStatementDTO"}
+  /api/v1/accounts/{accountId}/statements/{statementId}:
+    get:
+      tags: [DepositProduct]
+      summary: Read an account statement
+      operationId: getAccountStatement
+      parameters:
+      - {name: accountId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: statementId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: X-Idempotency-Key, in: header, required: false, schema: {type: string}}
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/AccountStatementDTO"}
+  /api/v1/accounts/{accountId}/limits:
+    post:
+      tags: [DepositProduct]
+      summary: Store an account limit
+      operationId: recordAccountLimit
+      parameters:
+      - {name: accountId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: X-Idempotency-Key, in: header, required: false, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/AccountLimitDTO"}
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/AccountLimitDTO"}
+  /api/v1/accounts/{accountId}/limits/{limitId}:
+    get:
+      tags: [DepositProduct]
+      summary: Read an account limit
+      operationId: getAccountLimit
+      parameters:
+      - {name: accountId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: limitId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: X-Idempotency-Key, in: header, required: false, schema: {type: string}}
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/AccountLimitDTO"}
+  /api/v1/accounts/{accountId}/savings-interest:
+    post:
+      tags: [DepositProduct]
+      summary: Store savings interest
+      operationId: recordSavingsInterest
+      parameters:
+      - {name: accountId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: X-Idempotency-Key, in: header, required: false, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/SavingsInterestDTO"}
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/SavingsInterestDTO"}
+  /api/v1/accounts/{accountId}/savings-interest/{interestId}:
+    get:
+      tags: [DepositProduct]
+      summary: Read savings interest
+      operationId: getSavingsInterest
+      parameters:
+      - {name: accountId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: interestId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: X-Idempotency-Key, in: header, required: false, schema: {type: string}}
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/SavingsInterestDTO"}
+  /api/v1/accounts/{accountId}/term-deposits:
+    post:
+      tags: [DepositProduct]
+      summary: Store a term-deposit payout
+      operationId: recordTermDeposit
+      parameters:
+      - {name: accountId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: X-Idempotency-Key, in: header, required: false, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/TermDepositDTO"}
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/TermDepositDTO"}
+  /api/v1/accounts/{accountId}/term-deposits/{termDepositId}:
+    get:
+      tags: [DepositProduct]
+      summary: Read a term-deposit payout
+      operationId: getTermDeposit
+      parameters:
+      - {name: accountId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: termDepositId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: X-Idempotency-Key, in: header, required: false, schema: {type: string}}
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/TermDepositDTO"}
+  /api/v1/accounts/{accountId}/sweeps:
+    post:
+      tags: [DepositProduct]
+      summary: Store a space sweep
+      operationId: recordAccountSweep
+      parameters:
+      - {name: accountId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: X-Idempotency-Key, in: header, required: false, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/AccountSweepDTO"}
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/AccountSweepDTO"}
+  /api/v1/accounts/{accountId}/sweeps/{sweepId}:
+    get:
+      tags: [DepositProduct]
+      summary: Read a space sweep
+      operationId: getAccountSweep
+      parameters:
+      - {name: accountId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: sweepId, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: X-Idempotency-Key, in: header, required: false, schema: {type: string}}
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/AccountSweepDTO"}
 components:
   schemas:
+    ServicingMandateDTO:
+      type: object
+      properties:
+        servicingMandateId: {type: string, format: uuid}
+        accountId: {type: string, format: uuid}
+        partyId: {type: string, format: uuid}
+        role: {type: string, enum: [OWNER, OPERATOR, VIEWER]}
+        active: {type: boolean}
+    CustomerPositionDTO:
+      type: object
+      properties:
+        customerPositionId: {type: string, format: uuid}
+        partyId: {type: string, format: uuid}
+        currency: {type: string, minLength: 3, maxLength: 3}
+        balances: {type: number}
+        creditLimit: {type: number}
+        creditUsed: {type: number}
+        collateralValue: {type: number}
+        taxWithheld: {type: number}
+        availableFunds: {type: number}
+        creditRemaining: {type: number}
+    AccountStatementDTO:
+      type: object
+      properties:
+        accountStatementId: {type: string, format: uuid}
+        accountId: {type: string, format: uuid}
+        currency: {type: string, minLength: 3, maxLength: 3}
+        openingBalance: {type: number}
+        lineAmounts: {type: array, items: {type: number}}
+        credits: {type: number}
+        debits: {type: number}
+        closingBalance: {type: number}
+    AccountLimitDTO:
+      type: object
+      properties:
+        accountLimitId: {type: string, format: uuid}
+        accountId: {type: string, format: uuid}
+        currency: {type: string, minLength: 3, maxLength: 3}
+        withdrawalLimit: {type: number}
+        overdraftLimit: {type: number}
+        balance: {type: number}
+        withdrawalAmount: {type: number}
+        allowed: {type: boolean}
+    SavingsInterestDTO:
+      type: object
+      properties:
+        savingsInterestId: {type: string, format: uuid}
+        accountId: {type: string, format: uuid}
+        currency: {type: string, minLength: 3, maxLength: 3}
+        balance: {type: number}
+        annualRatePercent: {type: number}
+        dayCount: {type: integer}
+        interestAmount: {type: number}
+    TermDepositDTO:
+      type: object
+      properties:
+        termDepositId: {type: string, format: uuid}
+        accountId: {type: string, format: uuid}
+        currency: {type: string, minLength: 3, maxLength: 3}
+        principal: {type: number}
+        annualRatePercent: {type: number}
+        openDate: {type: string, format: date}
+        maturityDate: {type: string, format: date}
+        withdrawalDate: {type: string, format: date}
+        penaltyRatePercent: {type: number}
+        payoutAmount: {type: number}
+    AccountSweepDTO:
+      type: object
+      properties:
+        accountSweepId: {type: string, format: uuid}
+        accountId: {type: string, format: uuid}
+        sourceSpaceId: {type: string, format: uuid}
+        targetSpaceId: {type: string, format: uuid}
+        amount: {type: number}
+        currency: {type: string, minLength: 3, maxLength: 3}
     AssetPriceDTO:
       required:
       - asOfDatetime
