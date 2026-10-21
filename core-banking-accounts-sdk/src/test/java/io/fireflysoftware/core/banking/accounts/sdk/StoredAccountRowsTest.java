@@ -47,7 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = AccountsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
                 "spring.application.name=core-banking-accounts",
-                "spring.application.version=26.10.4",
+                "spring.application.version=26.10.5",
                 "spring.application.description=Accounts core",
                 "spring.application.team.name=Firefly Software Foundation",
                 "spring.application.team.email=dev@fireflysoftware.io",
