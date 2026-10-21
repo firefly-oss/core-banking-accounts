@@ -188,6 +188,7 @@ class AccountServiceImplTest {
     @Test
     void deleteAccount_ShouldDeleteAccount_WhenAccountExists() {
         // Arrange
+        testAccount.setAccountStatus(AccountStatusEnum.DRAFT);
         when(accountRepository.findById(TEST_ACCOUNT_ID)).thenReturn(Mono.just(testAccount));
         when(accountRepository.delete(testAccount)).thenReturn(Mono.empty());
 
@@ -197,6 +198,17 @@ class AccountServiceImplTest {
 
         verify(accountRepository).findById(TEST_ACCOUNT_ID);
         verify(accountRepository).delete(testAccount);
+    }
+
+    @Test
+    void deleteAccount_ShouldReject_WhenAccountIsOpen() {
+        when(accountRepository.findById(TEST_ACCOUNT_ID)).thenReturn(Mono.just(testAccount));
+
+        StepVerifier.create(accountService.deleteAccount(TEST_ACCOUNT_ID))
+                .expectError(IllegalStateException.class)
+                .verify();
+
+        verify(accountRepository, never()).delete(any(Account.class));
     }
 
     @Test

@@ -18,5 +18,5 @@
 package io.fireflysoftware.core.banking.accounts.interfaces.enums.core.v1;
 
 public enum AccountStatusEnum {
-    OPEN, CLOSED, SUSPENDED, DORMANT
+    DRAFT, OPEN, CLOSED, SUSPENDED, DORMANT
 }

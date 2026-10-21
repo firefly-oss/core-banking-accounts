@@ -3825,6 +3825,7 @@ components:
         statusCode:
           type: string
           enum:
+          - DRAFT
           - OPEN
           - SUSPENDED
           - CLOSED
@@ -4052,6 +4053,7 @@ components:
         accountStatus:
           type: string
           enum:
+          - DRAFT
           - OPEN
           - CLOSED
           - SUSPENDED

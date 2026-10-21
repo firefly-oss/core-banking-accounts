@@ -23,6 +23,7 @@ import org.fireflyframework.core.queries.PaginationResponse;
 import io.fireflysoftware.core.banking.accounts.core.mappers.core.v1.AccountMapper;
 import io.fireflysoftware.core.banking.accounts.core.services.space.v1.AccountSpaceService;
 import io.fireflysoftware.core.banking.accounts.interfaces.dtos.core.v1.AccountDTO;
+import io.fireflysoftware.core.banking.accounts.interfaces.enums.core.v1.AccountStatusEnum;
 import io.fireflysoftware.core.banking.accounts.interfaces.dtos.space.v1.AccountSpaceDTO;
 import io.fireflysoftware.core.banking.accounts.interfaces.enums.space.v1.AccountSpaceTypeEnum;
 import io.fireflysoftware.core.banking.accounts.models.entities.core.v1.Account;
@@ -61,6 +62,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Mono<AccountDTO> createAccount(AccountDTO accountDTO) {
         Account account = mapper.toEntity(accountDTO);
+        if (account.getAccountStatus() == null) {
+            account.setAccountStatus(AccountStatusEnum.DRAFT);
+        }
         return repository.save(account)
                 .flatMap(savedAccount -> {
                     // Create a default MAIN space for the account
@@ -88,8 +92,19 @@ public class AccountServiceImpl implements AccountService {
     public Mono<AccountDTO> updateAccount(UUID accountId, AccountDTO accountDTO) {
         return repository.findById(accountId)
                 .flatMap(existingAccount -> {
+                    AccountStatusEnum current = existingAccount.getAccountStatus() != null
+                            ? existingAccount.getAccountStatus()
+                            : AccountStatusEnum.DRAFT;
                     mapper.updateEntityFromDto(accountDTO, existingAccount);
                     existingAccount.setAccountId(accountId);
+                    AccountStatusEnum next = existingAccount.getAccountStatus() != null
+                            ? existingAccount.getAccountStatus()
+                            : current;
+                    if (!AccountLifecycle.canTransition(current, next)) {
+                        return Mono.error(new IllegalStateException(
+                                "Account " + accountId + " cannot move from " + current + " to " + next));
+                    }
+                    existingAccount.setAccountStatus(next);
                     return repository.save(existingAccount);
                 })
                 .map(mapper::toDTO);
@@ -98,6 +113,16 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Mono<Void> deleteAccount(UUID accountId) {
         return repository.findById(accountId)
-                .flatMap(repository::delete);
+                .flatMap(existingAccount -> {
+                    AccountStatusEnum status = existingAccount.getAccountStatus() != null
+                            ? existingAccount.getAccountStatus()
+                            : AccountStatusEnum.DRAFT;
+                    if (status != AccountStatusEnum.DRAFT) {
+                        return Mono.error(new IllegalStateException(
+                                "Account " + accountId + " is " + status
+                                        + " and cannot be deleted; close it so the account history is kept"));
+                    }
+                    return repository.delete(existingAccount);
+                });
     }
 }
