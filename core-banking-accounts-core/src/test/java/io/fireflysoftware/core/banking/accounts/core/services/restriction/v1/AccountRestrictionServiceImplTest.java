@@ -248,10 +248,4 @@ class AccountRestrictionServiceImplTest {
         verify(repository).findById(RESTRICTION_ID);
         verify(repository, never()).save(any(AccountRestriction.class));
     }
-
-    // TODO: Fix this test
-    // @Test
-    void listAccountRestrictions_Success() {
-        // This test is disabled until we can properly mock the FilterUtils class
-    }
 }

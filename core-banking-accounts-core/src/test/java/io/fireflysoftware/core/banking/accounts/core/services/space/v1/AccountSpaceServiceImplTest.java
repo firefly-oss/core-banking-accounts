@@ -160,10 +160,24 @@ class AccountSpaceServiceImplTest {
                 .verify();
     }
 
-    // TODO: Fix this test
-    // @Test
+    @Test
     void updateAccountSpaceBalance_Success() {
-        // This test is disabled until we can properly mock the AccountBalanceService
+        BigDecimal newBalance = BigDecimal.valueOf(2000);
+        String reason = "Administrative adjustment";
+        AccountSpace updated = new AccountSpace();
+        updated.setAccountSpaceId(SPACE_ID);
+        updated.setAccountId(ACCOUNT_ID);
+        updated.setBalance(newBalance);
+
+        when(repository.findById(SPACE_ID)).thenReturn(Mono.just(accountSpace));
+        when(repository.save(any(AccountSpace.class))).thenReturn(Mono.just(updated));
+        when(accountBalanceService.createBalance(eq(ACCOUNT_ID), any(AccountBalanceDTO.class)))
+                .thenReturn(Mono.just(mock(AccountBalanceDTO.class)));
+        when(mapper.toDTO(updated)).thenReturn(accountSpaceDTO);
+
+        StepVerifier.create(service.updateAccountSpaceBalance(SPACE_ID, newBalance, reason))
+                .expectNext(accountSpaceDTO)
+                .verifyComplete();
     }
 
     @Test
